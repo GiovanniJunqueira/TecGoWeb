@@ -4,6 +4,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { environment } from "@/config";
 
 export function SidebarHeader() {
   return (
@@ -13,12 +14,14 @@ export function SidebarHeader() {
           <SidebarMenuButton size="lg" asChild>
             <a href="/" className="flex items-center gap-3">
               <img
-                src="logos/opencollective-svgrepo-com.svg"
-                alt="TechGo Logo"
+                src={environment.DEALERSHIP.LOGO}
+                alt={environment.DEALERSHIP.NAME}
                 className="size-8 rounded-lg"
               />
               <div className="grid flex-1 text-left leading-tight">
-                <span className="truncate text-base font-semibold">TechGo</span>
+                <span className="truncate text-base font-semibold">
+                  {environment.DEALERSHIP.NAME}
+                </span>
                 <span className="truncate text-xs text-muted-foreground">
                   Painel operacional
                 </span>

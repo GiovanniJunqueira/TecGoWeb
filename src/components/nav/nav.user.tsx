@@ -13,10 +13,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useTheme } from "@/contexts/theme";
 import { LogOut, Moon, MoreVertical } from "lucide-react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const { setTheme } = useTheme();
 
   return (
     <SidebarMenu>
@@ -75,13 +77,13 @@ export function NavUser() {
               </DropdownMenuItem>
 
               <DropdownMenuContent side="right" className="min-w-32">
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => setTheme("light")}>
                   Claro
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
                   Escuro
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => setTheme("system")}>
                   Sistema
                 </DropdownMenuItem>
               </DropdownMenuContent>
