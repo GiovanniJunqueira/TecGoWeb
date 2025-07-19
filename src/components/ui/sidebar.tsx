@@ -2,6 +2,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
+import { environment } from "@/config/environment"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -256,19 +257,39 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, isMobile } = useSidebar()
 
-  return (
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event)
+    toggleSidebar()
+  }
+
+  return isMobile ? (
+    <Button
+      data-sidebar="trigger"
+      data-slot="sidebar-trigger"
+      variant="ghost"
+      className={cn("flex items-center gap-2", className)}
+      onClick={handleClick}
+      {...props}
+    >
+      <img
+        src={environment.DEALERSHIP.LOGO}
+        alt={environment.DEALERSHIP.NAME}
+        className="size-8 rounded-lg"
+      />
+      <span className="truncate text-base font-semibold">
+        {environment.DEALERSHIP.NAME}
+      </span>
+    </Button>
+  ) : (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
       className={cn("size-7", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
+      onClick={handleClick}
       {...props}
     >
       <PanelLeftIcon />
