@@ -23,7 +23,7 @@ export function SidebarHeader() {
                   {environment.DEALERSHIP.NAME}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  Painel operacional
+                  Painel Operacional
                 </span>
               </div>
             </a>
