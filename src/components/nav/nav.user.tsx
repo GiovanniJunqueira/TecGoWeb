@@ -1,4 +1,3 @@
-import { ChevronsUpDown, LogOut, Moon, MoreVertical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -14,6 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { LogOut, Moon, MoreVertical } from "lucide-react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

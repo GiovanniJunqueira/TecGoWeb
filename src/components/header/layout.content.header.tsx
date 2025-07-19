@@ -1,6 +1,7 @@
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { BreadCrumb } from "../breadcrumb/breadcrumb";
 
 
 
@@ -21,7 +22,7 @@ export function LayoutContentHeader() {
             orientation="vertical"
             className="mr-2 h-4 bg-accent hidden md:flex"
           />
-          {/* <BreadCrumbDemo /> */}
+          <BreadCrumb />
         </div>
       </div>
     </header>
