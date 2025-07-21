@@ -2,10 +2,12 @@ import { Route, Routes } from "react-router-dom";
 
 import { Layout } from "./layouts/layout";
 import { SidebarExample } from "./pages/sidebar.example";
+import LoginPage from "./pages/login/login.page";
 
 export const Router = () => {
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
       <Route element={<Layout />}>
         <Route path="/" element={<SidebarExample />} />
         <Route path="/dashboard" element={<SidebarExample />} />
