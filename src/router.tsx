@@ -1,33 +1,25 @@
 import { Route, Routes } from "react-router-dom";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { MainLayout } from "./layouts/MainLayout"; // <-- Importe o novo Layout
 
-import Login from "./pages/login";
-import Cadastro from "./pages/cadastro";
-import DashBoard from "./pages/dashboard";
-import GestaoPagamentos from "./pages/gestaoPagamentos";
-import GestaoAlunos from "./pages/gestaoAlunos";
-import Escalacao from "./pages/escalacao";
-import Partidas from "./pages/partidas";
+import { Layout } from "./layouts/layout";
+import { SidebarExample } from "./pages/sidebar.example";
+import LoginPage from "./pages/login/login.page";
 
 export const Router = () => {
   return (
-    <ThemeProvider>
-      <Routes>
-        {/* Rotas públicas fora do layout principal */}
-        <Route path="/" element={<Login/>} />
-        <Route path="/cadastro" element={<Cadastro/>} />
-
-        {/* Rotas privadas que USAM o layout com Header e Sidebar */}
-        <Route element={<MainLayout />}>
-          <Route path="/inicio" element={<DashBoard/>} />
-          <Route path="/gestaoPagamentos" element={<GestaoPagamentos/>} />
-          <Route path="/gestaoAlunos" element={<GestaoAlunos/>} />
-          <Route path="/escalacao" element={<Escalacao/>} />
-          <Route path="/partidas" element={<Partidas/>} />
-          {/* Adicione outras rotas que usarão o mesmo layout aqui */}
-        </Route>
-      </Routes>
-    </ThemeProvider>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route element={<Layout />}>
+        <Route path="/" element={<SidebarExample />} />
+        <Route path="/dashboard" element={<SidebarExample />} />
+        <Route path="/pagamentos" element={<SidebarExample />} />
+        <Route path="/jogos" element={<SidebarExample />} />
+        <Route path="/turmas" element={<SidebarExample />} />
+        <Route path="/alunos/matricular" element={<SidebarExample />} />
+        <Route path="/notificacoes" element={<SidebarExample />} />
+        <Route path="/alunos" element={<SidebarExample />} />
+        <Route path="/responsaveis" element={<SidebarExample />} />
+        <Route path="/professores" element={<SidebarExample />} />
+      </Route>
+    </Routes>
   );
 };
