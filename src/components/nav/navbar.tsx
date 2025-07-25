@@ -1,4 +1,3 @@
-import { ChevronRight, type LucideIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,7 +13,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type NavbarProps = {
@@ -32,6 +33,7 @@ type NavbarProps = {
 };
 
 export function Navbar({ label, items }: NavbarProps) {
+  const { isMobile, setOpenMobile } = useSidebar();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -45,7 +47,10 @@ export function Navbar({ label, items }: NavbarProps) {
               <SidebarMenuButton
                 isActive={pathname === item.url}
                 tooltip={item.title}
-                onClick={() => navigate(item.url)}
+                onClick={() => {
+                  if (isMobile)  setOpenMobile(false);
+                  navigate(item.url);
+                }}
               >
                 <item.icon />
                 <span>{item.title}</span>
@@ -60,10 +65,15 @@ export function Navbar({ label, items }: NavbarProps) {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <a
+                              href={subItem.url}
+                              onClick={() => {
+                                if (isMobile) setOpenMobile(false);
+                              }}
+                            >
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>
