@@ -17,7 +17,7 @@ import { useTheme } from "@/contexts/theme";
 import { LogOut, Moon, MoreVertical } from "lucide-react";
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const { setTheme } = useTheme();
 
   return (
@@ -30,16 +30,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8">
-              <AvatarImage src="#" alt="Avatar" />
-              <AvatarFallback className="bg-transparent">
-                JD
-              </AvatarFallback>
+                <AvatarImage src="#" alt="Avatar" />
+                <AvatarFallback className="bg-transparent">JD</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">
-                Jhon 
-              </span>
-              <span className="truncate text-xs">jhon.doe@gmail.com</span>
+                <span className="truncate font-semibold">Jhon</span>
+                <span className="truncate text-xs">jhon.doe@gmail.com</span>
               </div>
               <MoreVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -54,14 +50,10 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">
-                    JD
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-transparent">JD</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    Jhon Doe
-                  </span>
+                  <span className="truncate font-semibold">Jhon Doe</span>
                   <span className="truncate text-xs">jhondoe@gmail.com</span>
                 </div>
               </div>
@@ -77,13 +69,28 @@ export function NavUser() {
               </DropdownMenuItem>
 
               <DropdownMenuContent side="right" className="min-w-32">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("light");
+                    if (isMobile) setOpenMobile(false);
+                  }}
+                >
                   Claro
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("dark");
+                    if (isMobile) setOpenMobile(false);
+                  }}
+                >
                   Escuro
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme("system");
+                    if (isMobile) setOpenMobile(false);
+                  }}
+                >
                   Sistema
                 </DropdownMenuItem>
               </DropdownMenuContent>
