@@ -14,14 +14,33 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "@/validators";
+import { AuthService } from "@/services/auth/auth.service";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Dados enviados:", data);
+  const handleSubmit = (data: LoginFormData) => {
+    AuthService.login(data)
+      .then((data) => {
+        console.log("Login successful:", data);
+        navigate("/");
+      })
+      .catch((error) => {
+        if (error instanceof AxiosError) {
+          toast.error("Ocorreu um erro ao realizar essa ação", {
+            description: error.response?.data?.message,
+          });
+        } else {
+          toast.error("Ocorreu um erro ao realizar essa ação");
+        }
+      })
+      .finally(() => {});
   };
 
   return (
@@ -32,7 +51,10 @@ export function LoginForm() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="grid gap-6"
+            >
               <FormField
                 control={form.control}
                 name="email"

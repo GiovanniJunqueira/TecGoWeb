@@ -1,11 +1,11 @@
 import { api } from "@/config";
 import type { LoginResponseEntity } from "@/entities/auth";
+import type { LoginFormData } from "@/validators";
 
 export class AuthService {
-  public static async login(email: string, password: string): Promise<string> {
+  public static async login(props: LoginFormData): Promise<string> {
     const { data } = await api.post<LoginResponseEntity>("/auth/login", {
-      email,
-      password,
+      props
     });
 
     return data.token;
