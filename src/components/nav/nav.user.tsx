@@ -17,7 +17,7 @@ import { useTheme } from "@/contexts/theme";
 import { LogOut, Moon, MoreVertical } from "lucide-react";
 
 export function NavUser() {
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { isMobile } = useSidebar();
   const { setTheme } = useTheme();
 
   return (
@@ -72,7 +72,6 @@ export function NavUser() {
                 <DropdownMenuItem
                   onClick={() => {
                     setTheme("light");
-                    if (isMobile) setOpenMobile(false);
                   }}
                 >
                   Claro
@@ -80,7 +79,6 @@ export function NavUser() {
                 <DropdownMenuItem
                   onClick={() => {
                     setTheme("dark");
-                    if (isMobile) setOpenMobile(false);
                   }}
                 >
                   Escuro
@@ -88,7 +86,6 @@ export function NavUser() {
                 <DropdownMenuItem
                   onClick={() => {
                     setTheme("system");
-                    if (isMobile) setOpenMobile(false);
                   }}
                 >
                   Sistema
