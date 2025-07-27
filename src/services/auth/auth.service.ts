@@ -5,7 +5,8 @@ import type { LoginFormData } from "@/validators";
 export class AuthService {
   public static async login(props: LoginFormData): Promise<string> {
     const { data } = await api.post<LoginResponseEntity>("/auth/login", {
-      props
+      email: props.email,
+      password: props.password,
     });
 
     return data.token;
