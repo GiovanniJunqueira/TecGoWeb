@@ -13,6 +13,7 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
+      
       includeAssets: [
         "favicon.ico",
         "apple-touch-icon.png",

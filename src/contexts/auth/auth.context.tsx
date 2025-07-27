@@ -6,8 +6,8 @@ import React, {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthStorage } from "../../storages";
 import type { User } from "@/entities/user/user.entity";
+import { AuthStorage } from "@/storages";
 
 interface AuthContextType {
   user: User | null;
@@ -41,8 +41,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (isValid) {
       const payload = AuthStorage.decode();
 
-      if (payload?.user && Object.keys(payload.user).length > 0) {
-        setUser(payload.user as User);
+      if (payload) {
+        setUser(payload);
         setIsLoading(false);
         return;
       } else {

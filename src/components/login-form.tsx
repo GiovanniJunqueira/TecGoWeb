@@ -15,12 +15,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "@/validators";
 import { AuthService } from "@/services/auth/auth.service";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/contexts/auth/auth.context";
 
 export function LoginForm() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const form = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
   });
@@ -29,6 +31,7 @@ export function LoginForm() {
     AuthService.login(data)
       .then((data) => {
         login(data);
+        navigate("/");
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
