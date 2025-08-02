@@ -15,22 +15,11 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import type { NavbarProps } from "./entities/nav.bar.entity";
 
-type NavbarProps = {
-  label: string;
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-};
+
 
 export function Navbar({ label, items }: NavbarProps) {
   const { isMobile, setOpenMobile } = useSidebar();
@@ -74,6 +63,7 @@ export function Navbar({ label, items }: NavbarProps) {
                                 if (isMobile) setOpenMobile(false);
                               }}
                             >
+                              <subItem.icon />
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>

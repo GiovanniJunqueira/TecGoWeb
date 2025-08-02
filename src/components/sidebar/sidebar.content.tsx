@@ -1,12 +1,15 @@
 import {
-  User,
-  Users,
-  Table,
+  Bell,
   ClipboardList,
   CreditCard,
   LayoutDashboard,
-  Bell,
+  Table,
+  User,
+  UserPlus,
+  Users,
+  FileText,
 } from "lucide-react";
+
 import { SidebarContent as UISidebarContent } from "../ui/sidebar";
 import { Navbar } from "../nav/navbar";
 import { ScrollArea } from "../ui/scroll-area";
@@ -30,39 +33,16 @@ const data = {
   ],
   navOperacional: [
     {
-      title: "Jogos",
-      url: "/jogos",
-      icon: ClipboardList,
-      description: "Criação e visualização de partidas agendadas (Escalação).",
-    },
-    {
-      title: "Turmas",
-      url: "/turmas",
-      icon: Table,
-      description:
-        "Cadastro de turmas com controle de alunos e aulas vinculadas.",
-    },
-    {
-      title: "Matricular Aluno",
-      url: "/alunos/matricular",
+      title: "Atletas",
+      url: "/atletas",
       icon: User,
-      description:
-        "Fluxo específico para matrícula de um novo aluno (inclui cadastro do responsável).",
-    },
-    {
-      title: "Notificações",
-      url: "/notificacoes",
-      icon: Bell,
-      description: "Envio automatizado para responsáveis.",
-    },
-  ],
-  navAdministrativo: [
-    {
-      title: "Alunos",
-      url: "/alunos",
-      icon: User,
-      description:
-        "Gestão dos dados dos alunos, incluindo saúde e participação.",
+      items: [
+        {
+          title: "Matricular Atleta",
+          url: "/atletas/matricular",
+          icon: UserPlus,
+        },
+      ],
     },
     {
       title: "Responsáveis",
@@ -76,6 +56,36 @@ const data = {
       url: "/professores",
       icon: Users,
       description: "Gestão dos dados dos professores.",
+    },
+    {
+      title: "Jogos",
+      url: "/jogos",
+      icon: ClipboardList,
+      description: "Criação e visualização de partidas agendadas (Escalação).",
+    },
+    {
+      title: "Turmas",
+      url: "/turmas",
+      icon: Table,
+      description:
+        "Cadastro de turmas com controle de alunos e aulas vinculadas.",
+    },
+
+    {
+      title: "Notificações",
+      url: "/notificacoes",
+      icon: Bell,
+      description: "Envio automatizado para responsáveis.",
+    },
+
+    
+  ],
+  navAdministrativo: [
+    {
+      title: "Contratos",
+      url: "/contratos",
+      icon: FileText,
+      description: "Gestão de contratos administrativos e documentos legais.",
     },
   ],
 };
