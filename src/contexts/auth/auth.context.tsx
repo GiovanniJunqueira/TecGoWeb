@@ -1,3 +1,7 @@
+import type { LoginResponseEntity } from "@/entities/auth";
+import type { UserPayload } from "@/entities/user/user.entity";
+import { AuthService } from "@/services/auth/auth.service";
+import { AuthStorage } from "@/storages";
 import React, {
   createContext,
   useCallback,
@@ -6,16 +10,13 @@ import React, {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import type { User } from "@/entities/user/user.entity";
-import { AuthStorage } from "@/storages";
 
 interface AuthContextType {
-  user: User | null;
+  user: UserPayload | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => void;
+  login: (data: LoginResponseEntity) => void;
   logout: () => void;
-  validateSession: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,62 +25,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const validateSession = useCallback((): boolean => {
-    const hasToken = AuthStorage.has();
-
-    if (!hasToken) return false;
-
-    return true;
-  }, []);
-
-  const checkAuthentication = useCallback(() => {
-    const isValid = validateSession();
-
-    if (isValid) {
-      const payload = AuthStorage.decode();
-
-      if (payload) {
-        setUser(payload);
-        setIsLoading(false);
-        return;
-      } else {
-        logout();
-        return;
-      }
-    } else {
-      setUser(null);
-    }
-
-    setIsLoading(false);
-  }, [validateSession]);
-
-  const login = useCallback(
-    (token: string) => {
-      setIsLoading(true);
-      AuthStorage.set(token);
-      checkAuthentication();
-    },
-    [checkAuthentication]
-  );
+  const [user, setUser] = useState<UserPayload | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const logout = useCallback(() => {
-    setIsLoading(true);
-
     AuthStorage.remove();
     setUser(null);
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/login");
-    }, 0);
+    navigate("/login");
   }, [navigate]);
 
+  const fetchUser = useCallback(async () => {
+    const hasToken = AuthStorage.has();
+    if (!hasToken) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const userData = await AuthService.me();
+      setUser(userData);
+    } catch {
+      console.error("Failed to fetch user data:");
+      logout();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [logout]);
+
   useEffect(() => {
-    checkAuthentication();
-  }, [checkAuthentication]);
+    fetchUser();
+  }, [fetchUser]);
+
+  const login = useCallback(
+    async (data: LoginResponseEntity) => {
+      AuthStorage.set(data.accessToken, data.expiresIn, data.refreshToken);
+
+      try {
+        const userData = await AuthService.me();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to fetch user data after login:", error);
+        logout();
+        throw error;
+      }
+    },
+    [logout]
+  );
 
   return (
     <AuthContext.Provider
@@ -89,10 +80,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isLoading,
         login,
         logout,
-        validateSession,
       }}
     >
-      {children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };

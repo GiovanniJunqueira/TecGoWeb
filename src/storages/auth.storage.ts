@@ -1,46 +1,57 @@
-import type { User } from "@/entities/user/user.entity";
-import { decodeJwt } from "jose";
+const STORAGE_KEY = "@auth";
 
-const key = "@auth";
+type AuthData = {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+};
 
 export class AuthStorage {
-  static has = (): boolean => {
-    if (typeof window === "undefined") return false;
+  static has(): boolean {
+    console.log(this.getData());
+    return this.getData() !== null;
+  }
 
-    const token = localStorage.getItem(key);
-    return !!token;
-  };
+  static getAccessToken(): string | null {
+    return this.getData()?.accessToken ?? null;
+  }
 
-  static get = (): string | null => {
-    if (typeof window === "undefined") return null;
+  static getRefreshToken(): string | null {
+    return this.getData()?.refreshToken ?? null;
+  }
 
-    return localStorage.getItem(key);
-  };
+  static getData(): AuthData | null {
 
-  static set = (token: string): void => {
-    if (typeof window === "undefined") return;
-
-    localStorage.setItem(key, token);
-  };
-
-  static remove = (): void => {
-    if (typeof window === "undefined") return;
-
-    localStorage.removeItem(key);
-  };
-
-  static decode = (): User | null => {
-    if (typeof window === "undefined") return null;
-
-    const token = this.get();
-    if (!token) return null;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
 
     try {
-      const payload = decodeJwt<User>(token);
-      return payload;
-    } catch (error) {
-      console.error("Failed to decode token:", error);
+      return JSON.parse(raw) as AuthData;
+    } catch {
       return null;
     }
-  };
+  }
+
+  static set(accessToken: string, expiresIn: number, refreshToken?: string): void {
+
+    const expiresAt = Date.now() + expiresIn * 1000;
+    const data: AuthData = { accessToken, refreshToken: refreshToken ?? '', expiresAt };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  static remove(): void {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  static isExpiring(bufferMinutes = 0.5): boolean {
+  const data = this.getData();
+  if (!data?.expiresAt) return true;
+
+  const nowWithBuffer = Date.now() + bufferMinutes * 60 * 1000;
+  return nowWithBuffer > data.expiresAt;
+}
+
+  static isAuthenticated(): boolean {
+    return !!this.getAccessToken() && !this.isExpiring();
+  }
 }

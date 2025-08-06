@@ -29,8 +29,9 @@ export function LoginForm() {
 
   const handleSubmit = (data: LoginFormData) => {
     AuthService.login(data)
-      .then((data) => {
-        login(data);
+      .then((responseData) => {
+        login(responseData);
+        console.log(responseData);
         navigate("/");
       })
       .catch((error) => {
@@ -41,8 +42,7 @@ export function LoginForm() {
         } else {
           toast.error("Ocorreu um erro ao realizar essa ação");
         }
-      })
-      .finally(() => {});
+      });
   };
 
   return (

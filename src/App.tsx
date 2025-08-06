@@ -1,9 +1,9 @@
 import { BrowserRouter } from "react-router-dom";
-import { Router } from "./router";
-import { ThemeProvider } from "./contexts/theme";
-import { environment } from "./config";
 import { Toaster } from "./components/ui/sonner";
+import { environment } from "./config";
 import { AuthProvider } from "./contexts/auth/auth.context";
+import { ThemeProvider } from "./contexts/theme";
+import { Router } from "./router";
 
 export function App() {
   const theme: "light" | "dark" = environment.THEME;

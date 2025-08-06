@@ -1,7 +1,12 @@
 export class LoginResponseEntity {
-  token: string;
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
 
   constructor(data: LoginResponseEntity) {
-    this.token = data.token;
+    this.accessToken = data.accessToken;
+    this.expiresIn = data.expiresIn;
+    this.refreshToken = data.refreshToken;
   }
 }
+

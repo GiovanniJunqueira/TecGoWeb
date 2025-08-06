@@ -19,3 +19,5 @@ export class User {
     this.role = data.role;
   }
 }
+
+export type UserPayload = User;

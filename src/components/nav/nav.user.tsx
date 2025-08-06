@@ -20,8 +20,7 @@ import { LogOut, Moon, MoreVertical } from "lucide-react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user, logout } = useAuth();
-
+  const { logout, user } = useAuth();
   const { setTheme } = useTheme();
 
   return (
@@ -35,10 +34,14 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage src="#" alt="Avatar" />
-                <AvatarFallback className="bg-transparent">{getInitials(user?.firstname + " " + user?.lastname)}</AvatarFallback>
+                <AvatarFallback className="bg-transparent">
+                  {getInitials(user?.firstname + " " + user?.lastname)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user?.firstname}</span>
+                <span className="truncate font-semibold">
+                  {user?.firstname}
+                </span>
                 <span className="truncate text-xs">{user?.email}</span>
               </div>
               <MoreVertical className="ml-auto size-4" />
@@ -54,10 +57,14 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">{getInitials(user?.firstname + " " + user?.lastname)}</AvatarFallback>
+                  <AvatarFallback className="bg-transparent">
+                    {getInitials(user?.firstname + " " + user?.lastname)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user?.firstname + " " + user?.lastname}</span>
+                  <span className="truncate font-semibold">
+                    {user?.firstname + " " + user?.lastname}
+                  </span>
                   <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
