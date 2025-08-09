@@ -4,9 +4,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { environment } from "@/config";
+import { useAuth } from "@/contexts/auth/auth.context";
 
 export function SidebarHeader() {
+  const { school } = useAuth();
+
   return (
     <UiSidebarHeader>
       <SidebarMenu>
@@ -14,13 +16,13 @@ export function SidebarHeader() {
           <SidebarMenuButton size="lg" asChild>
             <a href="/" className="flex items-center gap-3">
               <img
-                src={environment.DEALERSHIP.LOGO}
-                alt={environment.DEALERSHIP.NAME}
+                src={school?.logoUrl || ""}
+                alt={school?.name || ""}
                 className="size-8 rounded-lg"
               />
               <div className="grid flex-1 text-left leading-tight">
                 <span className="truncate text-base font-semibold">
-                  {environment.DEALERSHIP.NAME}
+                  {school?.name || "" }
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
                   Painel Operacional

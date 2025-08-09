@@ -1,6 +1,8 @@
 import type { LoginResponseEntity } from "@/entities/auth";
+import type { School } from "@/entities/school/scholl.entity";
 import type { UserPayload } from "@/entities/user/user.entity";
 import { AuthService } from "@/services/auth/auth.service";
+import { SchoolService } from "@/services/schollService/school.service";
 import { AuthStorage } from "@/storages";
 import React, {
   createContext,
@@ -13,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: UserPayload | null;
+  school: School | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (data: LoginResponseEntity) => void;
@@ -26,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserPayload | null>(null);
+  const [school, setSchool] = useState<School | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const logout = useCallback(() => {
@@ -35,15 +39,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [navigate]);
 
   const fetchUser = useCallback(async () => {
-    const hasToken = AuthStorage.has();
-    if (!hasToken) {
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const userData = await AuthService.me();
+      const schoolData = await SchoolService.get();
+
       setUser(userData);
+      setSchool(schoolData);
     } catch {
       console.error("Failed to fetch user data:");
       logout();
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
+  }, []);
 
   const login = useCallback(
     async (data: LoginResponseEntity) => {
@@ -75,7 +76,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user, 
+        school,
         isAuthenticated: AuthStorage.has(),
         isLoading,
         login,

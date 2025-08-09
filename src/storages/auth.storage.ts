@@ -8,7 +8,6 @@ type AuthData = {
 
 export class AuthStorage {
   static has(): boolean {
-    console.log(this.getData());
     return this.getData() !== null;
   }
 

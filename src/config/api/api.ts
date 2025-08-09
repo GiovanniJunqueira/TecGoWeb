@@ -1,6 +1,8 @@
 import axios from "axios";
 import { environment } from "../environment";
 import { AuthStorage } from "@/storages";
+import { useAuth } from "@/contexts/auth/auth.context";
+
 
 export const api = axios.create({
   baseURL: environment.API_URL,
@@ -49,7 +51,9 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error("Falha ao atualizar o token:", refreshError);
         AuthStorage.remove();
-        window.location.href = "/login";
+        const { logout } = useAuth();
+        logout();
+
       }
     }
 
