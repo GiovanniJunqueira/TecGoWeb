@@ -42,7 +42,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const userData = await AuthService.me();
       const schoolData = await SchoolService.get();
-
       setUser(userData);
       setSchool(schoolData);
     } catch {

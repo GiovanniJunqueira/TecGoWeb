@@ -31,7 +31,6 @@ export function LoginForm() {
     AuthService.login(data)
       .then((responseData) => {
         login(responseData);
-        console.log(responseData);
         navigate("/");
       })
       .catch((error) => {
