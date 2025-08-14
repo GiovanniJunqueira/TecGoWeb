@@ -62,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       try {
         const userData = await AuthService.me();
+        const schoolData = await SchoolService.get();
+        setSchool(schoolData);
         setUser(userData);
       } catch (error) {
         console.error("Failed to fetch user data after login:", error);

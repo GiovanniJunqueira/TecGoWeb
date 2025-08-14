@@ -16,6 +16,7 @@
 /build
 /.next
 /out
+/dev-dist
 
 # Debug logs
 npm-debug.log*

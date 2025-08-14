@@ -58,9 +58,10 @@ export function Navbar({ label, items }: NavbarProps) {
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a
-                              href={subItem.url}
+                              
                               onClick={() => {
                                 if (isMobile) setOpenMobile(false);
+                                navigate(subItem.url);
                               }}
                             >
                               <subItem.icon />

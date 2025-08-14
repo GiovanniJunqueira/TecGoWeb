@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { HomeIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ArrowLeftIcon, HomeIcon } from "lucide-react";
 
-export const NotFoundPage = () => {
+export  function NotFoundPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="max-w-md text-center px-4">
@@ -18,13 +18,6 @@ export const NotFoundPage = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild variant="outline">
-            <Link to="/" className="flex items-center gap-2">
-              <ArrowLeftIcon className="h-4 w-4" />
-              <span>Voltar</span>
-            </Link>
-          </Button>
-
           <Button asChild>
             <Link to="/" className="flex items-center gap-2">
               <HomeIcon className="h-4 w-4" />
@@ -35,4 +28,4 @@ export const NotFoundPage = () => {
       </div>
     </div>
   );
-};
+}
