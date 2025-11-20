@@ -4,11 +4,14 @@ import { environment } from "./config";
 import { AuthProvider } from "./contexts/auth/auth.context";
 import { ThemeProvider } from "./contexts/theme";
 import { Router } from "./router";
+import { NuqsAdapter } from "nuqs/adapters/react";
+import { HelmetDemo } from "./components/shared/helmet/helmet";
 
 export function App() {
   const theme: "light" | "dark" = environment.THEME;
   return (
     <BrowserRouter>
+    <NuqsAdapter>
       <AuthProvider>
         <ThemeProvider defaultTheme={theme}>
           <Toaster
@@ -17,9 +20,11 @@ export function App() {
             theme={theme}
             closeButton
           />
+          <HelmetDemo />
           <Router />
         </ThemeProvider>
       </AuthProvider>
+      </NuqsAdapter>
     </BrowserRouter>
   );
 }

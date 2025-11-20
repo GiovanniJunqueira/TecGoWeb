@@ -3,8 +3,6 @@ import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import { BreadCrumb } from "../breadcrumb/breadcrumb";
 
-
-
 export function LayoutContentHeader() {
   const { open, isMobile } = useSidebar();
 

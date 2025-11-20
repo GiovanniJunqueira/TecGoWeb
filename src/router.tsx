@@ -5,6 +5,8 @@ import { SidebarExample } from "./pages/sidebar.example";
 import LoginPage from "./pages/login/login.page";
 import { ProtectedRoute, PublicRoute } from "./contexts/auth/guards";
 import { NotFoundPage } from "./pages/notFound/NotFoundPage";
+import PlayerListPage from "./pages/operational/player/list/player.list.page";
+import PlayerCreateFormPage from "./pages/operational/player/player.create.form.page";
 
 export const Router = () => {
   return (
@@ -19,9 +21,9 @@ export const Router = () => {
           <Route path="/pagamentos" element={<SidebarExample />} />
           <Route path="/jogos" element={<SidebarExample />} />
           <Route path="/turmas" element={<SidebarExample />} />
-          <Route path="/atletas/matricular" element={<SidebarExample />} />
+          <Route path="/atletas/matricular" element={<PlayerCreateFormPage />} />
           <Route path="/notificacoes" element={<SidebarExample />} />
-          <Route path="/atletas" element={<SidebarExample />} />
+          <Route path="/atletas" element={<PlayerListPage />} />
           <Route path="/responsaveis" element={<SidebarExample />} />
           <Route path="/professores" element={<SidebarExample />} />
           <Route path="*" element={<NotFoundPage />} />
