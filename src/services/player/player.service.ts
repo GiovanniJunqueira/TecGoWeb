@@ -24,6 +24,11 @@ export class PlayerService {
     return data;
   }
 
+  public static async update(id: string, payload: PlayerFormData) {
+    const { data } = await api.put(`/player/${id}`, payload);
+    return data;
+  }
+
   public static async softDelete(id: string) {
     const { data } = await api.delete(`/player/deletPlayer/${id}`);
     return data;

@@ -35,6 +35,7 @@ export const Router = () => {
           <Route path="/jogos/:id" element={<GameDetailsPage />} />
           <Route path="/turmas" element={<SidebarExample />} />
           <Route path="/atletas/matricular" element={<PlayerCreateFormPage />} />
+          <Route path="/atletas/editar/:id" element={<PlayerCreateFormPage />} />
           <Route path="/notificacoes" element={<SidebarExample />} />
           <Route path="/atletas" element={<PlayerListPage />} />
           <Route path="/atletas/:id" element={<PlayerDetailsPage />} />

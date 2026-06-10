@@ -28,4 +28,16 @@ export class ResponsibleService {
   public static async delete(id: string): Promise<void> {
     await api.delete(`/api/responsibles/${id}`);
   }
+
+  public static async findByPlayer(playerId: string): Promise<Responsible[]> {
+    const { data } = await api.get<Responsible[]>(`/api/responsibles/by-player/${playerId}`);
+    return data;
+  }
+
+  public static async updateForPlayer(
+    playerId: string,
+    payload: { responsibleIds: string[] }
+  ): Promise<void> {
+    await api.put(`/api/responsibles/by-player/${playerId}`, payload);
+  }
 }

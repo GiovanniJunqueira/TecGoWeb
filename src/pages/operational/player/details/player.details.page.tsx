@@ -4,7 +4,9 @@ import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
+import type { Responsible } from "@/entities/responsible/responsible.entity";
 import { PlayerService } from "@/services/player/player.service";
+import { ResponsibleService } from "@/services/responsible/responsible.service";
 import { toast } from "sonner";
 
 export default function PlayerDetailsPage() {
@@ -12,6 +14,7 @@ export default function PlayerDetailsPage() {
   const navigate = useNavigate();
   const [player, setPlayer] = useState<ProfilePlayer | null>(null);
   const [loading, setLoading] = useState(false);
+  const [responsibles, setResponsibles] = useState<Responsible[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -29,11 +32,35 @@ export default function PlayerDetailsPage() {
     load();
   }, [id]);
 
+  useEffect(() => {
+    async function loadResponsibles() {
+      if (!id) return;
+      try {
+        const data = await ResponsibleService.findByPlayer(id);
+        setResponsibles(data);
+      } catch {
+        // opcional
+      }
+    }
+    loadResponsibles();
+  }, [id]);
+
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <Label className="text-2xl font-semibold">Detalhes do Atleta</Label>
-        <Button variant="outline" onClick={() => navigate(-1)}>Voltar</Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/atletas/editar/${id}`)}
+            disabled={!id}
+          >
+            Editar atleta
+          </Button>
+          <Button variant="outline" onClick={() => navigate(-1)}>
+            Voltar
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -76,6 +103,43 @@ export default function PlayerDetailsPage() {
           <div className="md:col-span-2">
             <div className="text-sm text-muted-foreground">Instituição</div>
             <div className="font-medium">{player.college || "-"}</div>
+          </div>
+          <div className="md:col-span-2 space-y-2 mt-4">
+            <div className="text-lg font-semibold">Responsáveis</div>
+            {responsibles.length === 0 ? (
+              <div className="text-sm text-muted-foreground">
+                Nenhum responsável vinculado a este atleta.
+              </div>
+            ) : (
+              <div className="overflow-auto max-h-[300px] border rounded">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="p-3 text-left">Nome</th>
+                      <th className="p-3 text-left">Telefone</th>
+                      <th className="p-3 text-left">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responsibles.map((r) => (
+                      <tr key={r.id} className="border-t">
+                        <td className="p-3">{r.name}</td>
+                        <td className="p-3">{r.phone}</td>
+                        <td className="p-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/responsaveis/${r.id}`)}
+                          >
+                            Ver responsável
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}

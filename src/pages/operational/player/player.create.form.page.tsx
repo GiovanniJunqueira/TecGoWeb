@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LayoutContent } from "@/layouts/layout.content";
 import { PlayerService } from "@/services/player/player.service";
+import { ResponsibleService } from "@/services/responsible/responsible.service";
+import type { Responsible } from "@/entities/responsible/responsible.entity";
 import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { playerSchema, type PlayerFormData } from "@/validators";
@@ -20,6 +24,19 @@ import { AxiosError } from "axios";
 
 export default function PlayerCreateFormPage() {
 
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
+  const navigate = useNavigate();
+
+  const [availableResponsibles, setAvailableResponsibles] = useState<Responsible[]>([]);
+  const [selectedResponsibleIds, setSelectedResponsibleIds] = useState<string[]>([]);
+  const [responsibleSearch, setResponsibleSearch] = useState("");
+  const [newResponsible, setNewResponsible] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    document: "",
+  });
   const form = useForm<PlayerFormData>({
     resolver: yupResolver(playerSchema) as Resolver<PlayerFormData>,
     defaultValues: {
@@ -47,12 +64,111 @@ export default function PlayerCreateFormPage() {
     },
   });
 
+  useEffect(() => {
+    if (!isEdit || !id) return;
+    (async () => {
+      try {
+        const data = await PlayerService.findById(id);
+        form.reset({
+          firstname: data.firstname ?? "",
+          lastname: data.lastname ?? "",
+          birthDate: data.birthDate ?? "",
+          rg: data.rg ?? "",
+          cpf: data.cpf ?? "",
+          phoneNumber: data.phoneNumber ?? "",
+          address: data.address ?? "",
+          addressNumber: data.addressNumber ?? "",
+          addressNeighborhood: data.addressNeighborhood ?? "",
+          addressComplement: data.addressComplement ?? "",
+          postcode: data.postcode ?? "",
+          college: data.college ?? "",
+          collegeAddress: data.collegeAddress ?? "",
+          collegeNeighborhood: data.collegeNeighborhood ?? "",
+          collegeComplement: data.collegeComplement ?? "",
+          collegePostcode: data.collegePostcode ?? "",
+          collegePhone: data.collegePhone ?? "",
+          collegeSeries: data.collegeSeries ?? "",
+          collegeTime: data.collegeTime ?? "",
+          origin: data.origin ?? "",
+          registrationId: data.registrationId ?? "",
+        });
+      } catch {
+        toast.error("Não foi possível carregar o atleta");
+      }
+    })();
+  }, [id, isEdit, form]);
+
+  useEffect(() => {
+    async function loadResponsibles() {
+      try {
+        const data = await ResponsibleService.findAll({
+          name: responsibleSearch || undefined,
+        });
+        setAvailableResponsibles(data ?? []);
+      } catch {
+        toast.error("Falha ao carregar responsáveis");
+      }
+    }
+    loadResponsibles();
+  }, [responsibleSearch]);
+
+  useEffect(() => {
+    if (!isEdit || !id) return;
+    (async () => {
+      try {
+        const data = await ResponsibleService.findByPlayer(id);
+        setSelectedResponsibleIds(data.map((r) => r.id));
+      } catch {
+        // opcionalmente ignorar erro aqui
+      }
+    })();
+  }, [isEdit, id]);
+
   const onSubmit: SubmitHandler<PlayerFormData> = async (data) => {
     try {
-      const response = await PlayerService.create({ ...data });
-      console.log("Atleta criado com sucesso:", response);
-      form.reset();
-      toast.success("Atleta criado com sucesso");
+      let playerId = id;
+
+      if (isEdit && id) {
+        await PlayerService.update(id, data);
+        playerId = id;
+        toast.success("Atleta atualizado com sucesso");
+      } else {
+        const response = await PlayerService.create({ ...data });
+        playerId = response;
+        toast.success("Atleta criado com sucesso");
+      }
+
+      let responsibleIds = [...selectedResponsibleIds];
+
+      if (
+        newResponsible.name.trim() ||
+        newResponsible.phone.trim() ||
+        newResponsible.email.trim() ||
+        newResponsible.document.trim()
+      ) {
+        const created = await ResponsibleService.create({
+          name: newResponsible.name,
+          phone: newResponsible.phone,
+          email: newResponsible.email,
+          document: newResponsible.document,
+          address: "",
+          addressNumber: "",
+          addressNeighborhood: "",
+          addressComplement: "",
+          postcode: "",
+          students: [],
+        });
+
+        responsibleIds.push(created.id);
+      }
+
+      if (playerId && responsibleIds.length >= 0) {
+        await ResponsibleService.updateForPlayer(playerId, {
+          responsibleIds,
+        });
+      }
+
+      navigate("/atletas");
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error("Ocorreu um erro ao realizar essa ação", {
@@ -66,7 +182,9 @@ export default function PlayerCreateFormPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Matricular Atleta</Label>
+      <Label className="text-2xl font-semibold">
+        {isEdit ? "Editar Atleta" : "Matricular Atleta"}
+      </Label>
       <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <section className="space-y-4">
@@ -137,6 +255,107 @@ export default function PlayerCreateFormPage() {
                 </FormItem>
               )}
             />
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold">Responsáveis</h2>
+
+          <div className="flex flex-col gap-2 max-w-md">
+            <Label>Buscar responsável</Label>
+            <Input
+              value={responsibleSearch}
+              onChange={(e) => setResponsibleSearch(e.target.value)}
+              placeholder="Digite o nome do responsável"
+            />
+          </div>
+
+          <div className="overflow-auto max-h-[300px] border rounded">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="p-3 text-left">Selecionar</th>
+                  <th className="p-3 text-left">Nome</th>
+                  <th className="p-3 text-left">Telefone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {availableResponsibles.length === 0 ? (
+                  <tr>
+                    <td className="p-3" colSpan={3}>
+                      Nenhum responsável encontrado
+                    </td>
+                  </tr>
+                ) : (
+                  availableResponsibles.map((r) => (
+                    <tr key={r.id} className="border-t">
+                      <td className="p-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedResponsibleIds.includes(r.id)}
+                          onChange={(e) => {
+                            setSelectedResponsibleIds((prev) =>
+                              e.target.checked
+                                ? [...prev, r.id]
+                                : prev.filter((rid) => rid !== r.id)
+                            );
+                          }}
+                        />
+                      </td>
+                      <td className="p-3">{r.name}</td>
+                      <td className="p-3">{r.phone}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="space-y-2 mt-4 max-w-xl">
+            <h3 className="font-semibold">Novo responsável</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Nome</Label>
+                <Input
+                  value={newResponsible.name}
+                  onChange={(e) =>
+                    setNewResponsible((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  placeholder="Nome do responsável"
+                />
+              </div>
+              <div>
+                <Label>Telefone</Label>
+                <Input
+                  value={newResponsible.phone}
+                  onChange={(e) =>
+                    setNewResponsible((prev) => ({ ...prev, phone: e.target.value }))
+                  }
+                  placeholder="Telefone do responsável"
+                />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={newResponsible.email}
+                  onChange={(e) =>
+                    setNewResponsible((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  placeholder="Email do responsável"
+                />
+              </div>
+              <div>
+                <Label>Documento</Label>
+                <Input
+                  value={newResponsible.document}
+                  onChange={(e) =>
+                    setNewResponsible((prev) => ({ ...prev, document: e.target.value }))
+                  }
+                  placeholder="CPF ou RG"
+                />
+              </div>
+            </div>
           </div>
         </section>
 
