@@ -1,8 +1,6 @@
 import axios from "axios";
 import { environment } from "../environment";
 import { AuthStorage } from "@/storages";
-import { useAuth } from "@/contexts/auth/auth.context";
-
 
 export const api = axios.create({
   baseURL: environment.API_URL,
@@ -25,6 +23,23 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -34,7 +49,19 @@ api.interceptors.response.use(
     const isRefreshEndpoint = originalRequest.url?.includes("/auth/refresh-token");
 
     if (isTokenExpired && !isRetryAttempted && !isRefreshEndpoint) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const refreshToken = AuthStorage.getRefreshToken();
@@ -44,16 +71,17 @@ api.interceptors.response.use(
         const { accessToken, expiresIn } = data;
 
         AuthStorage.set(accessToken, expiresIn, refreshToken);
+        processQueue(null, accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("Falha ao atualizar o token:", refreshError);
+        processQueue(refreshError, null);
         AuthStorage.remove();
-        const { logout } = useAuth();
-        logout();
-
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
