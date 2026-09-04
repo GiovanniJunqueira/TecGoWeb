@@ -33,7 +33,7 @@ export default function TeacherFormPage() {
   useEffect(() => {
     if (!isEdit || !id) return;
 
-    async function load() {
+    const load = async () => {
       try {
         setLoading(true);
         const data = await TeacherService.findById(id);
@@ -43,7 +43,7 @@ export default function TeacherFormPage() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     load();
   }, [id, isEdit]);
