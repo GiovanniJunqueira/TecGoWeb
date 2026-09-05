@@ -46,9 +46,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const userData = await AuthService.me();
-      const schoolData = await SchoolService.get();
       setUser(userData);
-      setSchool(schoolData);
+
+      try {
+        const schoolData = await SchoolService.get();
+        setSchool(schoolData);
+      } catch {
+        setSchool(null);
+      }
     } catch {
       console.error("Failed to fetch user data:");
       logout();
@@ -67,9 +72,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       try {
         const userData = await AuthService.me();
-        const schoolData = await SchoolService.get();
-        setSchool(schoolData);
         setUser(userData);
+
+        try {
+          const schoolData = await SchoolService.get();
+          setSchool(schoolData);
+        } catch {
+          setSchool(null);
+        }
       } catch (error) {
         console.error("Failed to fetch user data after login:", error);
         logout();

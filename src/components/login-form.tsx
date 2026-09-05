@@ -27,9 +27,10 @@ export function LoginForm() {
 
   const handleSubmit = (data: LoginFormData) => {
     AuthService.login(data)
-      .then((responseData) => {
-        login(responseData);
-        navigate("/");
+      .then(async (responseData) => {
+        await login(responseData);
+        const payload = JSON.parse(atob(responseData.accessToken.split(".")[1]));
+        navigate(payload.role === "MASTER" ? "/master/escolas/nova" : "/");
       })
       .catch((error) => {
         if (error instanceof AxiosError) {

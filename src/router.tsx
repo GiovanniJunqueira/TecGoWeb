@@ -4,7 +4,8 @@ import { Layout } from "./layouts/layout";
 import DashboardPage from "./pages/dashboard/dashboard.page";
 import { SidebarExample } from "./pages/sidebar.example";
 import LoginPage from "./pages/login/login.page";
-import { ProtectedRoute, PublicRoute } from "./contexts/auth/guards";
+import { ProtectedRoute, PublicRoute, MasterRoute } from "./contexts/auth/guards";
+import MasterSchoolCreatePage from "./pages/master/schools/master.school.create.page";
 import { NotFoundPage } from "./pages/notFound/NotFoundPage";
 import PlayerListPage from "./pages/operational/player/list/player.list.page";
 import PlayerCreateFormPage from "./pages/operational/player/player.create.form.page";
@@ -24,6 +25,11 @@ export const Router = () => {
     <Routes>
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<LoginPage />} />
+      </Route>
+      <Route element={<MasterRoute />}>
+        <Route element={<Layout />}>
+          <Route path="/master/escolas/nova" element={<MasterSchoolCreatePage />} />
+        </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>

@@ -1,12 +1,12 @@
-export type Role = "ADMIN" | "USER" | "RELATED";
+export type Role = "MASTER" | "ADMIN" | "PLAYER";
 
 export class User {
   id: string;
   email: string;
-  phone: string;
-  firstname: string;
-  lastname: string;
-  document: string;
+  phone?: string;
+  firstname?: string;
+  lastname?: string;
+  document?: string;
   role: Role;
 
   constructor(data: User) {

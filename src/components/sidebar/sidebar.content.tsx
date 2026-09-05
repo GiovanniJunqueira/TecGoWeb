@@ -3,6 +3,7 @@ import {
   ClipboardList,
   CreditCard,
   LayoutDashboard,
+  School,
   Table,
   User,
   UserPlus,
@@ -13,6 +14,7 @@ import {
 import { SidebarContent as UISidebarContent } from "../ui/sidebar";
 import { Navbar } from "../nav/navbar";
 import { ScrollArea } from "../ui/scroll-area";
+import { useAuth } from "@/contexts/auth/auth.context";
 
 const data = {
   navGerencial: [
@@ -88,16 +90,32 @@ const data = {
       description: "Gestão de contratos administrativos e documentos legais.",
     },
   ],
+  navMaster: [
+    {
+      title: "Escolas",
+      url: "/master/escolas/nova",
+      icon: School,
+      description: "Cadastro de novas escolas e seus administradores.",
+    },
+  ],
 };
 
 export function SidebarContent() {
+  const { user } = useAuth();
+  const isMaster = user?.role === "MASTER";
+
   return (
     <UISidebarContent>
       <ScrollArea className="h-full">
-        <Navbar items={data.navGerencial} label="Gerencial" />
-        <Navbar items={data.navFinanceiro} label="Financeiro" />
-        <Navbar items={data.navOperacional} label="Operacional" />
-        <Navbar items={data.navAdministrativo} label="Administrativo" />
+        {isMaster && <Navbar items={data.navMaster} label="Master" />}
+        {!isMaster && (
+          <>
+            <Navbar items={data.navGerencial} label="Gerencial" />
+            <Navbar items={data.navFinanceiro} label="Financeiro" />
+            <Navbar items={data.navOperacional} label="Operacional" />
+            <Navbar items={data.navAdministrativo} label="Administrativo" />
+          </>
+        )}
       </ScrollArea>
     </UISidebarContent>
   );

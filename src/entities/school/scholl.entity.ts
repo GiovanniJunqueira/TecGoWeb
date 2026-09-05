@@ -1,5 +1,5 @@
 export class School {
-  id: number;
+  id: string;
   name: string;
   cnpj: string;
   address: string;
