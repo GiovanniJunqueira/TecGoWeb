@@ -39,6 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [navigate]);
 
   const fetchUser = useCallback(async () => {
+    if (!AuthStorage.has()) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const userData = await AuthService.me();
       const schoolData = await SchoolService.get();
