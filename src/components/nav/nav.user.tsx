@@ -16,12 +16,14 @@ import {
 import { useAuth } from "@/contexts/auth/auth.context";
 import { useTheme } from "@/contexts/theme";
 import { getInitials } from "@/lib/get.initials";
-import { LogOut, Moon, MoreVertical } from "lucide-react";
+import { KeyRound, LogOut, Moon, MoreVertical } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { logout, user } = useAuth();
   const { setTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <SidebarMenu>
@@ -103,6 +105,13 @@ export function NavUser() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem onClick={() => navigate("/conta/senha")}>
+              <KeyRound className="mr-2 h-4 w-4" />
+              Alterar senha
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 

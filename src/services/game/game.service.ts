@@ -1,23 +1,30 @@
 import { api } from "@/config";
 import type { Game, GameCategory, GameType } from "@/entities/game/game.entity";
 
+export interface GamePayload {
+  type: GameType;
+  category: GameCategory;
+  opponent: string;
+  date: string;
+  homeScore: number;
+  awayScore: number;
+  location?: string;
+  players: {
+    playerId: string;
+    goals: number;
+    starter: boolean;
+    notes?: string;
+  }[];
+}
+
 export class GameService {
-  public static async create(payload: {
-    type: GameType;
-    category: GameCategory;
-    opponent: string;
-    date: string;
-    homeScore: number;
-    awayScore: number;
-    location?: string;
-    players: {
-      playerId: string;
-      goals: number;
-      starter: boolean;
-      notes?: string;
-    }[];
-  }): Promise<Game> {
+  public static async create(payload: GamePayload): Promise<Game> {
     const { data } = await api.post<Game>("/api/games", payload);
+    return data;
+  }
+
+  public static async update(id: string, payload: GamePayload): Promise<Game> {
+    const { data } = await api.put<Game>(`/api/games/${id}`, payload);
     return data;
   }
 

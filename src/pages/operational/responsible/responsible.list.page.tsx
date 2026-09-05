@@ -48,7 +48,7 @@ export default function ResponsibleListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Responsáveis</Label>
-        {/* Futuro: botão para criar novo responsável direto */}
+        <Button onClick={() => navigate("/responsaveis/novo")}>Novo responsável</Button>
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
@@ -115,6 +115,13 @@ export default function ResponsibleListPage() {
                       onClick={() => navigate(`/responsaveis/${r.id}`)}
                     >
                       Ver
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/responsaveis/editar/${r.id}`)}
+                    >
+                      Editar
                     </Button>
                     <Button
                       variant="destructive"

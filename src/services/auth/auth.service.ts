@@ -30,4 +30,15 @@ export class AuthService {
 
     return data;
   }
+
+  public static async logout(): Promise<void> {
+    await api.delete("/auth/logout");
+  }
+
+  public static async changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    await api.put("/auth/change-password", { currentPassword, newPassword });
+  }
 }

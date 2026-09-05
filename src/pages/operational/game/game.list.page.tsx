@@ -179,6 +179,13 @@ export default function GameListPage() {
                       Ver
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/jogos/editar/${g.id}`)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => onDelete(g.id)}

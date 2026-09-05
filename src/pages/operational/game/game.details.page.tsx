@@ -45,9 +45,14 @@ export default function GameDetailsPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Detalhes do Jogo</Label>
-        <Button variant="outline" onClick={() => navigate(-1)}>
-          Voltar
-        </Button>
+        <div className="space-x-2">
+          {id && (
+            <Button onClick={() => navigate(`/jogos/editar/${id}`)}>Editar</Button>
+          )}
+          <Button variant="outline" onClick={() => navigate(-1)}>
+            Voltar
+          </Button>
+        </div>
       </div>
 
       {loading ? (

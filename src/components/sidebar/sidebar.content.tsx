@@ -1,14 +1,12 @@
 import {
-  Bell,
   ClipboardList,
   CreditCard,
   LayoutDashboard,
   School,
-  Table,
+  Settings,
   User,
   UserPlus,
   Users,
-  FileText,
 } from "lucide-react";
 
 import { SidebarContent as UISidebarContent } from "../ui/sidebar";
@@ -65,29 +63,13 @@ const data = {
       icon: ClipboardList,
       description: "Criação e visualização de partidas agendadas (Escalação).",
     },
-    {
-      title: "Turmas",
-      url: "/turmas",
-      icon: Table,
-      description:
-        "Cadastro de turmas com controle de alunos e aulas vinculadas.",
-    },
-
-    {
-      title: "Notificações",
-      url: "/notificacoes",
-      icon: Bell,
-      description: "Envio automatizado para responsáveis.",
-    },
-
-    
   ],
-  navAdministrativo: [
+  navConfiguracoes: [
     {
-      title: "Contratos",
-      url: "/contratos",
-      icon: FileText,
-      description: "Gestão de contratos administrativos e documentos legais.",
+      title: "Escola",
+      url: "/escola",
+      icon: Settings,
+      description: "Dados e logo da escola.",
     },
   ],
   navMaster: [
@@ -113,7 +95,7 @@ export function SidebarContent() {
             <Navbar items={data.navGerencial} label="Gerencial" />
             <Navbar items={data.navFinanceiro} label="Financeiro" />
             <Navbar items={data.navOperacional} label="Operacional" />
-            <Navbar items={data.navAdministrativo} label="Administrativo" />
+            <Navbar items={data.navConfiguracoes} label="Configurações" />
           </>
         )}
       </ScrollArea>

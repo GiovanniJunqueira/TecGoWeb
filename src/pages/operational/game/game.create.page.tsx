@@ -9,7 +9,7 @@ import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const gameTypes: { value: GameType; label: string }[] = [
   { value: "CHAMPIONSHIP", label: "Campeonato" },
@@ -32,6 +32,8 @@ interface PlayerSelection extends ProfilePlayer {
 }
 
 export default function GameCreatePage() {
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
   const [type, setType] = useState<GameType | undefined>();
   const [category, setCategory] = useState<GameCategory | undefined>();
   const [opponent, setOpponent] = useState<string>("");
@@ -48,22 +50,46 @@ export default function GameCreatePage() {
       try {
         const data = await PlayerService.findAll({ page: 0, size: 100, sort: "firstname,asc" });
         const content = data?.content ?? data ?? [];
-        setPlayers(
-          content.map((p: ProfilePlayer) => ({
-            ...p,
-            selected: false,
-            goals: 0,
-            starter: false,
-            notes: "",
-          }))
-        );
+        let base: PlayerSelection[] = content.map((p: ProfilePlayer) => ({
+          ...p,
+          selected: false,
+          goals: 0,
+          starter: false,
+          notes: "",
+        }));
+
+        if (isEdit && id) {
+          const game = await GameService.findById(id);
+          setType(game.type);
+          setCategory(game.category);
+          setOpponent(game.opponent);
+          setDate(game.date);
+          setHomeScore(String(game.homeScore ?? 0));
+          setAwayScore(String(game.awayScore ?? 0));
+          setLocation(game.location ?? "");
+
+          base = base.map((p) => {
+            const stats = game.players.find((gp) => gp.playerId === p.id);
+            return stats
+              ? {
+                  ...p,
+                  selected: true,
+                  goals: stats.goals ?? 0,
+                  starter: Boolean(stats.starter),
+                  notes: stats.notes ?? "",
+                }
+              : p;
+          });
+        }
+
+        setPlayers(base);
       } catch {
-        toast.error("Falha ao carregar atletas");
+        toast.error(isEdit ? "Falha ao carregar o jogo" : "Falha ao carregar atletas");
       }
     }
 
     loadPlayers();
-  }, []);
+  }, [id, isEdit]);
 
   const togglePlayerSelected = (id: string) => {
     setPlayers((prev) =>
@@ -104,27 +130,34 @@ export default function GameCreatePage() {
       return;
     }
 
+    const payload = {
+      type,
+      category,
+      opponent,
+      date,
+      homeScore: Number(homeScore) || 0,
+      awayScore: Number(awayScore) || 0,
+      location: location || undefined,
+      players: selectedPlayers.map((p) => ({
+        playerId: p.id,
+        goals: p.goals || 0,
+        starter: p.starter,
+        notes: p.notes || undefined,
+      })),
+    };
+
     try {
       setLoading(true);
-      await GameService.create({
-        type,
-        category,
-        opponent,
-        date,
-        homeScore: Number(homeScore) || 0,
-        awayScore: Number(awayScore) || 0,
-        location: location || undefined,
-        players: selectedPlayers.map((p) => ({
-          playerId: p.id,
-          goals: p.goals || 0,
-          starter: p.starter,
-          notes: p.notes || undefined,
-        })),
-      });
-      toast.success("Jogo cadastrado com sucesso");
+      if (isEdit && id) {
+        await GameService.update(id, payload);
+        toast.success("Jogo atualizado com sucesso");
+      } else {
+        await GameService.create(payload);
+        toast.success("Jogo cadastrado com sucesso");
+      }
       navigate("/jogos");
     } catch {
-      toast.error("Não foi possível cadastrar o jogo");
+      toast.error(isEdit ? "Não foi possível atualizar o jogo" : "Não foi possível cadastrar o jogo");
     } finally {
       setLoading(false);
     }
@@ -132,7 +165,7 @@ export default function GameCreatePage() {
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Novo Jogo</Label>
+      <Label className="text-2xl font-semibold">{isEdit ? "Editar Jogo" : "Novo Jogo"}</Label>
 
       <section className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

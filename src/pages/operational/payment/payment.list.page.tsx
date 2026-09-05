@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PaymentService } from "@/services/payment/payment.service";
 import type { Payment } from "@/entities/payment/payment.entity";
+import { PlayerService } from "@/services/player/player.service";
+import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
 
 export default function PaymentListPage() {
@@ -12,6 +14,11 @@ export default function PaymentListPage() {
   const [month, setMonth] = useState<string>("");
   const [onlyPending, setOnlyPending] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [players, setPlayers] = useState<ProfilePlayer[]>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newPlayerId, setNewPlayerId] = useState("");
+  const [newMonth, setNewMonth] = useState("");
+  const [creating, setCreating] = useState(false);
 
   async function load() {
     if (!month) {
@@ -33,8 +40,38 @@ export default function PaymentListPage() {
   }
 
   useEffect(() => {
-    // opcionalmente podemos carregar o mês atual no futuro
+    async function loadPlayers() {
+      try {
+        const data = await PlayerService.findAll({ page: 0, size: 200, sort: "firstname,asc" });
+        setPlayers(data?.content ?? data ?? []);
+      } catch {
+        toast.error("Falha ao carregar atletas");
+      }
+    }
+    loadPlayers();
   }, []);
+
+  const onCreatePayment = async () => {
+    if (!newPlayerId || !newMonth) {
+      toast.error("Selecione o atleta e o mês");
+      return;
+    }
+
+    try {
+      setCreating(true);
+      await PaymentService.create(newPlayerId, newMonth);
+      toast.success("Pagamento lançado com sucesso");
+      setNewPlayerId("");
+      setShowCreateForm(false);
+      if (newMonth === month) {
+        await load();
+      }
+    } catch {
+      toast.error("Não foi possível lançar o pagamento");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const onMarkAsPaid = async (id: string) => {
     try {
@@ -60,7 +97,43 @@ export default function PaymentListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Pagamentos</Label>
+        <Button onClick={() => setShowCreateForm((prev) => !prev)}>
+          {showCreateForm ? "Cancelar" : "Novo pagamento"}
+        </Button>
       </div>
+
+      {showCreateForm && (
+        <section className="flex flex-wrap items-end gap-4 rounded border p-4">
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm">Atleta</Label>
+            <select
+              className="border rounded px-2 py-1 text-sm min-w-48"
+              value={newPlayerId}
+              onChange={(e) => setNewPlayerId(e.target.value)}
+            >
+              <option value="">Selecione o atleta</option>
+              {players.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.firstname} {p.lastname}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm">Mês</Label>
+            <Input
+              value={newMonth}
+              onChange={(e) => setNewMonth(e.target.value)}
+              placeholder="Ex: 2025-01"
+            />
+          </div>
+
+          <Button onClick={onCreatePayment} disabled={creating}>
+            {creating ? "Lançando..." : "Lançar pagamento"}
+          </Button>
+        </section>
+      )}
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2">

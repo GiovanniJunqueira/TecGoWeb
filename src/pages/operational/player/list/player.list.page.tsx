@@ -10,13 +10,17 @@ import { toast } from "sonner";
 export default function PlayerListPage() {
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
-  async function load(page = 0) {
+  async function load(targetPage = 0) {
     try {
       setLoading(true);
-      const data = await PlayerService.findAll({ page, size: 10, sort: "firstname,asc" });
+      const data = await PlayerService.findAll({ page: targetPage, size: 10, sort: "firstname,asc" });
       setPlayers(data?.content ?? data ?? []);
+      setTotalPages(data?.totalPages ?? 0);
+      setPage(data?.number ?? targetPage);
     } catch {
       toast.error("Falha ao buscar atletas");
     } finally {
@@ -40,7 +44,10 @@ export default function PlayerListPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Atletas</Label>
+      <div className="flex items-center justify-between">
+        <Label className="text-2xl font-semibold">Atletas</Label>
+        <Button onClick={() => navigate("/atletas/matricular")}>Novo atleta</Button>
+      </div>
 
       <div className="overflow-auto rounded border">
         <table className="w-full text-sm">
@@ -75,6 +82,30 @@ export default function PlayerListPage() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 0 || loading}
+            onClick={() => load(page - 1)}
+          >
+            Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Página {page + 1} de {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => load(page + 1)}
+          >
+            Próxima
+          </Button>
+        </div>
+      )}
     </LayoutContent>
   );
 }

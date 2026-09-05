@@ -32,4 +32,19 @@ export class SchoolService {
     return data;
   }
 
+  public static async update(payload: Omit<SchoolCreatePayload, "cnpj">): Promise<School> {
+    const formData = new FormData();
+    formData.append("name", payload.name);
+    formData.append("address", payload.address);
+    formData.append("city", payload.city);
+    if (payload.logo) {
+      formData.append("logo", payload.logo);
+    }
+
+    const { data } = await api.put<School>("/school", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  }
+
 }
