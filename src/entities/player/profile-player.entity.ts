@@ -21,4 +21,6 @@ export interface ProfilePlayer {
   collegeTime?: string;
   origin?: string;
   registrationId?: string;
+  isDeleted?: boolean;
+  inactiveSince?: string | null;
 }

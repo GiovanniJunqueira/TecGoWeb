@@ -33,4 +33,25 @@ export class PlayerService {
     const { data } = await api.delete(`/player/deletPlayer/${id}`);
     return data;
   }
+
+  public static async findAllInactive(params?: {
+    page?: number;
+    size?: number;
+    sort?: string;
+  }) {
+    const { page = 0, size = 10, sort = "firstname,asc" } = params || {};
+    const { data } = await api.get("/player/findAllInativos", {
+      params: { page, size, sort },
+    });
+    return data;
+  }
+
+  public static async reactivate(id: string) {
+    const { data } = await api.put(`/player/reativar/${id}`);
+    return data;
+  }
+
+  public static async hardDelete(id: string) {
+    await api.delete(`/player/excluirPermanente/${id}`);
+  }
 }
