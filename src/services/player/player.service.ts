@@ -11,10 +11,11 @@ export class PlayerService {
     page?: number;
     size?: number;
     sort?: string;
+    search?: string;
   }) {
-    const { page = 0, size = 10, sort = "firstname,asc" } = params || {};
+    const { page = 0, size = 10, sort = "firstname,asc", search } = params || {};
     const { data } = await api.get("/player/findAll", {
-      params: { page, size, sort },
+      params: { page, size, sort, search: search || undefined },
     });
     return data;
   }
@@ -38,10 +39,11 @@ export class PlayerService {
     page?: number;
     size?: number;
     sort?: string;
+    search?: string;
   }) {
-    const { page = 0, size = 10, sort = "firstname,asc" } = params || {};
+    const { page = 0, size = 10, sort = "firstname,asc", search } = params || {};
     const { data } = await api.get("/player/findAllInativos", {
-      params: { page, size, sort },
+      params: { page, size, sort, search: search || undefined },
     });
     return data;
   }

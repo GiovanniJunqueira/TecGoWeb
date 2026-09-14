@@ -4,10 +4,16 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PaymentService } from "@/services/payment/payment.service";
-import type { Payment } from "@/entities/payment/payment.entity";
+import type { Payment, PaymentMethod } from "@/entities/payment/payment.entity";
 import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
+
+const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
+  { value: "PIX", label: "PIX" },
+  { value: "DINHEIRO", label: "Dinheiro" },
+  { value: "CARTAO", label: "Cartão" },
+];
 
 export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -19,18 +25,22 @@ export default function PaymentListPage() {
   const [newPlayerId, setNewPlayerId] = useState("");
   const [newMonth, setNewMonth] = useState("");
   const [creating, setCreating] = useState(false);
+  const [methodDraft, setMethodDraft] = useState<Record<string, PaymentMethod>>({});
 
   async function load() {
-    if (!month) {
-      toast.error("Informe o mês para buscar os pagamentos");
-      return;
-    }
-
     try {
       setLoading(true);
-      const data = onlyPending
-        ? await PaymentService.getPendingByMonth(month)
-        : await PaymentService.getByMonth(month);
+      let data: Payment[];
+      if (!month) {
+        data = await PaymentService.getAll();
+        if (onlyPending) {
+          data = data.filter((p) => !p.status);
+        }
+      } else {
+        data = onlyPending
+          ? await PaymentService.getPendingByMonth(month)
+          : await PaymentService.getByMonth(month);
+      }
       setPayments(data ?? []);
     } catch {
       toast.error("Falha ao buscar pagamentos");
@@ -49,6 +59,8 @@ export default function PaymentListPage() {
       }
     }
     loadPlayers();
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCreatePayment = async () => {
@@ -74,8 +86,14 @@ export default function PaymentListPage() {
   };
 
   const onMarkAsPaid = async (id: string) => {
+    const method = methodDraft[id];
+    if (!method) {
+      toast.error("Selecione a forma de pagamento");
+      return;
+    }
+
     try {
-      await PaymentService.markAsPaid(id);
+      await PaymentService.markAsPaid(id, method);
       toast.success("Pagamento marcado como pago");
       await load();
     } catch {
@@ -137,7 +155,7 @@ export default function PaymentListPage() {
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2">
-          <Label className="text-sm">Mês</Label>
+          <Label className="text-sm">Mês (deixe em branco pra ver todos)</Label>
           <Input
             value={month}
             onChange={(e) => setMonth(e.target.value)}
@@ -170,19 +188,20 @@ export default function PaymentListPage() {
               <th className="text-left p-3">Mês</th>
               <th className="text-left p-3">Status</th>
               <th className="text-left p-3">Pago em</th>
+              <th className="text-left p-3">Forma</th>
               <th className="text-right p-3">Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td className="p-3" colSpan={5}>
+                <td className="p-3" colSpan={6}>
                   Carregando...
                 </td>
               </tr>
             ) : payments.length === 0 ? (
               <tr>
-                <td className="p-3" colSpan={5}>
+                <td className="p-3" colSpan={6}>
                   Nenhum pagamento encontrado
                 </td>
               </tr>
@@ -193,15 +212,37 @@ export default function PaymentListPage() {
                   <td className="p-3">{p.month}</td>
                   <td className="p-3">{p.status ? "Pago" : "Pendente"}</td>
                   <td className="p-3">{p.paidAt ?? "-"}</td>
+                  <td className="p-3">
+                    {paymentMethodOptions.find((o) => o.value === p.paymentMethod)?.label ?? "-"}
+                  </td>
                   <td className="p-3 text-right space-x-2">
                     {!p.status && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onMarkAsPaid(p.id)}
-                      >
-                        Marcar como pago
-                      </Button>
+                      <>
+                        <select
+                          className="border rounded px-2 py-1 text-sm"
+                          value={methodDraft[p.id] ?? ""}
+                          onChange={(e) =>
+                            setMethodDraft((prev) => ({
+                              ...prev,
+                              [p.id]: e.target.value as PaymentMethod,
+                            }))
+                          }
+                        >
+                          <option value="">Forma de pagamento</option>
+                          {paymentMethodOptions.map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </select>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onMarkAsPaid(p.id)}
+                        >
+                          Marcar como pago
+                        </Button>
+                      </>
                     )}
                     <Button
                       variant="destructive"

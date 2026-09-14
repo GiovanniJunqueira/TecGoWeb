@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { useNavigate } from "react-router-dom";
@@ -21,15 +22,16 @@ export default function PlayerListPage() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  async function load(targetTab: Tab = tab, targetPage = 0) {
+  async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search) {
     try {
       setLoading(true);
       const data =
         targetTab === "ativos"
-          ? await PlayerService.findAll({ page: targetPage, size: 10, sort: "firstname,asc" })
-          : await PlayerService.findAllInactive({ page: targetPage, size: 10, sort: "firstname,asc" });
+          ? await PlayerService.findAll({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch })
+          : await PlayerService.findAllInactive({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch });
       setPlayers(data?.content ?? data ?? []);
       setTotalPages(data?.totalPages ?? 0);
       setPage(data?.number ?? targetPage);
@@ -99,6 +101,21 @@ export default function PlayerListPage() {
         >
           Inativos
         </button>
+      </div>
+
+      <div className="flex items-end gap-4">
+        <div className="flex flex-col gap-2 flex-1 max-w-sm">
+          <Label className="text-sm">Buscar por nome ou matrícula</Label>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && load(tab, 0, search)}
+            placeholder="Ex: João ou 230501"
+          />
+        </div>
+        <Button variant="outline" onClick={() => load(tab, 0, search)} disabled={loading}>
+          Buscar
+        </Button>
       </div>
 
       <div className="overflow-auto rounded border">

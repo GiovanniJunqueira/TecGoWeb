@@ -1,5 +1,5 @@
 import { api } from "@/config";
-import type { Payment } from "@/entities/payment/payment.entity";
+import type { Payment, PaymentMethod } from "@/entities/payment/payment.entity";
 
 export class PaymentService {
   public static async create(playerId: string, month: string): Promise<Payment> {
@@ -9,8 +9,13 @@ export class PaymentService {
     return data;
   }
 
-  public static async markAsPaid(id: string): Promise<Payment> {
-    const { data } = await api.put<Payment>(`/api/payments/${id}/pay`);
+  public static async markAsPaid(id: string, paymentMethod: PaymentMethod): Promise<Payment> {
+    const { data } = await api.put<Payment>(`/api/payments/${id}/pay`, { paymentMethod });
+    return data;
+  }
+
+  public static async getAll(): Promise<Payment[]> {
+    const { data } = await api.get<Payment[]>("/api/payments");
     return data;
   }
 

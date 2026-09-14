@@ -31,6 +31,19 @@ interface PlayerSelection extends ProfilePlayer {
   notes: string;
 }
 
+function calculateAge(birthDate?: string): number | null {
+  if (!birthDate) return null;
+  const birth = new Date(birthDate);
+  if (Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const hasNotHadBirthdayThisYear =
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
+  if (hasNotHadBirthdayThisYear) age--;
+  return age;
+}
+
 export default function GameCreatePage() {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
@@ -42,13 +55,15 @@ export default function GameCreatePage() {
   const [awayScore, setAwayScore] = useState<string>("0");
   const [location, setLocation] = useState<string>("");
   const [players, setPlayers] = useState<PlayerSelection[]>([]);
+  const [minAge, setMinAge] = useState<string>("");
+  const [maxAge, setMaxAge] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadPlayers() {
       try {
-        const data = await PlayerService.findAll({ page: 0, size: 100, sort: "firstname,asc" });
+        const data = await PlayerService.findAll({ page: 0, size: 500, sort: "firstname,asc" });
         const content = data?.content ?? data ?? [];
         let base: PlayerSelection[] = content.map((p: ProfilePlayer) => ({
           ...p,
@@ -245,27 +260,68 @@ export default function GameCreatePage() {
       </section>
 
       <section className="space-y-4">
-        <Label className="text-lg font-semibold">Atletas e estatísticas</Label>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <Label className="text-lg font-semibold">Atletas e estatísticas</Label>
+          <div className="flex items-end gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">Idade mínima</Label>
+              <Input
+                type="number"
+                className="w-24"
+                value={minAge}
+                onChange={(e) => setMinAge(e.target.value)}
+                placeholder="Ex: 9"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">Idade máxima</Label>
+              <Input
+                type="number"
+                className="w-24"
+                value={maxAge}
+                onChange={(e) => setMaxAge(e.target.value)}
+                placeholder="Ex: 11"
+              />
+            </div>
+          </div>
+        </div>
         <div className="overflow-auto max-h-[400px] border rounded">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
                 <th className="p-3 text-left">Selecionar</th>
                 <th className="p-3 text-left">Nome</th>
+                <th className="p-3 text-left">Idade</th>
                 <th className="p-3 text-left">Gols</th>
                 <th className="p-3 text-left">Titular</th>
                 <th className="p-3 text-left">Anotações</th>
               </tr>
             </thead>
             <tbody>
-              {players.length === 0 ? (
-                <tr>
-                  <td className="p-3" colSpan={5}>
-                    Nenhum atleta encontrado
-                  </td>
-                </tr>
-              ) : (
-                players.map((p) => (
+              {(() => {
+                const min = minAge ? Number(minAge) : null;
+                const max = maxAge ? Number(maxAge) : null;
+                const visiblePlayers = players.filter((p) => {
+                  if (p.selected) return true;
+                  if (min === null && max === null) return true;
+                  const age = calculateAge(p.birthDate);
+                  if (age === null) return false;
+                  if (min !== null && age < min) return false;
+                  if (max !== null && age > max) return false;
+                  return true;
+                });
+
+                if (visiblePlayers.length === 0) {
+                  return (
+                    <tr>
+                      <td className="p-3" colSpan={6}>
+                        Nenhum atleta encontrado
+                      </td>
+                    </tr>
+                  );
+                }
+
+                return visiblePlayers.map((p) => (
                   <tr key={p.id} className="border-t">
                     <td className="p-3">
                       <input
@@ -277,6 +333,7 @@ export default function GameCreatePage() {
                     <td className="p-3">
                       {p.firstname} {p.lastname}
                     </td>
+                    <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
                     <td className="p-3">
                       <Input
                         type="number"
@@ -305,8 +362,8 @@ export default function GameCreatePage() {
                       />
                     </td>
                   </tr>
-                ))
-              )}
+                ));
+              })()}
             </tbody>
           </table>
         </div>
