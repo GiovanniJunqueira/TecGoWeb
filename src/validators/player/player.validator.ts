@@ -22,6 +22,7 @@ export const playerSchema = yup.object().shape({
   collegeTime: yup.string().optional(),
   origin: yup.string().optional(),
   registrationId: yup.string().optional(),
+  turma: yup.string().optional(),
 });
 
 export type PlayerFormData = yup.Asserts<typeof playerSchema>;

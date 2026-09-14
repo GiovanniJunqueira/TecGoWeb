@@ -21,6 +21,11 @@ import {
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
+function computeTurma(birthDate: string): string {
+  const year = new Date(birthDate).getFullYear();
+  if (Number.isNaN(year)) return "";
+  return `Turma ${String(year % 100).padStart(2, "0")}`;
+}
 
 export default function PlayerCreateFormPage() {
 
@@ -53,6 +58,7 @@ export default function PlayerCreateFormPage() {
       postcode: "",
       origin: "",
       registrationId: "",
+      turma: "",
       college: "",
       collegeAddress: "",
       collegeNeighborhood: "",
@@ -63,6 +69,17 @@ export default function PlayerCreateFormPage() {
       collegeTime: "",
     },
   });
+
+  const birthDateValue = form.watch("birthDate");
+
+  useEffect(() => {
+    if (!birthDateValue) return;
+    const currentTurma = form.getValues("turma");
+    if (currentTurma) return;
+    const computed = computeTurma(birthDateValue);
+    if (computed) form.setValue("turma", computed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [birthDateValue]);
 
   useEffect(() => {
     if (!isEdit || !id) return;
@@ -91,6 +108,7 @@ export default function PlayerCreateFormPage() {
           collegeTime: data.collegeTime ?? "",
           origin: data.origin ?? "",
           registrationId: data.registrationId ?? "",
+          turma: data.turma ?? "",
         });
       } catch {
         toast.error("Não foi possível carregar o atleta");
@@ -250,6 +268,23 @@ export default function PlayerCreateFormPage() {
                   <FormLabel>Matrícula</FormLabel>
                   <FormControl>
                     <Input id="registrationId" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="turma"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Turma</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="turma"
+                      placeholder="Preenchida automaticamente pelo ano de nascimento"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -82,6 +82,10 @@ export default function PlayerDetailsPage() {
             <div className="font-medium">{player.birthDate}</div>
           </div>
           <div>
+            <div className="text-sm text-muted-foreground">Turma</div>
+            <div className="font-medium">{player.turma || "-"}</div>
+          </div>
+          <div>
             <div className="text-sm text-muted-foreground">Telefone</div>
             <div className="font-medium">{player.phoneNumber || "-"}</div>
           </div>

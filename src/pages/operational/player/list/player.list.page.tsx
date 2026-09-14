@@ -124,6 +124,7 @@ export default function PlayerListPage() {
             <tr>
               <th className="text-left p-3">Nome</th>
               <th className="text-left p-3">Matrícula</th>
+              <th className="text-left p-3">Turma</th>
               {tab === "inativos" && <th className="text-left p-3">Inativo há</th>}
               <th className="text-right p-3">Ações</th>
             </tr>
@@ -131,13 +132,13 @@ export default function PlayerListPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td className="p-3" colSpan={tab === "inativos" ? 4 : 3}>
+                <td className="p-3" colSpan={tab === "inativos" ? 5 : 4}>
                   Carregando...
                 </td>
               </tr>
             ) : players.length === 0 ? (
               <tr>
-                <td className="p-3" colSpan={tab === "inativos" ? 4 : 3}>
+                <td className="p-3" colSpan={tab === "inativos" ? 5 : 4}>
                   {tab === "ativos" ? "Nenhum atleta encontrado" : "Nenhum atleta inativo"}
                 </td>
               </tr>
@@ -150,6 +151,7 @@ export default function PlayerListPage() {
                       {p.firstname} {p.lastname}
                     </td>
                     <td className="p-3">{p.registrationId || "-"}</td>
+                    <td className="p-3">{p.turma || "-"}</td>
                     {tab === "inativos" && (
                       <td className="p-3">
                         {days !== null ? `${days} dia${days === 1 ? "" : "s"}` : "-"}

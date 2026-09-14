@@ -23,4 +23,5 @@ export interface ProfilePlayer {
   registrationId?: string;
   isDeleted?: boolean;
   inactiveSince?: string | null;
+  turma?: string | null;
 }
