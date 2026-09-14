@@ -24,4 +24,7 @@ export interface ProfilePlayer {
   isDeleted?: boolean;
   inactiveSince?: string | null;
   turma?: string | null;
+  paymentPlan?: PaymentPlan | null;
 }
+
+export type PaymentPlan = "PLANO_2X" | "PLANO_3X";

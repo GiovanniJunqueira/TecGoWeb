@@ -6,6 +6,7 @@ export interface Payment {
   paidAt: string | null;
   month: string;
   paymentMethod?: PaymentMethod | null;
+  amount?: number | null;
   playerId?: string;
   playerName?: string;
 }

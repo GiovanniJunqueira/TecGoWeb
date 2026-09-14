@@ -189,19 +189,20 @@ export default function PaymentListPage() {
               <th className="text-left p-3">Status</th>
               <th className="text-left p-3">Pago em</th>
               <th className="text-left p-3">Forma</th>
+              <th className="text-left p-3">Valor</th>
               <th className="text-right p-3">Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td className="p-3" colSpan={6}>
+                <td className="p-3" colSpan={7}>
                   Carregando...
                 </td>
               </tr>
             ) : payments.length === 0 ? (
               <tr>
-                <td className="p-3" colSpan={6}>
+                <td className="p-3" colSpan={7}>
                   Nenhum pagamento encontrado
                 </td>
               </tr>
@@ -214,6 +215,11 @@ export default function PaymentListPage() {
                   <td className="p-3">{p.paidAt ?? "-"}</td>
                   <td className="p-3">
                     {paymentMethodOptions.find((o) => o.value === p.paymentMethod)?.label ?? "-"}
+                  </td>
+                  <td className="p-3">
+                    {p.amount != null
+                      ? p.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                      : "-"}
                   </td>
                   <td className="p-3 text-right space-x-2">
                     {!p.status && (

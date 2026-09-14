@@ -59,6 +59,7 @@ export default function PlayerCreateFormPage() {
       origin: "",
       registrationId: "",
       turma: "",
+      paymentPlan: undefined,
       college: "",
       collegeAddress: "",
       collegeNeighborhood: "",
@@ -109,6 +110,7 @@ export default function PlayerCreateFormPage() {
           origin: data.origin ?? "",
           registrationId: data.registrationId ?? "",
           turma: data.turma ?? "",
+          paymentPlan: data.paymentPlan ?? undefined,
         });
       } catch {
         toast.error("Não foi possível carregar o atleta");
@@ -285,6 +287,31 @@ export default function PlayerCreateFormPage() {
                       placeholder="Preenchida automaticamente pelo ano de nascimento"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="paymentPlan"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Plano de pagamento</FormLabel>
+                  <FormControl>
+                    <select
+                      className="border rounded px-3 py-2 text-sm w-full h-9"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value || undefined)}
+                    >
+                      <option value="">Selecione o plano</option>
+                      <option value="PLANO_2X">
+                        2x por semana (R$ 100 até dia 10 / R$ 120 após)
+                      </option>
+                      <option value="PLANO_3X">
+                        3x por semana (R$ 120 até dia 10 / R$ 150 após)
+                      </option>
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
