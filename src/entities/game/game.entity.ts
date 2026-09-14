@@ -8,6 +8,7 @@ export interface GamePlayerStats {
   goals: number | null;
   starter: boolean | null;
   notes: string | null;
+  attended: boolean | null;
 }
 
 export interface Game {

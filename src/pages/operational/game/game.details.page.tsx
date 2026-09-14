@@ -47,7 +47,12 @@ export default function GameDetailsPage() {
         <Label className="text-2xl font-semibold">Detalhes do Jogo</Label>
         <div className="space-x-2">
           {id && (
-            <Button onClick={() => navigate(`/jogos/editar/${id}`)}>Editar</Button>
+            <>
+              <Button onClick={() => navigate(`/jogos/editar/${id}`)}>Editar</Button>
+              <Button variant="outline" onClick={() => navigate(`/jogos/${id}/chamada`)}>
+                Fazer chamada
+              </Button>
+            </>
           )}
           <Button variant="outline" onClick={() => navigate(-1)}>
             Voltar
@@ -101,13 +106,14 @@ export default function GameDetailsPage() {
                     <th className="p-3 text-left">Atleta</th>
                     <th className="p-3 text-left">Gols</th>
                     <th className="p-3 text-left">Titular</th>
+                    <th className="p-3 text-left">Compareceu</th>
                     <th className="p-3 text-left">Anotações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(!game.players || game.players.length === 0) ? (
                     <tr>
-                      <td className="p-3" colSpan={4}>
+                      <td className="p-3" colSpan={5}>
                         Nenhum atleta cadastrado para este jogo
                       </td>
                     </tr>
@@ -117,6 +123,9 @@ export default function GameDetailsPage() {
                         <td className="p-3">{p.playerName ?? "-"}</td>
                         <td className="p-3">{p.goals ?? 0}</td>
                         <td className="p-3">{p.starter ? "Sim" : "Não"}</td>
+                        <td className="p-3">
+                          {p.attended === null ? "-" : p.attended ? "Sim" : "Não"}
+                        </td>
                         <td className="p-3">{p.notes ?? "-"}</td>
                       </tr>
                     ))

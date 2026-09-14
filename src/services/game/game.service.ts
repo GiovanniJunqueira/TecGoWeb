@@ -28,6 +28,14 @@ export class GameService {
     return data;
   }
 
+  public static async updateAttendance(
+    id: string,
+    entries: { playerId: string; attended: boolean }[]
+  ): Promise<Game> {
+    const { data } = await api.put<Game>(`/api/games/${id}/chamada`, entries);
+    return data;
+  }
+
   public static async findAll(params?: {
     type?: GameType;
     category?: GameCategory;

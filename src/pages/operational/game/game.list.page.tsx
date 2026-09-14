@@ -21,7 +21,10 @@ const gameCategories: { value: GameCategory; label: string }[] = [
   { value: "SUB_17", label: "Sub-17" },
 ];
 
+type Tab = "futuros" | "passados";
+
 export default function GameListPage() {
+  const [tab, setTab] = useState<Tab>("futuros");
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<GameType | undefined>();
@@ -66,6 +69,25 @@ export default function GameListPage() {
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Jogos</Label>
         <Button onClick={() => navigate("/jogos/novo")}>Novo jogo</Button>
+      </div>
+
+      <div className="flex gap-2 border-b">
+        <button
+          className={`px-4 py-2 text-sm ${
+            tab === "futuros" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
+          }`}
+          onClick={() => setTab("futuros")}
+        >
+          Futuros
+        </button>
+        <button
+          className={`px-4 py-2 text-sm ${
+            tab === "passados" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
+          }`}
+          onClick={() => setTab("passados")}
+        >
+          Passados
+        </button>
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
@@ -143,20 +165,35 @@ export default function GameListPage() {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td className="p-3" colSpan={6}>
-                  Carregando...
-                </td>
-              </tr>
-            ) : games.length === 0 ? (
-              <tr>
-                <td className="p-3" colSpan={6}>
-                  Nenhum jogo encontrado
-                </td>
-              </tr>
-            ) : (
-              games.map((g) => (
+            {(() => {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const filteredGames = games.filter((g) => {
+                const gameDate = new Date(g.date);
+                return tab === "futuros" ? gameDate >= today : gameDate < today;
+              });
+
+              if (loading) {
+                return (
+                  <tr>
+                    <td className="p-3" colSpan={6}>
+                      Carregando...
+                    </td>
+                  </tr>
+                );
+              }
+
+              if (filteredGames.length === 0) {
+                return (
+                  <tr>
+                    <td className="p-3" colSpan={6}>
+                      {tab === "futuros" ? "Nenhum jogo futuro encontrado" : "Nenhum jogo passado encontrado"}
+                    </td>
+                  </tr>
+                );
+              }
+
+              return filteredGames.map((g) => (
                 <tr key={g.id} className="border-t">
                   <td className="p-3">{g.date}</td>
                   <td className="p-3">
@@ -186,6 +223,13 @@ export default function GameListPage() {
                       Editar
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/jogos/${g.id}/chamada`)}
+                    >
+                      Fazer chamada
+                    </Button>
+                    <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => onDelete(g.id)}
@@ -194,8 +238,8 @@ export default function GameListPage() {
                     </Button>
                   </td>
                 </tr>
-              ))
-            )}
+              ));
+            })()}
           </tbody>
         </table>
       </div>

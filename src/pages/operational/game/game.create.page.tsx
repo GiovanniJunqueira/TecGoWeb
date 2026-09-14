@@ -57,6 +57,7 @@ export default function GameCreatePage() {
   const [players, setPlayers] = useState<PlayerSelection[]>([]);
   const [minAge, setMinAge] = useState<string>("");
   const [maxAge, setMaxAge] = useState<string>("");
+  const [showAddPlayers, setShowAddPlayers] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -261,112 +262,170 @@ export default function GameCreatePage() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <Label className="text-lg font-semibold">Atletas e estatísticas</Label>
-          <div className="flex items-end gap-4">
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm">Idade mínima</Label>
-              <Input
-                type="number"
-                className="w-24"
-                value={minAge}
-                onChange={(e) => setMinAge(e.target.value)}
-                placeholder="Ex: 9"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm">Idade máxima</Label>
-              <Input
-                type="number"
-                className="w-24"
-                value={maxAge}
-                onChange={(e) => setMaxAge(e.target.value)}
-                placeholder="Ex: 11"
-              />
-            </div>
-          </div>
+          <Label className="text-lg font-semibold">Escalação</Label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowAddPlayers((prev) => !prev)}
+          >
+            {showAddPlayers ? "Fechar" : "Adicionar jogador"}
+          </Button>
         </div>
+
         <div className="overflow-auto max-h-[400px] border rounded">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="p-3 text-left">Selecionar</th>
                 <th className="p-3 text-left">Nome</th>
                 <th className="p-3 text-left">Idade</th>
                 <th className="p-3 text-left">Gols</th>
                 <th className="p-3 text-left">Titular</th>
                 <th className="p-3 text-left">Anotações</th>
+                <th className="p-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {(() => {
-                const min = minAge ? Number(minAge) : null;
-                const max = maxAge ? Number(maxAge) : null;
-                const visiblePlayers = players.filter((p) => {
-                  if (p.selected) return true;
-                  if (min === null && max === null) return true;
-                  const age = calculateAge(p.birthDate);
-                  if (age === null) return false;
-                  if (min !== null && age < min) return false;
-                  if (max !== null && age > max) return false;
-                  return true;
-                });
-
-                if (visiblePlayers.length === 0) {
-                  return (
-                    <tr>
-                      <td className="p-3" colSpan={6}>
-                        Nenhum atleta encontrado
+              {players.filter((p) => p.selected).length === 0 ? (
+                <tr>
+                  <td className="p-3" colSpan={6}>
+                    Nenhum atleta escalado ainda. Clique em "Adicionar jogador".
+                  </td>
+                </tr>
+              ) : (
+                players
+                  .filter((p) => p.selected)
+                  .map((p) => (
+                    <tr key={p.id} className="border-t">
+                      <td className="p-3">
+                        {p.firstname} {p.lastname}
+                      </td>
+                      <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
+                      <td className="p-3">
+                        <Input
+                          type="number"
+                          className="w-20"
+                          value={p.goals}
+                          onChange={(e) =>
+                            updatePlayerField(p.id, "goals", Number(e.target.value) || 0)
+                          }
+                        />
+                      </td>
+                      <td className="p-3">
+                        <input
+                          type="checkbox"
+                          checked={p.starter}
+                          onChange={(e) =>
+                            updatePlayerField(p.id, "starter", e.target.checked)
+                          }
+                        />
+                      </td>
+                      <td className="p-3">
+                        <Input
+                          value={p.notes}
+                          onChange={(e) =>
+                            updatePlayerField(p.id, "notes", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="p-3 text-right">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => togglePlayerSelected(p.id)}
+                        >
+                          Remover
+                        </Button>
                       </td>
                     </tr>
-                  );
-                }
-
-                return visiblePlayers.map((p) => (
-                  <tr key={p.id} className="border-t">
-                    <td className="p-3">
-                      <input
-                        type="checkbox"
-                        checked={p.selected}
-                        onChange={() => togglePlayerSelected(p.id)}
-                      />
-                    </td>
-                    <td className="p-3">
-                      {p.firstname} {p.lastname}
-                    </td>
-                    <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
-                    <td className="p-3">
-                      <Input
-                        type="number"
-                        className="w-20"
-                        value={p.goals}
-                        onChange={(e) =>
-                          updatePlayerField(p.id, "goals", Number(e.target.value) || 0)
-                        }
-                      />
-                    </td>
-                    <td className="p-3">
-                      <input
-                        type="checkbox"
-                        checked={p.starter}
-                        onChange={(e) =>
-                          updatePlayerField(p.id, "starter", e.target.checked)
-                        }
-                      />
-                    </td>
-                    <td className="p-3">
-                      <Input
-                        value={p.notes}
-                        onChange={(e) =>
-                          updatePlayerField(p.id, "notes", e.target.value)
-                        }
-                      />
-                    </td>
-                  </tr>
-                ));
-              })()}
+                  ))
+              )}
             </tbody>
           </table>
         </div>
+
+        {showAddPlayers && (
+          <div className="space-y-4 rounded border p-4">
+            <div className="flex items-end gap-4 flex-wrap">
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Idade mínima</Label>
+                <Input
+                  type="number"
+                  className="w-24"
+                  value={minAge}
+                  onChange={(e) => setMinAge(e.target.value)}
+                  placeholder="Ex: 9"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Idade máxima</Label>
+                <Input
+                  type="number"
+                  className="w-24"
+                  value={maxAge}
+                  onChange={(e) => setMaxAge(e.target.value)}
+                  placeholder="Ex: 11"
+                />
+              </div>
+            </div>
+
+            <div className="overflow-auto max-h-[300px] border rounded">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th className="p-3 text-left">Nome</th>
+                    <th className="p-3 text-left">Idade</th>
+                    <th className="p-3 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const min = minAge ? Number(minAge) : null;
+                    const max = maxAge ? Number(maxAge) : null;
+                    const available = players.filter((p) => {
+                      if (p.selected) return false;
+                      if (min === null && max === null) return true;
+                      const age = calculateAge(p.birthDate);
+                      if (age === null) return false;
+                      if (min !== null && age < min) return false;
+                      if (max !== null && age > max) return false;
+                      return true;
+                    });
+
+                    if (available.length === 0) {
+                      return (
+                        <tr>
+                          <td className="p-3" colSpan={3}>
+                            Nenhum atleta disponível para adicionar
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return available.map((p) => (
+                      <tr key={p.id} className="border-t">
+                        <td className="p-3">
+                          {p.firstname} {p.lastname}
+                        </td>
+                        <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
+                        <td className="p-3 text-right">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => togglePlayerSelected(p.id)}
+                          >
+                            Adicionar
+                          </Button>
+                        </td>
+                      </tr>
+                    ));
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </section>
 
       <div className="flex justify-end gap-4">
