@@ -22,6 +22,11 @@ import TeacherFormPage from "./pages/operational/teacher/teacher.form.page";
 import TeacherDetailsPage from "./pages/operational/teacher/teacher.details.page";
 import SchoolSettingsPage from "./pages/school/school.settings.page";
 import ChangePasswordPage from "./pages/account/change-password.page";
+import AulaGrupoListPage from "./pages/operational/aula/aula.grupo.list.page";
+import AulaGrupoFormPage from "./pages/operational/aula/aula.grupo.form.page";
+import AulaGrupoDetailsPage from "./pages/operational/aula/aula.grupo.details.page";
+import AulaChamadaPage from "./pages/operational/aula/aula.chamada.page";
+import AulaReportPage from "./pages/operational/aula/aula.report.page";
 
 export const Router = () => {
   return (
@@ -56,6 +61,12 @@ export const Router = () => {
           <Route path="/professores/novo" element={<TeacherFormPage />} />
           <Route path="/professores/editar/:id" element={<TeacherFormPage />} />
           <Route path="/professores/:id" element={<TeacherDetailsPage />} />
+          <Route path="/aulas" element={<AulaGrupoListPage />} />
+          <Route path="/aulas/novo" element={<AulaGrupoFormPage />} />
+          <Route path="/aulas/editar/:id" element={<AulaGrupoFormPage />} />
+          <Route path="/aulas/:id/relatorio" element={<AulaReportPage />} />
+          <Route path="/aulas/:id" element={<AulaGrupoDetailsPage />} />
+          <Route path="/aulas/sessoes/:sessaoId/chamada" element={<AulaChamadaPage />} />
           <Route path="/escola" element={<SchoolSettingsPage />} />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />

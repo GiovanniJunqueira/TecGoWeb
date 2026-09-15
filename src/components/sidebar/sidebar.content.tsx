@@ -1,4 +1,5 @@
 import {
+  CalendarCheck,
   ClipboardList,
   CreditCard,
   LayoutDashboard,
@@ -62,6 +63,12 @@ const data = {
       url: "/jogos",
       icon: ClipboardList,
       description: "Criação e visualização de partidas agendadas (Escalação).",
+    },
+    {
+      title: "Aulas",
+      url: "/aulas",
+      icon: CalendarCheck,
+      description: "Grupos de aula, chamada e histórico de frequência.",
     },
   ],
   navConfiguracoes: [
