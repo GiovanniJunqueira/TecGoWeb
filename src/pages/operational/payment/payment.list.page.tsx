@@ -18,6 +18,7 @@ const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
 export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [month, setMonth] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
   const [onlyPending, setOnlyPending] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
@@ -30,17 +31,11 @@ export default function PaymentListPage() {
   async function load() {
     try {
       setLoading(true);
-      let data: Payment[];
-      if (!month) {
-        data = await PaymentService.getAll();
-        if (onlyPending) {
-          data = data.filter((p) => !p.status);
-        }
-      } else {
-        data = onlyPending
-          ? await PaymentService.getPendingByMonth(month)
-          : await PaymentService.getByMonth(month);
-      }
+      const data = await PaymentService.search({
+        month: month || undefined,
+        pending: onlyPending || undefined,
+        search: search || undefined,
+      });
       setPayments(data ?? []);
     } catch {
       toast.error("Falha ao buscar pagamentos");
@@ -155,11 +150,21 @@ export default function PaymentListPage() {
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2">
+          <Label className="text-sm">Buscar por aluno ou responsável</Label>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Nome do aluno ou do responsável"
+            className="min-w-64"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
           <Label className="text-sm">Mês (deixe em branco pra ver todos)</Label>
           <Input
+            type="month"
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            placeholder="Ex: 2025-01"
           />
         </div>
 
@@ -185,6 +190,7 @@ export default function PaymentListPage() {
           <thead className="bg-muted/50">
             <tr>
               <th className="text-left p-3">Atleta</th>
+              <th className="text-left p-3">Responsável</th>
               <th className="text-left p-3">Mês</th>
               <th className="text-left p-3">Status</th>
               <th className="text-left p-3">Pago em</th>
@@ -196,13 +202,13 @@ export default function PaymentListPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td className="p-3" colSpan={7}>
+                <td className="p-3" colSpan={8}>
                   Carregando...
                 </td>
               </tr>
             ) : payments.length === 0 ? (
               <tr>
-                <td className="p-3" colSpan={7}>
+                <td className="p-3" colSpan={8}>
                   Nenhum pagamento encontrado
                 </td>
               </tr>
@@ -210,6 +216,7 @@ export default function PaymentListPage() {
               payments.map((p) => (
                 <tr key={p.id} className="border-t">
                   <td className="p-3">{p.playerName ?? "-"}</td>
+                  <td className="p-3">{p.responsibleName ?? "-"}</td>
                   <td className="p-3">{p.month}</td>
                   <td className="p-3">{p.status ? "Pago" : "Pendente"}</td>
                   <td className="p-3">{p.paidAt ?? "-"}</td>

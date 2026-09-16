@@ -1,6 +1,12 @@
 import { api } from "@/config";
 import type { Payment, PaymentMethod } from "@/entities/payment/payment.entity";
 
+export interface PaymentSearchParams {
+  month?: string;
+  pending?: boolean;
+  search?: string;
+}
+
 export class PaymentService {
   public static async create(playerId: string, month: string): Promise<Payment> {
     const { data } = await api.post<Payment>("/api/payments/create", null, {
@@ -14,23 +20,13 @@ export class PaymentService {
     return data;
   }
 
-  public static async getAll(): Promise<Payment[]> {
-    const { data } = await api.get<Payment[]>("/api/payments");
-    return data;
-  }
-
-  public static async getByMonth(month: string): Promise<Payment[]> {
-    const { data } = await api.get<Payment[]>(`/api/payments/month/${month}`);
+  public static async search(params: PaymentSearchParams): Promise<Payment[]> {
+    const { data } = await api.get<Payment[]>("/api/payments", { params });
     return data;
   }
 
   public static async getByPlayer(playerId: string): Promise<Payment[]> {
     const { data } = await api.get<Payment[]>(`/api/payments/player/${playerId}`);
-    return data;
-  }
-
-  public static async getPendingByMonth(month: string): Promise<Payment[]> {
-    const { data } = await api.get<Payment[]>(`/api/payments/month/${month}/pending`);
     return data;
   }
 

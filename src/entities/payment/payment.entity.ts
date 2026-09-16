@@ -9,4 +9,5 @@ export interface Payment {
   amount?: number | null;
   playerId?: string;
   playerName?: string;
+  responsibleName?: string | null;
 }
