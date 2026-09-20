@@ -7,6 +7,7 @@ import { ResponsibleService } from "@/services/responsible/responsible.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 export default function ResponsibleListPage() {
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
@@ -14,6 +15,7 @@ export default function ResponsibleListPage() {
   const [name, setName] = useState("");
   const [studentName, setStudentName] = useState("");
   const navigate = useNavigate();
+  const deleteDialog = useConfirmDialog();
 
   async function load() {
     try {
@@ -126,7 +128,7 @@ export default function ResponsibleListPage() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete(r.id)}
+                      onClick={() => deleteDialog.open(r.id)}
                     >
                       Excluir
                     </Button>
@@ -137,6 +139,14 @@ export default function ResponsibleListPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Excluir responsável?"
+        description="Essa ação não pode ser desfeita."
+        onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

@@ -44,7 +44,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const isTokenExpired = error.response?.status === 403;
+    const isTokenExpired = error.response?.status === 401;
     const isRetryAttempted = originalRequest._retry;
     const isRefreshEndpoint = originalRequest.url?.includes("/auth/refresh-token");
 

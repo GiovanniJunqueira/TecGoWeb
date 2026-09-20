@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { AulaGrupoService, AulaSessaoService } from "@/services/aula/aula.service";
 import type { AulaGrupo, AulaSessao } from "@/entities/aula/aula.entity";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 export default function AulaGrupoDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function AulaGrupoDetailsPage() {
   const [newDate, setNewDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const deleteDialog = useConfirmDialog();
 
   async function load() {
     if (!id) return;
@@ -145,7 +147,7 @@ export default function AulaGrupoDetailsPage() {
                       >
                         Fazer chamada
                       </Button>
-                      <Button variant="destructive" size="sm" onClick={() => onDeleteSessao(s.id)}>
+                      <Button variant="destructive" size="sm" onClick={() => deleteDialog.open(s.id)}>
                         Excluir
                       </Button>
                     </td>
@@ -156,6 +158,14 @@ export default function AulaGrupoDetailsPage() {
           </table>
         </div>
       </section>
+
+      <ConfirmDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Excluir aula?"
+        description="Essa ação não pode ser desfeita."
+        onConfirm={() => deleteDialog.targetId && onDeleteSessao(deleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

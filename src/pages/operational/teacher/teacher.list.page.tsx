@@ -7,6 +7,7 @@ import { TeacherService } from "@/services/teacher/teacher.service";
 import type { Teacher, TeacherStatus } from "@/entities/teacher/teacher.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 const teacherStatusOptions: { value: TeacherStatus; label: string }[] = [
   { value: "ACTIVE", label: "Ativo" },
@@ -19,6 +20,7 @@ export default function TeacherListPage() {
   const [name, setName] = useState("");
   const [status, setStatus] = useState<TeacherStatus | undefined>();
   const navigate = useNavigate();
+  const deleteDialog = useConfirmDialog();
 
   async function load() {
     try {
@@ -133,7 +135,7 @@ export default function TeacherListPage() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete(t.id)}
+                      onClick={() => deleteDialog.open(t.id)}
                     >
                       Excluir
                     </Button>
@@ -144,6 +146,14 @@ export default function TeacherListPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Excluir professor?"
+        description="Essa ação não pode ser desfeita."
+        onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

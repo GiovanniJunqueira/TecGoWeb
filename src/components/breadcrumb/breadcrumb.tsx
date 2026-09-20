@@ -28,18 +28,18 @@ export function BreadCrumb() {
   });
 
   return (
-    <Breadcrumb className="hidden md:block">
+    <Breadcrumb>
       <BreadcrumbList>
         {fullPaths.length > 0 ? (
           <>
             {fullPaths.slice(0, -1).map((segment, index) => (
               <React.Fragment key={index}>
-                <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbItem>
                   <BreadcrumbLink asChild>
                     <Link to={segment.path}>{segment.label}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbSeparator />
               </React.Fragment>
             ))}
 

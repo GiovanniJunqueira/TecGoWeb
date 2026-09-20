@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/auth/auth.context";
 import { Navigate, Outlet } from "react-router-dom";
 
 export const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return <SkeletonPageComponent />;
@@ -11,6 +11,10 @@ export const ProtectedRoute = () => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role === "MASTER") {
+    return <Navigate to="/master/escolas/nova" replace />;
   }
 
   return <Outlet />;

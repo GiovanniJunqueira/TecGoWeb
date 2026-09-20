@@ -7,6 +7,7 @@ import { GameService } from "@/services/game/game.service";
 import type { Game, GameCategory, GameType } from "@/entities/game/game.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 const gameTypes: { value: GameType; label: string }[] = [
   { value: "CHAMPIONSHIP", label: "Campeonato" },
@@ -31,7 +32,9 @@ export default function GameListPage() {
   const [category, setCategory] = useState<GameCategory | undefined>();
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [opponentSearch, setOpponentSearch] = useState<string>("");
   const navigate = useNavigate();
+  const deleteDialog = useConfirmDialog();
 
   async function load() {
     try {
@@ -147,6 +150,15 @@ export default function GameListPage() {
           />
         </div>
 
+        <div className="flex flex-col gap-2">
+          <Label className="text-sm">Adversário</Label>
+          <Input
+            value={opponentSearch}
+            onChange={(e) => setOpponentSearch(e.target.value)}
+            placeholder="Buscar por adversário"
+          />
+        </div>
+
         <Button onClick={load} disabled={loading}>
           {loading ? "Carregando..." : "Filtrar"}
         </Button>
@@ -170,7 +182,10 @@ export default function GameListPage() {
               today.setHours(0, 0, 0, 0);
               const filteredGames = games.filter((g) => {
                 const gameDate = new Date(g.date);
-                return tab === "futuros" ? gameDate >= today : gameDate < today;
+                const matchesTab = tab === "futuros" ? gameDate >= today : gameDate < today;
+                const matchesOpponent = !opponentSearch
+                  || g.opponent?.toLowerCase().includes(opponentSearch.toLowerCase());
+                return matchesTab && matchesOpponent;
               });
 
               if (loading) {
@@ -232,7 +247,7 @@ export default function GameListPage() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete(g.id)}
+                      onClick={() => deleteDialog.open(g.id)}
                     >
                       Excluir
                     </Button>
@@ -243,6 +258,14 @@ export default function GameListPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Excluir jogo?"
+        description="Essa ação não pode ser desfeita."
+        onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

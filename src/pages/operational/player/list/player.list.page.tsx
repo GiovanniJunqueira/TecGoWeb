@@ -7,6 +7,7 @@ import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 type Tab = "ativos" | "inativos";
 
@@ -24,6 +25,7 @@ export default function PlayerListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const hardDeleteDialog = useConfirmDialog();
 
   async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search) {
     try {
@@ -170,7 +172,7 @@ export default function PlayerListPage() {
                           <Button variant="outline" size="sm" onClick={() => onReactivate(p.id)}>
                             Reativar
                           </Button>
-                          <Button variant="destructive" size="sm" onClick={() => onHardDelete(p.id)}>
+                          <Button variant="destructive" size="sm" onClick={() => hardDeleteDialog.open(p.id)}>
                             Excluir permanentemente
                           </Button>
                         </>
@@ -207,6 +209,15 @@ export default function PlayerListPage() {
           </Button>
         </div>
       )}
+
+      <ConfirmDialog
+        open={hardDeleteDialog.isOpen}
+        onOpenChange={(open) => !open && hardDeleteDialog.close()}
+        title="Excluir atleta permanentemente?"
+        description="Essa ação não pode ser desfeita. Todos os dados do atleta serão apagados."
+        confirmLabel="Excluir permanentemente"
+        onConfirm={() => hardDeleteDialog.targetId && onHardDelete(hardDeleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

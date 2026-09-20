@@ -8,20 +8,23 @@ import { toast } from "sonner";
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function load() {
+    try {
+      setLoading(true);
+      setError(false);
+      const data = await DashboardService.getSummary();
+      setSummary(data);
+    } catch {
+      setError(true);
+      toast.error("Não foi possível carregar o dashboard");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const data = await DashboardService.getSummary();
-        setSummary(data);
-      } catch {
-        toast.error("Não foi possível carregar o dashboard");
-      } finally {
-        setLoading(false);
-      }
-    }
-
     load();
   }, []);
 
@@ -30,6 +33,20 @@ export default function DashboardPage() {
       <Label className="text-2xl font-semibold">Visão geral da escolinha</Label>
 
       {loading && <div>Carregando...</div>}
+
+      {!loading && error && (
+        <div className="rounded border p-4 flex flex-col items-start gap-3">
+          <span className="text-sm text-muted-foreground">
+            Não foi possível carregar os indicadores do dashboard.
+          </span>
+          <button
+            className="text-sm underline underline-offset-4 text-primary"
+            onClick={load}
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
 
       {!loading && summary && (
         <>

@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { SchoolService } from "@/services/schollService/school.service";
 import { AdminService } from "@/services/admin/admin.service";
 import type { School } from "@/entities/school/scholl.entity";
+import { useAuth } from "@/contexts/auth/auth.context";
 import { toast } from "sonner";
 
 type Step = "school" | "admin" | "done";
 
 export default function MasterSchoolCreatePage() {
+  const { logout } = useAuth();
   const [step, setStep] = useState<Step>("school");
   const [loading, setLoading] = useState(false);
   const [createdSchool, setCreatedSchool] = useState<School | null>(null);
@@ -104,7 +106,19 @@ export default function MasterSchoolCreatePage() {
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Cadastrar nova escola</Label>
+      <div className="flex items-center justify-between">
+        <Label className="text-2xl font-semibold">Cadastrar nova escola</Label>
+        <div className="flex gap-2">
+          {step === "admin" && (
+            <Button variant="outline" onClick={resetAll}>
+              Cancelar
+            </Button>
+          )}
+          <Button variant="outline" onClick={logout}>
+            Sair
+          </Button>
+        </div>
+      </div>
 
       {step === "school" && (
         <section className="space-y-4 max-w-2xl">

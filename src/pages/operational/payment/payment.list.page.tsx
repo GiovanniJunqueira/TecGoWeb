@@ -8,6 +8,7 @@ import type { Payment, PaymentMethod } from "@/entities/payment/payment.entity";
 import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
+import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 
 const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "PIX", label: "PIX" },
@@ -27,6 +28,7 @@ export default function PaymentListPage() {
   const [newMonth, setNewMonth] = useState("");
   const [creating, setCreating] = useState(false);
   const [methodDraft, setMethodDraft] = useState<Record<string, PaymentMethod>>({});
+  const deleteDialog = useConfirmDialog();
 
   async function load() {
     try {
@@ -260,7 +262,7 @@ export default function PaymentListPage() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete(p.id)}
+                      onClick={() => deleteDialog.open(p.id)}
                     >
                       Excluir
                     </Button>
@@ -271,6 +273,14 @@ export default function PaymentListPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Excluir pagamento?"
+        description="Essa ação não pode ser desfeita."
+        onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
     </LayoutContent>
   );
 }

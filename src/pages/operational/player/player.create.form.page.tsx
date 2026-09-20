@@ -202,9 +202,14 @@ export default function PlayerCreateFormPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">
-        {isEdit ? "Editar Atleta" : "Matricular Atleta"}
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label className="text-2xl font-semibold">
+          {isEdit ? "Editar Atleta" : "Matricular Atleta"}
+        </Label>
+        <Button type="button" variant="outline" onClick={() => navigate("/atletas")}>
+          Voltar
+        </Button>
+      </div>
       <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <section className="space-y-4">
@@ -658,6 +663,13 @@ export default function PlayerCreateFormPage() {
         </section>
 
         <div className="flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate("/atletas")}
+          >
+            Cancelar
+          </Button>
           <Button
             type="button"
             variant="outline"
