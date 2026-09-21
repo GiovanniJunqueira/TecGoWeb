@@ -16,6 +16,11 @@ const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "CARTAO", label: "Cartão" },
 ];
 
+function todayStr(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
 export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [month, setMonth] = useState<string>("");
@@ -28,6 +33,10 @@ export default function PaymentListPage() {
   const [newMonth, setNewMonth] = useState("");
   const [creating, setCreating] = useState(false);
   const [methodDraft, setMethodDraft] = useState<Record<string, PaymentMethod>>({});
+  const [paidAtDraft, setPaidAtDraft] = useState<Record<string, string>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<{ paidAt: string; amount: string }>({ paidAt: "", amount: "" });
+  const [savingEdit, setSavingEdit] = useState(false);
   const deleteDialog = useConfirmDialog();
 
   async function load() {
@@ -90,11 +99,40 @@ export default function PaymentListPage() {
     }
 
     try {
-      await PaymentService.markAsPaid(id, method);
+      await PaymentService.markAsPaid(id, method, paidAtDraft[id] || todayStr());
       toast.success("Pagamento marcado como pago");
       await load();
     } catch {
       toast.error("Não foi possível marcar o pagamento como pago");
+    }
+  };
+
+  const onStartEdit = (p: Payment) => {
+    setEditingId(p.id);
+    setEditDraft({
+      paidAt: p.paidAt ?? todayStr(),
+      amount: p.amount != null ? String(p.amount) : "",
+    });
+  };
+
+  const onCancelEdit = () => {
+    setEditingId(null);
+  };
+
+  const onSaveEdit = async (id: string) => {
+    try {
+      setSavingEdit(true);
+      await PaymentService.editPayment(id, {
+        paidAt: editDraft.paidAt || undefined,
+        amount: editDraft.amount !== "" ? Number(editDraft.amount) : undefined,
+      });
+      toast.success("Pagamento atualizado");
+      setEditingId(null);
+      await load();
+    } catch {
+      toast.error("Não foi possível atualizar o pagamento");
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -221,14 +259,35 @@ export default function PaymentListPage() {
                   <td className="p-3">{p.responsibleName ?? "-"}</td>
                   <td className="p-3">{p.month}</td>
                   <td className="p-3">{p.status ? "Pago" : "Pendente"}</td>
-                  <td className="p-3">{p.paidAt ?? "-"}</td>
+                  <td className="p-3">
+                    {editingId === p.id ? (
+                      <Input
+                        type="date"
+                        className="h-8 w-40"
+                        value={editDraft.paidAt}
+                        onChange={(e) => setEditDraft((prev) => ({ ...prev, paidAt: e.target.value }))}
+                      />
+                    ) : (
+                      p.paidAt ?? "-"
+                    )}
+                  </td>
                   <td className="p-3">
                     {paymentMethodOptions.find((o) => o.value === p.paymentMethod)?.label ?? "-"}
                   </td>
                   <td className="p-3">
-                    {p.amount != null
-                      ? p.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                      : "-"}
+                    {editingId === p.id ? (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        className="h-8 w-28"
+                        value={editDraft.amount}
+                        onChange={(e) => setEditDraft((prev) => ({ ...prev, amount: e.target.value }))}
+                      />
+                    ) : p.amount != null ? (
+                      p.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                    ) : (
+                      "-"
+                    )}
                   </td>
                   <td className="p-3 text-right space-x-2">
                     {!p.status && (
@@ -250,6 +309,14 @@ export default function PaymentListPage() {
                             </option>
                           ))}
                         </select>
+                        <Input
+                          type="date"
+                          className="h-8 w-40 inline-block"
+                          value={paidAtDraft[p.id] ?? todayStr()}
+                          onChange={(e) =>
+                            setPaidAtDraft((prev) => ({ ...prev, [p.id]: e.target.value }))
+                          }
+                        />
                         <Button
                           variant="outline"
                           size="sm"
@@ -259,13 +326,31 @@ export default function PaymentListPage() {
                         </Button>
                       </>
                     )}
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deleteDialog.open(p.id)}
-                    >
-                      Excluir
-                    </Button>
+                    {p.status && editingId === p.id ? (
+                      <>
+                        <Button variant="outline" size="sm" onClick={onCancelEdit} disabled={savingEdit}>
+                          Cancelar
+                        </Button>
+                        <Button size="sm" onClick={() => onSaveEdit(p.id)} disabled={savingEdit}>
+                          {savingEdit ? "Salvando..." : "Salvar"}
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        {p.status && (
+                          <Button variant="outline" size="sm" onClick={() => onStartEdit(p)}>
+                            Editar
+                          </Button>
+                        )}
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deleteDialog.open(p.id)}
+                        >
+                          Excluir
+                        </Button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))

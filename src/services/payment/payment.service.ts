@@ -15,8 +15,13 @@ export class PaymentService {
     return data;
   }
 
-  public static async markAsPaid(id: string, paymentMethod: PaymentMethod): Promise<Payment> {
-    const { data } = await api.put<Payment>(`/api/payments/${id}/pay`, { paymentMethod });
+  public static async markAsPaid(id: string, paymentMethod: PaymentMethod, paidAt?: string): Promise<Payment> {
+    const { data } = await api.put<Payment>(`/api/payments/${id}/pay`, { paymentMethod, paidAt: paidAt || undefined });
+    return data;
+  }
+
+  public static async editPayment(id: string, payload: { paidAt?: string; amount?: number }): Promise<Payment> {
+    const { data } = await api.put<Payment>(`/api/payments/${id}/edit`, payload);
     return data;
   }
 
