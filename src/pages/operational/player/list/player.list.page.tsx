@@ -24,16 +24,17 @@ export default function PlayerListPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
+  const [turmaFilter, setTurmaFilter] = useState("");
   const navigate = useNavigate();
   const hardDeleteDialog = useConfirmDialog();
 
-  async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search) {
+  async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search, targetTurma = turmaFilter) {
     try {
       setLoading(true);
       const data =
         targetTab === "ativos"
-          ? await PlayerService.findAll({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch })
-          : await PlayerService.findAllInactive({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch });
+          ? await PlayerService.findAll({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch, turma: targetTurma })
+          : await PlayerService.findAllInactive({ page: targetPage, size: 10, sort: "firstname,asc", search: targetSearch, turma: targetTurma });
       setPlayers(data?.content ?? data ?? []);
       setTotalPages(data?.totalPages ?? 0);
       setPage(data?.number ?? targetPage);
@@ -111,11 +112,20 @@ export default function PlayerListPage() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && load(tab, 0, search)}
+            onKeyDown={(e) => e.key === "Enter" && load(tab, 0, search, turmaFilter)}
             placeholder="Ex: João ou 230501"
           />
         </div>
-        <Button variant="outline" onClick={() => load(tab, 0, search)} disabled={loading}>
+        <div className="flex flex-col gap-2 max-w-48">
+          <Label className="text-sm">Nascidos</Label>
+          <Input
+            value={turmaFilter}
+            onChange={(e) => setTurmaFilter(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && load(tab, 0, search, turmaFilter)}
+            placeholder="Ex: Nascidos 12"
+          />
+        </div>
+        <Button variant="outline" onClick={() => load(tab, 0, search, turmaFilter)} disabled={loading}>
           Buscar
         </Button>
       </div>
@@ -126,7 +136,7 @@ export default function PlayerListPage() {
             <tr>
               <th className="text-left p-3">Nome</th>
               <th className="text-left p-3">Matrícula</th>
-              <th className="text-left p-3">Turma</th>
+              <th className="text-left p-3">Nascidos</th>
               {tab === "inativos" && <th className="text-left p-3">Inativo há</th>}
               <th className="text-right p-3">Ações</th>
             </tr>

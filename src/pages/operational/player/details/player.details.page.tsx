@@ -82,7 +82,7 @@ export default function PlayerDetailsPage() {
             <div className="font-medium">{player.birthDate}</div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground">Turma</div>
+            <div className="text-sm text-muted-foreground">Nascidos</div>
             <div className="font-medium">{player.turma || "-"}</div>
           </div>
           <div>

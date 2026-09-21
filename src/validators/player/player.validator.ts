@@ -23,6 +23,7 @@ export const playerSchema = yup.object().shape({
   origin: yup.string().optional(),
   registrationId: yup.string().optional(),
   turma: yup.string().optional(),
+  aulaGrupoId: yup.string().optional(),
   paymentPlan: yup
     .mixed<"PLANO_2X" | "PLANO_3X">()
     .oneOf(["PLANO_2X", "PLANO_3X"])

@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { AulaGrupoService, AulaSessaoService } from "@/services/aula/aula.service";
 import type { AulaGrupo, AulaSessao } from "@/entities/aula/aula.entity";
 import { toast } from "sonner";
@@ -14,9 +13,7 @@ export default function AulaGrupoDetailsPage() {
   const navigate = useNavigate();
   const [grupo, setGrupo] = useState<AulaGrupo | null>(null);
   const [sessoes, setSessoes] = useState<AulaSessao[]>([]);
-  const [newDate, setNewDate] = useState("");
   const [loading, setLoading] = useState(false);
-  const [creating, setCreating] = useState(false);
   const deleteDialog = useConfirmDialog();
 
   async function load() {
@@ -40,24 +37,6 @@ export default function AulaGrupoDetailsPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  const onCreateSessao = async () => {
-    if (!id || !newDate) {
-      toast.error("Selecione a data da aula");
-      return;
-    }
-    try {
-      setCreating(true);
-      await AulaSessaoService.create(id, newDate);
-      toast.success("Aula registrada com sucesso");
-      setNewDate("");
-      await load();
-    } catch {
-      toast.error("Não foi possível registrar a aula");
-    } finally {
-      setCreating(false);
-    }
-  };
 
   const onDeleteSessao = async (sessaoId: string) => {
     try {
@@ -97,16 +76,6 @@ export default function AulaGrupoDetailsPage() {
           {grupo.players.length} aluno(s) neste grupo
         </p>
       )}
-
-      <section className="flex items-end gap-4">
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm">Nova aula (data)</Label>
-          <Input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
-        </div>
-        <Button onClick={onCreateSessao} disabled={creating}>
-          {creating ? "Registrando..." : "Registrar aula"}
-        </Button>
-      </section>
 
       <section className="space-y-4">
         <Label className="text-lg font-semibold">Histórico de aulas (últimos 2 meses)</Label>

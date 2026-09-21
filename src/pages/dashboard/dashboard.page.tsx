@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { DashboardService } from "@/services/dashboard/dashboard.service";
 import type { DashboardSummary } from "@/entities/dashboard/dashboard.entity";
 import { toast } from "sonner";
+
+function currentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [month, setMonth] = useState(currentMonth());
 
-  async function load() {
+  async function load(targetMonth = month) {
     try {
       setLoading(true);
       setError(false);
-      const data = await DashboardService.getSummary();
+      const data = await DashboardService.getSummary(targetMonth);
       setSummary(data);
     } catch {
       setError(true);
@@ -25,12 +32,19 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    load();
-  }, []);
+    load(month);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month]);
 
   return (
     <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Visão geral da escolinha</Label>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <Label className="text-2xl font-semibold">Visão geral da escolinha</Label>
+        <div className="flex flex-col gap-2">
+          <Label className="text-sm">Mês</Label>
+          <Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} />
+        </div>
+      </div>
 
       {loading && <div>Carregando...</div>}
 
@@ -41,7 +55,7 @@ export default function DashboardPage() {
           </span>
           <button
             className="text-sm underline underline-offset-4 text-primary"
-            onClick={load}
+            onClick={() => load()}
           >
             Tentar novamente
           </button>
@@ -57,12 +71,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="rounded border p-4 flex flex-col gap-2 bg-card">
-              <span className="text-sm text-muted-foreground">Jogos cadastrados</span>
+              <span className="text-sm text-muted-foreground">Jogos no mês</span>
               <span className="text-2xl font-bold">{summary.totalGames}</span>
             </div>
 
             <div className="rounded border p-4 flex flex-col gap-2 bg-card">
-              <span className="text-sm text-muted-foreground">Pagamentos deste mês</span>
+              <span className="text-sm text-muted-foreground">Pagamentos no mês</span>
               <span className="text-2xl font-bold">
                 {summary.totalPaymentsThisMonth}
               </span>

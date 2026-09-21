@@ -25,6 +25,11 @@ export class AulaGrupoService {
   public static async delete(id: string): Promise<void> {
     await api.delete(`/api/aulas/grupos/${id}`);
   }
+
+  public static async findByPlayer(playerId: string): Promise<AulaGrupo[]> {
+    const { data } = await api.get<AulaGrupo[]>(`/api/aulas/grupos/by-player/${playerId}`);
+    return data;
+  }
 }
 
 export class AulaSessaoService {

@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { LayoutContent } from "@/layouts/layout.content";
 import { PlayerService } from "@/services/player/player.service";
 import { ResponsibleService } from "@/services/responsible/responsible.service";
+import { AulaGrupoService } from "@/services/aula/aula.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
+import type { AulaGrupo } from "@/entities/aula/aula.entity";
 import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { playerSchema, type PlayerFormData } from "@/validators";
@@ -24,7 +26,7 @@ import { AxiosError } from "axios";
 function computeTurma(birthDate: string): string {
   const year = new Date(birthDate).getFullYear();
   if (Number.isNaN(year)) return "";
-  return `Turma ${String(year % 100).padStart(2, "0")}`;
+  return `Nascidos ${String(year % 100).padStart(2, "0")}`;
 }
 
 export default function PlayerCreateFormPage() {
@@ -42,6 +44,7 @@ export default function PlayerCreateFormPage() {
     email: "",
     document: "",
   });
+  const [aulaGrupos, setAulaGrupos] = useState<AulaGrupo[]>([]);
   const form = useForm<PlayerFormData>({
     resolver: yupResolver(playerSchema) as Resolver<PlayerFormData>,
     defaultValues: {
@@ -59,6 +62,7 @@ export default function PlayerCreateFormPage() {
       origin: "",
       registrationId: "",
       turma: "",
+      aulaGrupoId: "",
       paymentPlan: undefined,
       college: "",
       collegeAddress: "",
@@ -86,7 +90,10 @@ export default function PlayerCreateFormPage() {
     if (!isEdit || !id) return;
     (async () => {
       try {
-        const data = await PlayerService.findById(id);
+        const [data, aulaGruposDoAluno] = await Promise.all([
+          PlayerService.findById(id),
+          AulaGrupoService.findByPlayer(id).catch(() => []),
+        ]);
         form.reset({
           firstname: data.firstname ?? "",
           lastname: data.lastname ?? "",
@@ -110,6 +117,7 @@ export default function PlayerCreateFormPage() {
           origin: data.origin ?? "",
           registrationId: data.registrationId ?? "",
           turma: data.turma ?? "",
+          aulaGrupoId: aulaGruposDoAluno[0]?.id ?? "",
           paymentPlan: data.paymentPlan ?? undefined,
         });
       } catch {
@@ -143,6 +151,18 @@ export default function PlayerCreateFormPage() {
       }
     })();
   }, [isEdit, id]);
+
+  useEffect(() => {
+    async function loadAulaGrupos() {
+      try {
+        const data = await AulaGrupoService.findAll();
+        setAulaGrupos(data ?? []);
+      } catch {
+        toast.error("Falha ao carregar grupos de aula");
+      }
+    }
+    loadAulaGrupos();
+  }, []);
 
   const onSubmit: SubmitHandler<PlayerFormData> = async (data) => {
     try {
@@ -285,13 +305,37 @@ export default function PlayerCreateFormPage() {
               name="turma"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Turma</FormLabel>
+                  <FormLabel>Nascidos</FormLabel>
                   <FormControl>
                     <Input
                       id="turma"
                       placeholder="Preenchida automaticamente pelo ano de nascimento"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="aulaGrupoId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Grupo de aula</FormLabel>
+                  <FormControl>
+                    <select
+                      className="border rounded px-3 py-2 text-sm w-full h-9"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    >
+                      <option value="">Nenhum grupo</option>
+                      {aulaGrupos.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.name}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

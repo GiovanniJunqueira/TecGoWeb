@@ -1,5 +1,6 @@
 import {
   CalendarCheck,
+  CalendarPlus,
   ClipboardList,
   CreditCard,
   LayoutDashboard,
@@ -69,6 +70,13 @@ const data = {
       url: "/aulas",
       icon: CalendarCheck,
       description: "Grupos de aula, chamada e histórico de frequência.",
+      items: [
+        {
+          title: "Registrar Aula",
+          url: "/aulas/registrar",
+          icon: CalendarPlus,
+        },
+      ],
     },
   ],
   navConfiguracoes: [
