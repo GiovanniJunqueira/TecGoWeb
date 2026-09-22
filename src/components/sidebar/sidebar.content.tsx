@@ -3,6 +3,7 @@ import {
   CalendarPlus,
   ClipboardList,
   CreditCard,
+  Eye,
   LayoutDashboard,
   School,
   Settings,
@@ -40,6 +41,11 @@ const data = {
       icon: User,
       items: [
         {
+          title: "Ver Atletas",
+          url: "/atletas",
+          icon: Eye,
+        },
+        {
           title: "Matricular Atleta",
           url: "/atletas/matricular",
           icon: UserPlus,
@@ -52,6 +58,18 @@ const data = {
       icon: Users,
       description:
         "Visualização e gestão dos responsáveis vinculados aos alunos.",
+      items: [
+        {
+          title: "Ver Responsáveis",
+          url: "/responsaveis",
+          icon: Eye,
+        },
+        {
+          title: "Novo Responsável",
+          url: "/responsaveis/novo",
+          icon: UserPlus,
+        },
+      ],
     },
     {
       title: "Professores",
@@ -64,6 +82,18 @@ const data = {
       url: "/jogos",
       icon: ClipboardList,
       description: "Criação e visualização de partidas agendadas (Escalação).",
+      items: [
+        {
+          title: "Ver Jogos",
+          url: "/jogos",
+          icon: Eye,
+        },
+        {
+          title: "Novo Jogo",
+          url: "/jogos/novo",
+          icon: UserPlus,
+        },
+      ],
     },
     {
       title: "Aulas",
@@ -71,6 +101,11 @@ const data = {
       icon: CalendarCheck,
       description: "Grupos de aula, chamada e histórico de frequência.",
       items: [
+        {
+          title: "Ver Grupos",
+          url: "/aulas",
+          icon: Eye,
+        },
         {
           title: "Registrar Aula",
           url: "/aulas/registrar",
