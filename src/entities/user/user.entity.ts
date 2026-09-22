@@ -1,4 +1,6 @@
-export type Role = "MASTER" | "ADMIN" | "PLAYER";
+import type { Permission } from "@/entities/staff/staff.entity";
+
+export type Role = "MASTER" | "ADMIN" | "PLAYER" | "STAFF";
 
 export class User {
   id: string;
@@ -8,6 +10,7 @@ export class User {
   lastname?: string;
   document?: string;
   role: Role;
+  permissions?: Permission[];
 
   constructor(data: User) {
     this.id = data.id;
@@ -17,6 +20,7 @@ export class User {
     this.lastname = data.lastname;
     this.document = data.document;
     this.role = data.role;
+    this.permissions = data.permissions;
   }
 }
 

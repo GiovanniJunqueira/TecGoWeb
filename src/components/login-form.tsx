@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/contexts/auth/auth.context";
+import { getStaffLandingPath } from "@/lib/permissions";
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -30,7 +31,14 @@ export function LoginForm() {
       .then(async (responseData) => {
         await login(responseData);
         const payload = JSON.parse(atob(responseData.accessToken.split(".")[1]));
-        navigate(payload.role === "MASTER" ? "/master/escolas/nova" : "/");
+
+        if (payload.role === "MASTER") {
+          navigate("/master/escolas/nova");
+        } else if (payload.role === "STAFF") {
+          navigate(getStaffLandingPath(payload.permissions ?? []));
+        } else {
+          navigate("/");
+        }
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
