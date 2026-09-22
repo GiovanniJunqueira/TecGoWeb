@@ -20,8 +20,16 @@ export class PaymentService {
     return data;
   }
 
-  public static async editPayment(id: string, payload: { paidAt?: string; amount?: number }): Promise<Payment> {
+  public static async editPayment(
+    id: string,
+    payload: { paidAt?: string; amount?: number; paymentMethod?: PaymentMethod }
+  ): Promise<Payment> {
     const { data } = await api.put<Payment>(`/api/payments/${id}/edit`, payload);
+    return data;
+  }
+
+  public static async markAsPending(id: string): Promise<Payment> {
+    const { data } = await api.put<Payment>(`/api/payments/${id}/unpay`);
     return data;
   }
 

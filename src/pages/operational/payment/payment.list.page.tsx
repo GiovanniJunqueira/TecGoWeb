@@ -9,6 +9,7 @@ import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { EditPaymentDialog } from "@/components/payment/edit-payment-dialog";
 
 const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "PIX", label: "PIX" },
@@ -34,9 +35,7 @@ export default function PaymentListPage() {
   const [creating, setCreating] = useState(false);
   const [methodDraft, setMethodDraft] = useState<Record<string, PaymentMethod>>({});
   const [paidAtDraft, setPaidAtDraft] = useState<Record<string, string>>({});
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<{ paidAt: string; amount: string }>({ paidAt: "", amount: "" });
-  const [savingEdit, setSavingEdit] = useState(false);
+  const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
   const deleteDialog = useConfirmDialog();
 
   async function load() {
@@ -104,35 +103,6 @@ export default function PaymentListPage() {
       await load();
     } catch {
       toast.error("Não foi possível marcar o pagamento como pago");
-    }
-  };
-
-  const onStartEdit = (p: Payment) => {
-    setEditingId(p.id);
-    setEditDraft({
-      paidAt: p.paidAt ?? todayStr(),
-      amount: p.amount != null ? String(p.amount) : "",
-    });
-  };
-
-  const onCancelEdit = () => {
-    setEditingId(null);
-  };
-
-  const onSaveEdit = async (id: string) => {
-    try {
-      setSavingEdit(true);
-      await PaymentService.editPayment(id, {
-        paidAt: editDraft.paidAt || undefined,
-        amount: editDraft.amount !== "" ? Number(editDraft.amount) : undefined,
-      });
-      toast.success("Pagamento atualizado");
-      setEditingId(null);
-      await load();
-    } catch {
-      toast.error("Não foi possível atualizar o pagamento");
-    } finally {
-      setSavingEdit(false);
     }
   };
 
@@ -259,35 +229,14 @@ export default function PaymentListPage() {
                   <td className="p-3">{p.responsibleName ?? "-"}</td>
                   <td className="p-3">{p.month}</td>
                   <td className="p-3">{p.status ? "Pago" : "Pendente"}</td>
-                  <td className="p-3">
-                    {editingId === p.id ? (
-                      <Input
-                        type="date"
-                        className="h-8 w-40"
-                        value={editDraft.paidAt}
-                        onChange={(e) => setEditDraft((prev) => ({ ...prev, paidAt: e.target.value }))}
-                      />
-                    ) : (
-                      p.paidAt ?? "-"
-                    )}
-                  </td>
+                  <td className="p-3">{p.paidAt ?? "-"}</td>
                   <td className="p-3">
                     {paymentMethodOptions.find((o) => o.value === p.paymentMethod)?.label ?? "-"}
                   </td>
                   <td className="p-3">
-                    {editingId === p.id ? (
-                      <Input
-                        type="number"
-                        step="0.01"
-                        className="h-8 w-28"
-                        value={editDraft.amount}
-                        onChange={(e) => setEditDraft((prev) => ({ ...prev, amount: e.target.value }))}
-                      />
-                    ) : p.amount != null ? (
-                      p.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                    ) : (
-                      "-"
-                    )}
+                    {p.amount != null
+                      ? p.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                      : "-"}
                   </td>
                   <td className="p-3 text-right space-x-2">
                     {!p.status && (
@@ -326,31 +275,18 @@ export default function PaymentListPage() {
                         </Button>
                       </>
                     )}
-                    {p.status && editingId === p.id ? (
-                      <>
-                        <Button variant="outline" size="sm" onClick={onCancelEdit} disabled={savingEdit}>
-                          Cancelar
-                        </Button>
-                        <Button size="sm" onClick={() => onSaveEdit(p.id)} disabled={savingEdit}>
-                          {savingEdit ? "Salvando..." : "Salvar"}
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        {p.status && (
-                          <Button variant="outline" size="sm" onClick={() => onStartEdit(p)}>
-                            Editar
-                          </Button>
-                        )}
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteDialog.open(p.id)}
-                        >
-                          Excluir
-                        </Button>
-                      </>
+                    {p.status && (
+                      <Button variant="outline" size="sm" onClick={() => setEditingPayment(p)}>
+                        Editar
+                      </Button>
                     )}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deleteDialog.open(p.id)}
+                    >
+                      Excluir
+                    </Button>
                   </td>
                 </tr>
               ))
@@ -365,6 +301,12 @@ export default function PaymentListPage() {
         title="Excluir pagamento?"
         description="Essa ação não pode ser desfeita."
         onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
+
+      <EditPaymentDialog
+        payment={editingPayment}
+        onOpenChange={(open) => !open && setEditingPayment(null)}
+        onSaved={load}
       />
     </LayoutContent>
   );
