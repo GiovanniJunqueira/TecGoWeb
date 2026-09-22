@@ -19,11 +19,11 @@ export function BreadCrumb() {
 
   const lastSegment = pathSegments[pathSegments.length - 1];
 
-  const fullPaths = pathSegments.map((_, index) => {
+  const fullPaths = pathSegments.map((segment, index) => {
     const path = "/" + pathSegments.slice(0, index + 1).join("/");
     return {
       path,
-      label: Formatter.formatPathname(path),
+      label: Formatter.formatSegment(segment),
     };
   });
 
@@ -45,7 +45,7 @@ export function BreadCrumb() {
 
             <BreadcrumbItem>
               <BreadcrumbPage>
-                {Formatter.formatPathname("/" + lastSegment)}
+                {Formatter.formatSegment(lastSegment)}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </>

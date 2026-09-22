@@ -8,6 +8,7 @@ import type { Game, GameCategory, GameType } from "@/entities/game/game.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 const gameTypes: { value: GameType; label: string }[] = [
   { value: "CHAMPIONSHIP", label: "Campeonato" },
@@ -74,24 +75,14 @@ export default function GameListPage() {
         <Button onClick={() => navigate("/jogos/novo")}>Novo jogo</Button>
       </div>
 
-      <div className="flex gap-2 border-b">
-        <button
-          className={`px-4 py-2 text-sm ${
-            tab === "futuros" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
-          }`}
-          onClick={() => setTab("futuros")}
-        >
-          Futuros
-        </button>
-        <button
-          className={`px-4 py-2 text-sm ${
-            tab === "passados" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
-          }`}
-          onClick={() => setTab("passados")}
-        >
-          Passados
-        </button>
-      </div>
+      <SegmentedControl
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: "futuros", label: "Futuros" },
+          { value: "passados", label: "Passados" },
+        ]}
+      />
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2">

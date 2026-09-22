@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { PrintPlayersDialog } from "@/components/player/print-players-dialog";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 type Tab = "ativos" | "inativos";
 
@@ -94,24 +95,14 @@ export default function PlayerListPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 border-b">
-        <button
-          className={`px-4 py-2 text-sm ${
-            tab === "ativos" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
-          }`}
-          onClick={() => setTab("ativos")}
-        >
-          Ativos
-        </button>
-        <button
-          className={`px-4 py-2 text-sm ${
-            tab === "inativos" ? "border-b-2 border-primary font-semibold" : "text-muted-foreground"
-          }`}
-          onClick={() => setTab("inativos")}
-        >
-          Inativos
-        </button>
-      </div>
+      <SegmentedControl
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: "ativos", label: "Ativos" },
+          { value: "inativos", label: "Inativos" },
+        ]}
+      />
 
       <div className="flex items-end gap-4">
         <div className="flex flex-col gap-2 flex-1 max-w-sm">
@@ -181,7 +172,7 @@ export default function PlayerListPage() {
                         Ver
                       </Button>
                       {tab === "ativos" ? (
-                        <Button variant="destructive" size="sm" onClick={() => onInactivate(p.id)}>
+                        <Button variant="outline" size="sm" onClick={() => onInactivate(p.id)}>
                           Inativar
                         </Button>
                       ) : (
