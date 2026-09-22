@@ -104,7 +104,7 @@ export default function PlayerListPage() {
         ]}
       />
 
-      <div className="flex items-end gap-4">
+      <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2 flex-1 max-w-sm">
           <Label className="text-sm">Buscar por nome ou matrícula</Label>
           <Input

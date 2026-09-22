@@ -9,7 +9,7 @@ export function Layout() {
         <div className="flex flex-1 h-full">
           <AppSidebar />
 
-          <main className="flex-1 w-full relative">
+          <main className="flex-1 w-full min-w-0 relative">
             <Outlet />
           </main>
         </div>

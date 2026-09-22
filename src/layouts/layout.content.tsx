@@ -14,12 +14,12 @@ export function LayoutContent({
   className,
 }: LayoutContentProps) {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-w-0">
       <LayoutContentHeader  />
 
-      <div className="flex flex-col h-full mt-16 overflow-auto">
-        <div className="flex-1 p-6">
-          <div className={cn("flex flex-col", className)}>{children}</div>
+      <div className="flex flex-col h-full mt-16 overflow-auto min-w-0">
+        <div className="flex-1 p-6 min-w-0">
+          <div className={cn("flex flex-col min-w-0", className)}>{children}</div>
         </div>
       </div>
     </div>
