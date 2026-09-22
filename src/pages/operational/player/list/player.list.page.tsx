@@ -8,6 +8,7 @@ import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { PrintPlayersDialog } from "@/components/player/print-players-dialog";
 
 type Tab = "ativos" | "inativos";
 
@@ -27,6 +28,7 @@ export default function PlayerListPage() {
   const [turmaFilter, setTurmaFilter] = useState("");
   const navigate = useNavigate();
   const hardDeleteDialog = useConfirmDialog();
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
 
   async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search, targetTurma = turmaFilter) {
     try {
@@ -84,7 +86,12 @@ export default function PlayerListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Atletas</Label>
-        <Button onClick={() => navigate("/atletas/matricular")}>Novo atleta</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setPrintDialogOpen(true)}>
+            Imprimir
+          </Button>
+          <Button onClick={() => navigate("/atletas/matricular")}>Novo atleta</Button>
+        </div>
       </div>
 
       <div className="flex gap-2 border-b">
@@ -228,6 +235,8 @@ export default function PlayerListPage() {
         confirmLabel="Excluir permanentemente"
         onConfirm={() => hardDeleteDialog.targetId && onHardDelete(hardDeleteDialog.targetId)}
       />
+
+      <PrintPlayersDialog open={printDialogOpen} onOpenChange={setPrintDialogOpen} />
     </LayoutContent>
   );
 }

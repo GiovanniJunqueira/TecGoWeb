@@ -28,3 +28,21 @@ export interface ProfilePlayer {
 }
 
 export type PaymentPlan = "PLANO_2X" | "PLANO_3X";
+
+export interface PlayerReport {
+  id: string;
+  firstname: string;
+  lastname: string;
+  registrationId?: string | null;
+  turma?: string | null;
+  birthDate?: string | null;
+  rg?: string | null;
+  cpf?: string | null;
+  phoneNumber?: string | null;
+  address?: string | null;
+  college?: string | null;
+  paymentPlan?: PaymentPlan | null;
+  responsibleNames?: string | null;
+  aulaGrupoName?: string | null;
+  isDeleted: boolean;
+}

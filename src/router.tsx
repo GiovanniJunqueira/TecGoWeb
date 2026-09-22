@@ -9,6 +9,7 @@ import { NotFoundPage } from "./pages/notFound/NotFoundPage";
 import PlayerListPage from "./pages/operational/player/list/player.list.page";
 import PlayerCreateFormPage from "./pages/operational/player/player.create.form.page";
 import PlayerDetailsPage from "./pages/operational/player/details/player.details.page";
+import PlayerReportPage from "./pages/operational/player/player.report.page";
 import PaymentListPage from "./pages/operational/payment/payment.list.page";
 import GameListPage from "./pages/operational/game/game.list.page";
 import GameCreatePage from "./pages/operational/game/game.create.page";
@@ -52,6 +53,7 @@ export const Router = () => {
           <Route path="/jogos/:id" element={<GameDetailsPage />} />
           <Route path="/atletas/matricular" element={<PlayerCreateFormPage />} />
           <Route path="/atletas/editar/:id" element={<PlayerCreateFormPage />} />
+          <Route path="/atletas/relatorio" element={<PlayerReportPage />} />
           <Route path="/atletas" element={<PlayerListPage />} />
           <Route path="/atletas/:id" element={<PlayerDetailsPage />} />
           <Route path="/responsaveis" element={<ResponsibleListPage />} />

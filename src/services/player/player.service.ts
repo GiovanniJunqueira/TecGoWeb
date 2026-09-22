@@ -1,5 +1,6 @@
 import { api } from "@/config";
 import type { PlayerFormData } from "@/validators";
+import type { PlayerReport } from "@/entities/player/profile-player.entity";
 
 export class PlayerService {
   public static async create(payload: PlayerFormData) {
@@ -57,5 +58,20 @@ export class PlayerService {
 
   public static async hardDelete(id: string) {
     await api.delete(`/player/excluirPermanente/${id}`);
+  }
+
+  public static async report(params: {
+    status?: "ATIVOS" | "INATIVOS" | "TODOS";
+    turma?: string;
+    aulaGrupoId?: string;
+  }): Promise<PlayerReport[]> {
+    const { data } = await api.get<PlayerReport[]>("/player/relatorio", {
+      params: {
+        status: params.status || undefined,
+        turma: params.turma || undefined,
+        aulaGrupoId: params.aulaGrupoId || undefined,
+      },
+    });
+    return data;
   }
 }
