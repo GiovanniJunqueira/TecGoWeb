@@ -18,9 +18,9 @@ import GameAttendancePage from "./pages/operational/game/game.attendance.page";
 import ResponsibleListPage from "./pages/operational/responsible/responsible.list.page";
 import ResponsibleFormPage from "./pages/operational/responsible/responsible.form.page";
 import ResponsibleDetailsPage from "./pages/operational/responsible/responsible.details.page";
-import TeacherListPage from "./pages/operational/teacher/teacher.list.page";
-import TeacherFormPage from "./pages/operational/teacher/teacher.form.page";
-import TeacherDetailsPage from "./pages/operational/teacher/teacher.details.page";
+import StaffListPage from "./pages/operational/staff/staff.list.page";
+import StaffFormPage from "./pages/operational/staff/staff.form.page";
+import StaffDetailsPage from "./pages/operational/staff/staff.details.page";
 import SchoolSettingsPage from "./pages/school/school.settings.page";
 import ChangePasswordPage from "./pages/account/change-password.page";
 import AulaGrupoListPage from "./pages/operational/aula/aula.grupo.list.page";
@@ -60,10 +60,10 @@ export const Router = () => {
           <Route path="/responsaveis/novo" element={<ResponsibleFormPage />} />
           <Route path="/responsaveis/editar/:id" element={<ResponsibleFormPage />} />
           <Route path="/responsaveis/:id" element={<ResponsibleDetailsPage />} />
-          <Route path="/professores" element={<TeacherListPage />} />
-          <Route path="/professores/novo" element={<TeacherFormPage />} />
-          <Route path="/professores/editar/:id" element={<TeacherFormPage />} />
-          <Route path="/professores/:id" element={<TeacherDetailsPage />} />
+          <Route path="/profissionais" element={<StaffListPage />} />
+          <Route path="/profissionais/novo" element={<StaffFormPage />} />
+          <Route path="/profissionais/editar/:id" element={<StaffFormPage />} />
+          <Route path="/profissionais/:id" element={<StaffDetailsPage />} />
           <Route path="/aulas" element={<AulaGrupoListPage />} />
           <Route path="/aulas/novo" element={<AulaGrupoFormPage />} />
           <Route path="/aulas/registrar" element={<AulaSessaoCreatePage />} />

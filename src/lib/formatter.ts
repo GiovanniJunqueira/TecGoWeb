@@ -4,7 +4,7 @@ const KNOWN_LABELS: Record<string, string> = {
   jogos: "Jogos",
   atletas: "Atletas",
   responsaveis: "Responsáveis",
-  professores: "Professores",
+  profissionais: "Profissionais",
   aulas: "Aulas",
   escola: "Escola",
   conta: "Conta",

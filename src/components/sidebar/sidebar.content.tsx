@@ -72,10 +72,22 @@ const data = {
       ],
     },
     {
-      title: "Professores",
-      url: "/professores",
+      title: "Profissionais",
+      url: "/profissionais",
       icon: Users,
-      description: "Gestão dos dados dos professores.",
+      description: "Cadastro de professores e demais profissionais, com acessos por módulo.",
+      items: [
+        {
+          title: "Ver Profissionais",
+          url: "/profissionais",
+          icon: Eye,
+        },
+        {
+          title: "Novo Profissional",
+          url: "/profissionais/novo",
+          icon: UserPlus,
+        },
+      ],
     },
     {
       title: "Jogos",
