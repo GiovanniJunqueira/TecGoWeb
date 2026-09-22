@@ -3,7 +3,7 @@ import type { Payment, PaymentMethod } from "@/entities/payment/payment.entity";
 
 export interface PaymentSearchParams {
   month?: string;
-  pending?: boolean;
+  status?: boolean;
   search?: string;
 }
 

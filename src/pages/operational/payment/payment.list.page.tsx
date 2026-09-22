@@ -10,6 +10,10 @@ import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { EditPaymentDialog } from "@/components/payment/edit-payment-dialog";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { cn } from "@/lib/utils";
+
+type StatusFilter = "TODOS" | "PENDENTES" | "PAGOS";
 
 const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "PIX", label: "PIX" },
@@ -26,7 +30,8 @@ export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [month, setMonth] = useState<string>("");
   const [search, setSearch] = useState<string>("");
-  const [onlyPending, setOnlyPending] = useState<boolean>(false);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("TODOS");
+  const [colorize, setColorize] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -43,7 +48,7 @@ export default function PaymentListPage() {
       setLoading(true);
       const data = await PaymentService.search({
         month: month || undefined,
-        pending: onlyPending || undefined,
+        status: statusFilter === "PAGOS" ? true : statusFilter === "PENDENTES" ? false : undefined,
         search: search || undefined,
       });
       setPayments(data ?? []);
@@ -178,15 +183,28 @@ export default function PaymentListPage() {
           />
         </div>
 
+        <div className="flex flex-col gap-2">
+          <Label className="text-sm">Status</Label>
+          <SegmentedControl
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { value: "TODOS", label: "Todos" },
+              { value: "PENDENTES", label: "Pendentes" },
+              { value: "PAGOS", label: "Pagos" },
+            ]}
+          />
+        </div>
+
         <div className="flex items-center gap-2">
           <input
-            id="onlyPending"
+            id="colorize"
             type="checkbox"
-            checked={onlyPending}
-            onChange={(e) => setOnlyPending(e.target.checked)}
+            checked={colorize}
+            onChange={(e) => setColorize(e.target.checked)}
           />
-          <Label htmlFor="onlyPending" className="text-sm">
-            Apenas pendentes
+          <Label htmlFor="colorize" className="text-sm">
+            Colorir linhas
           </Label>
         </div>
 
@@ -224,7 +242,13 @@ export default function PaymentListPage() {
               </tr>
             ) : (
               payments.map((p) => (
-                <tr key={p.id} className="border-t">
+                <tr
+                  key={p.id}
+                  className={cn(
+                    "border-t",
+                    colorize && (p.status ? "bg-green-50" : "bg-red-50")
+                  )}
+                >
                   <td className="p-3">{p.playerName ?? "-"}</td>
                   <td className="p-3">{p.responsibleName ?? "-"}</td>
                   <td className="p-3">{p.month}</td>
