@@ -5,11 +5,15 @@ import {
   CreditCard,
   Eye,
   LayoutDashboard,
+  PackagePlus,
+  Receipt,
   School,
   Settings,
+  ShoppingBag,
   User,
   UserPlus,
   Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -53,6 +57,12 @@ const data = {
       icon: CreditCard,
       description: "Controle de mensalidades e histórico financeiro.",
       permission: "PAGAMENTOS_VER",
+    },
+    {
+      title: "Financeiro",
+      url: "/financeiro",
+      icon: Wallet,
+      description: "Resumo consolidado de mensalidades e vendas do mês.",
     },
   ] satisfies NavItem[],
   navOperacional: [
@@ -155,6 +165,39 @@ const data = {
           url: "/aulas/registrar",
           icon: CalendarPlus,
           permission: "AULAS_REGISTRAR_AULA",
+        },
+      ],
+    },
+    {
+      title: "Produtos",
+      url: "/produtos",
+      icon: ShoppingBag,
+      description: "Cadastro de produtos da lojinha e registro de vendas.",
+      permission: "PRODUTOS_VER",
+      items: [
+        {
+          title: "Ver Produtos",
+          url: "/produtos",
+          icon: Eye,
+          permission: "PRODUTOS_VER",
+        },
+        {
+          title: "Novo Produto",
+          url: "/produtos/novo",
+          icon: PackagePlus,
+          permission: "PRODUTOS_CRIAR",
+        },
+        {
+          title: "Ver Vendas",
+          url: "/produtos/vendas",
+          icon: Receipt,
+          permission: "PRODUTOS_VER",
+        },
+        {
+          title: "Registrar Venda",
+          url: "/produtos/vendas/nova",
+          icon: ShoppingBag,
+          permission: "PRODUTOS_VENDER",
         },
       ],
     },

@@ -29,6 +29,11 @@ import AulaGrupoDetailsPage from "./pages/operational/aula/aula.grupo.details.pa
 import AulaSessaoCreatePage from "./pages/operational/aula/aula.sessao.create.page";
 import AulaChamadaPage from "./pages/operational/aula/aula.chamada.page";
 import AulaReportPage from "./pages/operational/aula/aula.report.page";
+import ProductListPage from "./pages/operational/product/product.list.page";
+import ProductFormPage from "./pages/operational/product/product.form.page";
+import SaleListPage from "./pages/operational/product/sale.list.page";
+import SaleFormPage from "./pages/operational/product/sale.form.page";
+import FinanceiroPage from "./pages/financeiro/financeiro.page";
 
 export const Router = () => {
   return (
@@ -71,6 +76,12 @@ export const Router = () => {
           <Route path="/aulas/:id/relatorio" element={<AulaReportPage />} />
           <Route path="/aulas/:id" element={<AulaGrupoDetailsPage />} />
           <Route path="/aulas/sessoes/:sessaoId/chamada" element={<AulaChamadaPage />} />
+          <Route path="/produtos" element={<ProductListPage />} />
+          <Route path="/produtos/novo" element={<ProductFormPage />} />
+          <Route path="/produtos/editar/:id" element={<ProductFormPage />} />
+          <Route path="/produtos/vendas" element={<SaleListPage />} />
+          <Route path="/produtos/vendas/nova" element={<SaleFormPage />} />
+          <Route path="/financeiro" element={<FinanceiroPage />} />
           <Route path="/escola" element={<SchoolSettingsPage />} />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />

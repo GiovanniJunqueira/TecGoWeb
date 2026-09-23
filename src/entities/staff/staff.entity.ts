@@ -38,7 +38,14 @@ export type Permission =
   | "AULAS_FAZER_CHAMADA"
   | "AULAS_EDITAR_CHAMADA_PASSADA"
   | "AULAS_EXCLUIR_SESSAO"
-  | "AULAS_GERAR_RELATORIO";
+  | "AULAS_GERAR_RELATORIO"
+  | "PRODUTOS_VER"
+  | "PRODUTOS_CRIAR"
+  | "PRODUTOS_EDITAR"
+  | "PRODUTOS_INATIVAR"
+  | "PRODUTOS_REATIVAR"
+  | "PRODUTOS_VENDER"
+  | "PRODUTOS_EXCLUIR_VENDA";
 
 export interface StaffMember {
   id: string;
@@ -122,6 +129,18 @@ export const PERMISSION_GROUPS: {
       { value: "AULAS_EDITAR_CHAMADA_PASSADA", label: "Editar chamada de aula passada" },
       { value: "AULAS_EXCLUIR_SESSAO", label: "Excluir aula/sessão" },
       { value: "AULAS_GERAR_RELATORIO", label: "Gerar relatório de aulas" },
+    ],
+  },
+  {
+    module: "Produtos",
+    permissions: [
+      { value: "PRODUTOS_VER", label: "Ver produtos e vendas" },
+      { value: "PRODUTOS_CRIAR", label: "Cadastrar produto" },
+      { value: "PRODUTOS_EDITAR", label: "Editar produto" },
+      { value: "PRODUTOS_INATIVAR", label: "Inativar produto" },
+      { value: "PRODUTOS_REATIVAR", label: "Reativar produto" },
+      { value: "PRODUTOS_VENDER", label: "Registrar venda" },
+      { value: "PRODUTOS_EXCLUIR_VENDA", label: "Excluir venda" },
     ],
   },
 ];

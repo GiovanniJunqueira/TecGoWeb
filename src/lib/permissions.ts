@@ -37,6 +37,12 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/aulas/:id/relatorio", permission: "AULAS_GERAR_RELATORIO" },
   { pattern: "/aulas/:id", permission: "AULAS_VER_GRUPOS" },
   { pattern: "/aulas", permission: "AULAS_VER_GRUPOS" },
+
+  { pattern: "/produtos/novo", permission: "PRODUTOS_CRIAR" },
+  { pattern: "/produtos/editar/:id", permission: "PRODUTOS_EDITAR" },
+  { pattern: "/produtos/vendas/nova", permission: "PRODUTOS_VENDER" },
+  { pattern: "/produtos/vendas", permission: "PRODUTOS_VER" },
+  { pattern: "/produtos", permission: "PRODUTOS_VER" },
 ];
 
 // Rotas sempre liberadas para qualquer usuário autenticado, independente de permissão
@@ -53,6 +59,7 @@ const STAFF_LANDING_PRIORITY: { path: string; permission: Permission }[] = [
   { path: "/jogos", permission: "JOGOS_VER" },
   { path: "/aulas", permission: "AULAS_VER_GRUPOS" },
   { path: "/responsaveis", permission: "RESPONSAVEIS_VER" },
+  { path: "/produtos", permission: "PRODUTOS_VER" },
 ];
 
 export function getStaffLandingPath(permissions: Permission[]): string {
