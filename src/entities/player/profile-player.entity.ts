@@ -1,3 +1,5 @@
+import type { PaymentPlan } from "@/entities/paymentplan/payment-plan.entity";
+
 export interface ProfilePlayer {
   id: string;
   firstname: string;
@@ -27,8 +29,6 @@ export interface ProfilePlayer {
   paymentPlan?: PaymentPlan | null;
 }
 
-export type PaymentPlan = "PLANO_2X" | "PLANO_3X";
-
 export interface PlayerReport {
   id: string;
   firstname: string;
@@ -41,7 +41,7 @@ export interface PlayerReport {
   phoneNumber?: string | null;
   address?: string | null;
   college?: string | null;
-  paymentPlan?: PaymentPlan | null;
+  paymentPlanName?: string | null;
   responsibleNames?: string | null;
   aulaGrupoName?: string | null;
   isDeleted: boolean;

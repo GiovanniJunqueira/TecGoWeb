@@ -7,8 +7,10 @@ import { LayoutContent } from "@/layouts/layout.content";
 import { PlayerService } from "@/services/player/player.service";
 import { ResponsibleService } from "@/services/responsible/responsible.service";
 import { AulaGrupoService } from "@/services/aula/aula.service";
+import { PaymentPlanService } from "@/services/paymentplan/payment-plan.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
 import type { AulaGrupo } from "@/entities/aula/aula.entity";
+import type { PaymentPlan } from "@/entities/paymentplan/payment-plan.entity";
 import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { playerSchema, type PlayerFormData } from "@/validators";
@@ -45,6 +47,7 @@ export default function PlayerCreateFormPage() {
     document: "",
   });
   const [aulaGrupos, setAulaGrupos] = useState<AulaGrupo[]>([]);
+  const [paymentPlans, setPaymentPlans] = useState<PaymentPlan[]>([]);
   const form = useForm<PlayerFormData>({
     resolver: yupResolver(playerSchema) as Resolver<PlayerFormData>,
     defaultValues: {
@@ -63,7 +66,7 @@ export default function PlayerCreateFormPage() {
       registrationId: "",
       turma: "",
       aulaGrupoId: "",
-      paymentPlan: undefined,
+      paymentPlanId: "",
       college: "",
       collegeAddress: "",
       collegeNeighborhood: "",
@@ -118,7 +121,7 @@ export default function PlayerCreateFormPage() {
           registrationId: data.registrationId ?? "",
           turma: data.turma ?? "",
           aulaGrupoId: aulaGruposDoAluno[0]?.id ?? "",
-          paymentPlan: data.paymentPlan ?? undefined,
+          paymentPlanId: data.paymentPlan?.id ?? "",
         });
       } catch {
         toast.error("Não foi possível carregar o atleta");
@@ -162,6 +165,18 @@ export default function PlayerCreateFormPage() {
       }
     }
     loadAulaGrupos();
+  }, []);
+
+  useEffect(() => {
+    async function loadPaymentPlans() {
+      try {
+        const data = await PaymentPlanService.findAll("ATIVOS");
+        setPaymentPlans(data ?? []);
+      } catch {
+        toast.error("Falha ao carregar planos de pagamento");
+      }
+    }
+    loadPaymentPlans();
   }, []);
 
   const onSubmit: SubmitHandler<PlayerFormData> = async (data) => {
@@ -343,7 +358,7 @@ export default function PlayerCreateFormPage() {
             />
             <FormField
               control={form.control}
-              name="paymentPlan"
+              name="paymentPlanId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Plano de pagamento</FormLabel>
@@ -354,12 +369,12 @@ export default function PlayerCreateFormPage() {
                       onChange={(e) => field.onChange(e.target.value || undefined)}
                     >
                       <option value="">Selecione o plano</option>
-                      <option value="PLANO_2X">
-                        2x por semana (R$ 100 até dia 10 / R$ 120 após)
-                      </option>
-                      <option value="PLANO_3X">
-                        3x por semana (R$ 120 até dia 10 / R$ 150 após)
-                      </option>
+                      {paymentPlans.map((plan) => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.name} (R$ {plan.priceOnTime.toFixed(2)} até dia 10 / R${" "}
+                          {plan.priceLate.toFixed(2)} após)
+                        </option>
+                      ))}
                     </select>
                   </FormControl>
                   <FormMessage />

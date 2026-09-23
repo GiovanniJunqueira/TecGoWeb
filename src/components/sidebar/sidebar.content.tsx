@@ -209,6 +209,12 @@ const data = {
       icon: Settings,
       description: "Dados e logo da escola.",
     },
+    {
+      title: "Planos de Pagamento",
+      url: "/planos-pagamento",
+      icon: Wallet,
+      description: "Cadastro dos planos de mensalidade da escola.",
+    },
   ] satisfies NavItem[],
   navMaster: [
     {

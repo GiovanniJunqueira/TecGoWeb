@@ -14,11 +14,6 @@ const statusLabels: Record<string, string> = {
   TODOS: "Todos",
 };
 
-const paymentPlanLabels: Record<string, string> = {
-  PLANO_2X: "2x por semana",
-  PLANO_3X: "3x por semana",
-};
-
 function formatCell(key: string, player: PlayerReport): string {
   switch (key) {
     case "matricula":
@@ -38,7 +33,7 @@ function formatCell(key: string, player: PlayerReport): string {
     case "responsavel":
       return player.responsibleNames || "-";
     case "plano":
-      return player.paymentPlan ? paymentPlanLabels[player.paymentPlan] ?? player.paymentPlan : "-";
+      return player.paymentPlanName || "-";
     case "grupo":
       return player.aulaGrupoName || "-";
     case "instituicao":

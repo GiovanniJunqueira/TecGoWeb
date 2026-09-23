@@ -34,6 +34,8 @@ import ProductFormPage from "./pages/operational/product/product.form.page";
 import SaleListPage from "./pages/operational/product/sale.list.page";
 import SaleFormPage from "./pages/operational/product/sale.form.page";
 import FinanceiroPage from "./pages/financeiro/financeiro.page";
+import PaymentPlanListPage from "./pages/paymentplan/payment-plan.list.page";
+import PaymentPlanFormPage from "./pages/paymentplan/payment-plan.form.page";
 
 export const Router = () => {
   return (
@@ -82,6 +84,9 @@ export const Router = () => {
           <Route path="/produtos/vendas" element={<SaleListPage />} />
           <Route path="/produtos/vendas/nova" element={<SaleFormPage />} />
           <Route path="/financeiro" element={<FinanceiroPage />} />
+          <Route path="/planos-pagamento" element={<PaymentPlanListPage />} />
+          <Route path="/planos-pagamento/novo" element={<PaymentPlanFormPage />} />
+          <Route path="/planos-pagamento/editar/:id" element={<PaymentPlanFormPage />} />
           <Route path="/escola" element={<SchoolSettingsPage />} />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />

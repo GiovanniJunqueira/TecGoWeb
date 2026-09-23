@@ -87,13 +87,7 @@ export default function PlayerDetailsPage() {
           </div>
           <div>
             <div className="text-sm text-muted-foreground">Plano de pagamento</div>
-            <div className="font-medium">
-              {player.paymentPlan === "PLANO_2X"
-                ? "2x por semana"
-                : player.paymentPlan === "PLANO_3X"
-                ? "3x por semana"
-                : "-"}
-            </div>
+            <div className="font-medium">{player.paymentPlan?.name ?? "-"}</div>
           </div>
           <div>
             <div className="text-sm text-muted-foreground">Telefone</div>
