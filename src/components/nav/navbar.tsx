@@ -33,17 +33,26 @@ export function Navbar({ label, items }: NavbarProps) {
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
-              <SidebarMenuButton
-                isActive={pathname === item.url}
-                tooltip={item.title}
-                onClick={() => {
-                  if (isMobile)  setOpenMobile(false);
-                  navigate(item.url);
-                }}
-              >
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
+              {item.items?.length ? (
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton isActive={pathname === item.url} tooltip={item.title}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              ) : (
+                <SidebarMenuButton
+                  isActive={pathname === item.url}
+                  tooltip={item.title}
+                  onClick={() => {
+                    if (isMobile) setOpenMobile(false);
+                    navigate(item.url);
+                  }}
+                >
+                  <item.icon />
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              )}
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>

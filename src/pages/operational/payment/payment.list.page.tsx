@@ -150,11 +150,7 @@ export default function PaymentListPage() {
 
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Mês</Label>
-            <Input
-              value={newMonth}
-              onChange={(e) => setNewMonth(e.target.value)}
-              placeholder="Ex: 2025-01"
-            />
+            <Input type="month" value={newMonth} onChange={(e) => setNewMonth(e.target.value)} />
           </div>
 
           <Button onClick={onCreatePayment} disabled={creating}>
