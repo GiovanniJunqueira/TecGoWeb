@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResponsibleService } from "@/services/responsible/responsible.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { ResponsibleFormDialog } from "@/components/responsible/responsible-form-dialog";
+import { ResponsibleDetailsDialog } from "@/components/responsible/responsible-details-dialog";
 
 export default function ResponsibleListPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [studentName, setStudentName] = useState("");
-  const navigate = useNavigate();
   const deleteDialog = useConfirmDialog();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   async function load() {
     try {
@@ -34,6 +39,29 @@ export default function ResponsibleListPage() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const verId = searchParams.get("verId");
+    const novo = searchParams.get("novo");
+
+    if (verId) {
+      setViewingId(verId);
+    } else if (novo) {
+      setEditingId(null);
+      setFormOpen(true);
+    }
+
+    if (verId || novo) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("verId");
+        next.delete("novo");
+        return next;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDelete = async (id: string) => {
@@ -50,7 +78,14 @@ export default function ResponsibleListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Responsáveis</Label>
-        <Button onClick={() => navigate("/responsaveis/novo")}>Novo responsável</Button>
+        <Button
+          onClick={() => {
+            setEditingId(null);
+            setFormOpen(true);
+          }}
+        >
+          Novo responsável
+        </Button>
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
@@ -111,17 +146,16 @@ export default function ResponsibleListPage() {
                       : "-"}
                   </td>
                   <td className="p-3 text-right space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/responsaveis/${r.id}`)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setViewingId(r.id)}>
                       Ver
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/responsaveis/editar/${r.id}`)}
+                      onClick={() => {
+                        setEditingId(r.id);
+                        setFormOpen(true);
+                      }}
                     >
                       Editar
                     </Button>
@@ -146,6 +180,23 @@ export default function ResponsibleListPage() {
         title="Excluir responsável?"
         description="Essa ação não pode ser desfeita."
         onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
+
+      <ResponsibleFormDialog
+        open={formOpen}
+        responsibleId={editingId}
+        onOpenChange={setFormOpen}
+        onSaved={load}
+      />
+
+      <ResponsibleDetailsDialog
+        responsibleId={viewingId}
+        onOpenChange={(open) => !open && setViewingId(null)}
+        onEdit={(id) => {
+          setViewingId(null);
+          setEditingId(id);
+          setFormOpen(true);
+        }}
       />
     </LayoutContent>
   );

@@ -17,9 +17,6 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/atletas/:id", permission: "ATLETAS_VER" },
   { pattern: "/atletas", permission: "ATLETAS_VER" },
 
-  { pattern: "/responsaveis/novo", permission: "RESPONSAVEIS_CRIAR" },
-  { pattern: "/responsaveis/editar/:id", permission: "RESPONSAVEIS_EDITAR" },
-  { pattern: "/responsaveis/:id", permission: "RESPONSAVEIS_VER" },
   { pattern: "/responsaveis", permission: "RESPONSAVEIS_VER" },
 
   { pattern: "/pagamentos", permission: "PAGAMENTOS_VER" },
@@ -38,9 +35,6 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/aulas/:id", permission: "AULAS_VER_GRUPOS" },
   { pattern: "/aulas", permission: "AULAS_VER_GRUPOS" },
 
-  { pattern: "/produtos/novo", permission: "PRODUTOS_CRIAR" },
-  { pattern: "/produtos/editar/:id", permission: "PRODUTOS_EDITAR" },
-  { pattern: "/produtos/vendas/nova", permission: "PRODUTOS_VENDER" },
   { pattern: "/produtos/vendas", permission: "PRODUTOS_VER" },
   { pattern: "/produtos", permission: "PRODUTOS_VER" },
 ];

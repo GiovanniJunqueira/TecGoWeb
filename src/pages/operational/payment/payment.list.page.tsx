@@ -10,6 +10,8 @@ import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { EditPaymentDialog } from "@/components/payment/edit-payment-dialog";
+import { MarkAsPaidDialog } from "@/components/payment/mark-as-paid-dialog";
+import { CreatePaymentDialog } from "@/components/payment/create-payment-dialog";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 
@@ -21,11 +23,6 @@ const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "CARTAO", label: "Cartão" },
 ];
 
-function todayStr(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-}
-
 export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [month, setMonth] = useState<string>("");
@@ -34,12 +31,8 @@ export default function PaymentListPage() {
   const [colorize, setColorize] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newPlayerId, setNewPlayerId] = useState("");
-  const [newMonth, setNewMonth] = useState("");
-  const [creating, setCreating] = useState(false);
-  const [methodDraft, setMethodDraft] = useState<Record<string, PaymentMethod>>({});
-  const [paidAtDraft, setPaidAtDraft] = useState<Record<string, string>>({});
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [markingPaid, setMarkingPaid] = useState<Payment | null>(null);
   const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
   const deleteDialog = useConfirmDialog();
 
@@ -73,44 +66,6 @@ export default function PaymentListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onCreatePayment = async () => {
-    if (!newPlayerId || !newMonth) {
-      toast.error("Selecione o atleta e o mês");
-      return;
-    }
-
-    try {
-      setCreating(true);
-      await PaymentService.create(newPlayerId, newMonth);
-      toast.success("Pagamento lançado com sucesso");
-      setNewPlayerId("");
-      setShowCreateForm(false);
-      if (newMonth === month) {
-        await load();
-      }
-    } catch {
-      toast.error("Não foi possível lançar o pagamento");
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const onMarkAsPaid = async (id: string) => {
-    const method = methodDraft[id];
-    if (!method) {
-      toast.error("Selecione a forma de pagamento");
-      return;
-    }
-
-    try {
-      await PaymentService.markAsPaid(id, method, paidAtDraft[id] || todayStr());
-      toast.success("Pagamento marcado como pago");
-      await load();
-    } catch {
-      toast.error("Não foi possível marcar o pagamento como pago");
-    }
-  };
-
   const onDelete = async (id: string) => {
     try {
       await PaymentService.delete(id);
@@ -125,39 +80,8 @@ export default function PaymentListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Pagamentos</Label>
-        <Button onClick={() => setShowCreateForm((prev) => !prev)}>
-          {showCreateForm ? "Cancelar" : "Novo pagamento"}
-        </Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>Novo pagamento</Button>
       </div>
-
-      {showCreateForm && (
-        <section className="flex flex-wrap items-end gap-4 rounded border p-4">
-          <div className="flex flex-col gap-2">
-            <Label className="text-sm">Atleta</Label>
-            <select
-              className="border rounded px-2 py-1 text-sm min-w-48"
-              value={newPlayerId}
-              onChange={(e) => setNewPlayerId(e.target.value)}
-            >
-              <option value="">Selecione o atleta</option>
-              {players.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.firstname} {p.lastname}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label className="text-sm">Mês</Label>
-            <Input type="month" value={newMonth} onChange={(e) => setNewMonth(e.target.value)} />
-          </div>
-
-          <Button onClick={onCreatePayment} disabled={creating}>
-            {creating ? "Lançando..." : "Lançar pagamento"}
-          </Button>
-        </section>
-      )}
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-2">
@@ -259,43 +183,11 @@ export default function PaymentListPage() {
                       : "-"}
                   </td>
                   <td className="p-3 text-right space-x-2">
-                    {!p.status && (
-                      <>
-                        <select
-                          className="border rounded px-2 py-1 text-sm"
-                          value={methodDraft[p.id] ?? ""}
-                          onChange={(e) =>
-                            setMethodDraft((prev) => ({
-                              ...prev,
-                              [p.id]: e.target.value as PaymentMethod,
-                            }))
-                          }
-                        >
-                          <option value="">Forma de pagamento</option>
-                          {paymentMethodOptions.map((o) => (
-                            <option key={o.value} value={o.value}>
-                              {o.label}
-                            </option>
-                          ))}
-                        </select>
-                        <Input
-                          type="date"
-                          className="h-8 w-40 inline-block"
-                          value={paidAtDraft[p.id] ?? todayStr()}
-                          onChange={(e) =>
-                            setPaidAtDraft((prev) => ({ ...prev, [p.id]: e.target.value }))
-                          }
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onMarkAsPaid(p.id)}
-                        >
-                          Marcar como pago
-                        </Button>
-                      </>
-                    )}
-                    {p.status && (
+                    {!p.status ? (
+                      <Button variant="outline" size="sm" onClick={() => setMarkingPaid(p)}>
+                        Marcar como pago
+                      </Button>
+                    ) : (
                       <Button variant="outline" size="sm" onClick={() => setEditingPayment(p)}>
                         Editar
                       </Button>
@@ -321,6 +213,19 @@ export default function PaymentListPage() {
         title="Excluir pagamento?"
         description="Essa ação não pode ser desfeita."
         onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
+
+      <MarkAsPaidDialog
+        payment={markingPaid}
+        onOpenChange={(open) => !open && setMarkingPaid(null)}
+        onSaved={load}
+      />
+
+      <CreatePaymentDialog
+        open={createDialogOpen}
+        players={players}
+        onOpenChange={setCreateDialogOpen}
+        onSaved={load}
       />
 
       <EditPaymentDialog

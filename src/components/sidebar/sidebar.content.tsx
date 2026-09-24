@@ -102,7 +102,7 @@ const data = {
         },
         {
           title: "Novo Responsável",
-          url: "/responsaveis/novo",
+          url: "/responsaveis?novo=1",
           icon: UserPlus,
           permission: "RESPONSAVEIS_CRIAR",
         },
@@ -183,7 +183,7 @@ const data = {
         },
         {
           title: "Novo Produto",
-          url: "/produtos/novo",
+          url: "/produtos?novo=1",
           icon: PackagePlus,
           permission: "PRODUTOS_CRIAR",
         },
@@ -195,7 +195,7 @@ const data = {
         },
         {
           title: "Registrar Venda",
-          url: "/produtos/vendas/nova",
+          url: "/produtos/vendas?novo=1",
           icon: ShoppingBag,
           permission: "PRODUTOS_VENDER",
         },

@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SaleService } from "@/services/product/sale.service";
 import type { Sale } from "@/entities/product/product.entity";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { SaleFormDialog } from "@/components/product/sale-form-dialog";
 
 const paymentMethodLabels: Record<string, string> = {
   PIX: "PIX",
@@ -29,7 +30,21 @@ export default function SaleListPage() {
   const [month, setMonth] = useState(currentMonth());
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const deleteDialog = useConfirmDialog();
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("novo")) {
+      setSaleDialogOpen(true);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("novo");
+        return next;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function load(targetMonth = month) {
     try {
@@ -68,7 +83,7 @@ export default function SaleListPage() {
           <Button variant="outline" onClick={() => navigate("/produtos")}>
             Ver produtos
           </Button>
-          <Button onClick={() => navigate("/produtos/vendas/nova")}>Registrar venda</Button>
+          <Button onClick={() => setSaleDialogOpen(true)}>Registrar venda</Button>
         </div>
       </div>
 
@@ -139,6 +154,12 @@ export default function SaleListPage() {
         description="Essa ação não pode ser desfeita."
         confirmLabel="Excluir"
         onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
+      />
+
+      <SaleFormDialog
+        open={saleDialogOpen}
+        onOpenChange={setSaleDialogOpen}
+        onSaved={() => load(month)}
       />
     </LayoutContent>
   );

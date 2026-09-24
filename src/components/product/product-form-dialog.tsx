@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { LayoutContent } from "@/layouts/layout.content";
-import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ProductService } from "@/services/product/product.service";
 import { toast } from "sonner";
 
-export default function ProductFormPage() {
-  const { id } = useParams<{ id: string }>();
-  const isEdit = Boolean(id);
-  const navigate = useNavigate();
+interface ProductFormDialogProps {
+  open: boolean;
+  productId: string | null;
+  onOpenChange: (open: boolean) => void;
+  onSaved: () => void;
+}
 
+export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: ProductFormDialogProps) {
+  const isEdit = Boolean(productId);
   const [form, setForm] = useState({ name: "", description: "", price: "" });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -19,12 +29,20 @@ export default function ProductFormPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!isEdit || !id) return;
+    if (!open) return;
+
+    setPhoto(null);
+
+    if (!productId) {
+      setForm({ name: "", description: "", price: "" });
+      setPhotoUrl(null);
+      return;
+    }
 
     const load = async () => {
       try {
         setLoading(true);
-        const product = await ProductService.findById(id);
+        const product = await ProductService.findById(productId);
         setForm({
           name: product.name ?? "",
           description: product.description ?? "",
@@ -39,7 +57,7 @@ export default function ProductFormPage() {
     };
 
     load();
-  }, [id, isEdit]);
+  }, [open, productId]);
 
   const updateField = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -55,14 +73,15 @@ export default function ProductFormPage() {
     try {
       setSaving(true);
       const payload = { name: form.name, description: form.description, price, photoFile: photo };
-      if (isEdit && id) {
-        await ProductService.update(id, payload);
+      if (isEdit && productId) {
+        await ProductService.update(productId, payload);
         toast.success("Produto atualizado com sucesso");
       } else {
         await ProductService.create(payload);
         toast.success("Produto cadastrado com sucesso");
       }
-      navigate("/produtos");
+      onOpenChange(false);
+      onSaved();
     } catch {
       toast.error("Não foi possível salvar o produto");
     } finally {
@@ -71,27 +90,30 @@ export default function ProductFormPage() {
   };
 
   return (
-    <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">
-        {isEdit ? "Editar produto" : "Novo produto"}
-      </Label>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="max-w-lg">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{isEdit ? "Editar produto" : "Novo produto"}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {isEdit ? "Atualize os dados do produto." : "Cadastre um novo produto da lojinha."}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
 
-      {loading ? (
-        <div>Carregando...</div>
-      ) : (
-        <section className="space-y-4 max-w-2xl">
-          {photoUrl && (
-            <img src={photoUrl} alt={form.name} className="size-24 rounded-lg object-cover" />
-          )}
+        {loading ? (
+          <div>Carregando...</div>
+        ) : (
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+            {photoUrl && (
+              <img src={photoUrl} alt={form.name} className="size-20 rounded-lg object-cover" />
+            )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <Label>Nome do produto</Label>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">Nome do produto</Label>
               <Input value={form.name} onChange={(e) => updateField("name", e.target.value)} />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Preço (R$)</Label>
+              <Label className="text-sm">Preço (R$)</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -100,8 +122,8 @@ export default function ProductFormPage() {
               />
             </div>
 
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <Label>Descrição</Label>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">Descrição</Label>
               <textarea
                 className="border-input flex min-h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                 value={form.description}
@@ -109,8 +131,8 @@ export default function ProductFormPage() {
               />
             </div>
 
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <Label>{photoUrl ? "Trocar foto (opcional)" : "Foto"}</Label>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">{photoUrl ? "Trocar foto (opcional)" : "Foto"}</Label>
               <Input
                 type="file"
                 accept="image/*"
@@ -118,17 +140,17 @@ export default function ProductFormPage() {
               />
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={() => navigate("/produtos")}>
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit} disabled={saving || loading}>
-          {saving ? "Salvando..." : "Salvar"}
-        </Button>
-      </div>
-    </LayoutContent>
+        <AlertDialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit} disabled={saving || loading}>
+            {saving ? "Salvando..." : "Salvar"}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

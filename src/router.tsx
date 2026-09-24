@@ -16,8 +16,6 @@ import GameCreatePage from "./pages/operational/game/game.create.page";
 import GameDetailsPage from "./pages/operational/game/game.details.page";
 import GameAttendancePage from "./pages/operational/game/game.attendance.page";
 import ResponsibleListPage from "./pages/operational/responsible/responsible.list.page";
-import ResponsibleFormPage from "./pages/operational/responsible/responsible.form.page";
-import ResponsibleDetailsPage from "./pages/operational/responsible/responsible.details.page";
 import StaffListPage from "./pages/operational/staff/staff.list.page";
 import StaffFormPage from "./pages/operational/staff/staff.form.page";
 import StaffDetailsPage from "./pages/operational/staff/staff.details.page";
@@ -30,12 +28,9 @@ import AulaSessaoCreatePage from "./pages/operational/aula/aula.sessao.create.pa
 import AulaChamadaPage from "./pages/operational/aula/aula.chamada.page";
 import AulaReportPage from "./pages/operational/aula/aula.report.page";
 import ProductListPage from "./pages/operational/product/product.list.page";
-import ProductFormPage from "./pages/operational/product/product.form.page";
 import SaleListPage from "./pages/operational/product/sale.list.page";
-import SaleFormPage from "./pages/operational/product/sale.form.page";
 import FinanceiroPage from "./pages/financeiro/financeiro.page";
 import PaymentPlanListPage from "./pages/paymentplan/payment-plan.list.page";
-import PaymentPlanFormPage from "./pages/paymentplan/payment-plan.form.page";
 
 export const Router = () => {
   return (
@@ -64,9 +59,6 @@ export const Router = () => {
           <Route path="/atletas" element={<PlayerListPage />} />
           <Route path="/atletas/:id" element={<PlayerDetailsPage />} />
           <Route path="/responsaveis" element={<ResponsibleListPage />} />
-          <Route path="/responsaveis/novo" element={<ResponsibleFormPage />} />
-          <Route path="/responsaveis/editar/:id" element={<ResponsibleFormPage />} />
-          <Route path="/responsaveis/:id" element={<ResponsibleDetailsPage />} />
           <Route path="/profissionais" element={<StaffListPage />} />
           <Route path="/profissionais/novo" element={<StaffFormPage />} />
           <Route path="/profissionais/editar/:id" element={<StaffFormPage />} />
@@ -79,14 +71,9 @@ export const Router = () => {
           <Route path="/aulas/:id" element={<AulaGrupoDetailsPage />} />
           <Route path="/aulas/sessoes/:sessaoId/chamada" element={<AulaChamadaPage />} />
           <Route path="/produtos" element={<ProductListPage />} />
-          <Route path="/produtos/novo" element={<ProductFormPage />} />
-          <Route path="/produtos/editar/:id" element={<ProductFormPage />} />
           <Route path="/produtos/vendas" element={<SaleListPage />} />
-          <Route path="/produtos/vendas/nova" element={<SaleFormPage />} />
           <Route path="/financeiro" element={<FinanceiroPage />} />
           <Route path="/planos-pagamento" element={<PaymentPlanListPage />} />
-          <Route path="/planos-pagamento/novo" element={<PaymentPlanFormPage />} />
-          <Route path="/planos-pagamento/editar/:id" element={<PaymentPlanFormPage />} />
           <Route path="/escola" element={<SchoolSettingsPage />} />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />

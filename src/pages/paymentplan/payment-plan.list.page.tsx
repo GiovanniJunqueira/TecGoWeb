@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { PaymentPlanService } from "@/services/paymentplan/payment-plan.service";
 import type { PaymentPlan } from "@/entities/paymentplan/payment-plan.entity";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { PaymentPlanFormDialog } from "@/components/paymentplan/payment-plan-form-dialog";
 
 type Tab = "ATIVOS" | "INATIVOS";
 
@@ -18,7 +18,8 @@ export default function PaymentPlanListPage() {
   const [tab, setTab] = useState<Tab>("ATIVOS");
   const [plans, setPlans] = useState<PaymentPlan[]>([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
 
   async function load(targetTab: Tab = tab) {
     try {
@@ -61,7 +62,14 @@ export default function PaymentPlanListPage() {
     <LayoutContent className="gap-6">
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Planos de Pagamento</Label>
-        <Button onClick={() => navigate("/planos-pagamento/novo")}>Novo plano</Button>
+        <Button
+          onClick={() => {
+            setEditingPlanId(null);
+            setFormOpen(true);
+          }}
+        >
+          Novo plano
+        </Button>
       </div>
 
       <SegmentedControl
@@ -106,7 +114,10 @@ export default function PaymentPlanListPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/planos-pagamento/editar/${p.id}`)}
+                      onClick={() => {
+                        setEditingPlanId(p.id);
+                        setFormOpen(true);
+                      }}
                     >
                       Editar
                     </Button>
@@ -126,6 +137,13 @@ export default function PaymentPlanListPage() {
           </tbody>
         </table>
       </div>
+
+      <PaymentPlanFormDialog
+        open={formOpen}
+        planId={editingPlanId}
+        onOpenChange={setFormOpen}
+        onSaved={() => load(tab)}
+      />
     </LayoutContent>
   );
 }

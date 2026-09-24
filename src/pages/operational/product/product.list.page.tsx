@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ProductService } from "@/services/product/product.service";
 import type { Product } from "@/entities/product/product.entity";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { ProductFormDialog } from "@/components/product/product-form-dialog";
+import { SaleFormDialog } from "@/components/product/sale-form-dialog";
 
 type Tab = "ATIVOS" | "INATIVOS";
 
@@ -15,10 +17,14 @@ function formatPrice(value: number): string {
 }
 
 export default function ProductListPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<Tab>("ATIVOS");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [sellingProductId, setSellingProductId] = useState<string | null>(null);
+  const [saleDialogOpen, setSaleDialogOpen] = useState(false);
 
   async function load(targetTab: Tab = tab) {
     try {
@@ -36,6 +42,19 @@ export default function ProductListPage() {
     load(tab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  useEffect(() => {
+    if (searchParams.get("novo")) {
+      setEditingProductId(null);
+      setFormOpen(true);
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("novo");
+        return next;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onDeactivate = async (id: string) => {
     try {
@@ -62,10 +81,15 @@ export default function ProductListPage() {
       <div className="flex items-center justify-between">
         <Label className="text-2xl font-semibold">Produtos</Label>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate("/produtos/vendas")}>
-            Ver vendas
+          <Button
+            variant="outline"
+            onClick={() => {
+              setEditingProductId(null);
+              setFormOpen(true);
+            }}
+          >
+            Novo produto
           </Button>
-          <Button onClick={() => navigate("/produtos/novo")}>Novo produto</Button>
         </div>
       </div>
 
@@ -106,7 +130,10 @@ export default function ProductListPage() {
                 {tab === "ATIVOS" && (
                   <Button
                     size="sm"
-                    onClick={() => navigate(`/produtos/vendas/nova?produtoId=${p.id}`)}
+                    onClick={() => {
+                      setSellingProductId(p.id);
+                      setSaleDialogOpen(true);
+                    }}
                   >
                     Vender
                   </Button>
@@ -114,7 +141,10 @@ export default function ProductListPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/produtos/editar/${p.id}`)}
+                  onClick={() => {
+                    setEditingProductId(p.id);
+                    setFormOpen(true);
+                  }}
                 >
                   Editar
                 </Button>
@@ -132,6 +162,20 @@ export default function ProductListPage() {
           ))}
         </div>
       )}
+
+      <ProductFormDialog
+        open={formOpen}
+        productId={editingProductId}
+        onOpenChange={setFormOpen}
+        onSaved={() => load(tab)}
+      />
+
+      <SaleFormDialog
+        open={saleDialogOpen}
+        defaultProductId={sellingProductId}
+        onOpenChange={setSaleDialogOpen}
+        onSaved={() => load(tab)}
+      />
     </LayoutContent>
   );
 }

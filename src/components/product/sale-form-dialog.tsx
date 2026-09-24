@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { LayoutContent } from "@/layouts/layout.content";
-import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { ProductService } from "@/services/product/product.service";
 import { SaleService } from "@/services/product/sale.service";
@@ -25,13 +31,17 @@ function formatPrice(value: number): string {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export default function SaleFormPage() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+interface SaleFormDialogProps {
+  open: boolean;
+  defaultProductId?: string | null;
+  onOpenChange: (open: boolean) => void;
+  onSaved: () => void;
+}
 
+export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }: SaleFormDialogProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
-  const [productId, setProductId] = useState(searchParams.get("produtoId") ?? "");
+  const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("PIX");
   const [buyerType, setBuyerType] = useState<BuyerType>("ALUNO");
@@ -42,6 +52,16 @@ export default function SaleFormPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!open) return;
+
+    setQuantity("1");
+    setPaymentMethod("PIX");
+    setBuyerType("ALUNO");
+    setPlayerSearch("");
+    setBuyerPlayerId("");
+    setBuyerName("");
+    setProductId(defaultProductId ?? "");
+
     async function load() {
       try {
         setLoading(true);
@@ -58,7 +78,7 @@ export default function SaleFormPage() {
       }
     }
     load();
-  }, []);
+  }, [open, defaultProductId]);
 
   const selectedProduct = products.find((p) => p.id === productId);
   const qty = Number(quantity) || 0;
@@ -98,7 +118,8 @@ export default function SaleFormPage() {
         buyerName: buyerType === "OUTRO" ? buyerName : undefined,
       });
       toast.success("Venda registrada com sucesso");
-      navigate("/produtos/vendas");
+      onOpenChange(false);
+      onSaved();
     } catch {
       toast.error("Não foi possível registrar a venda");
     } finally {
@@ -107,16 +128,19 @@ export default function SaleFormPage() {
   };
 
   return (
-    <LayoutContent className="gap-6">
-      <Label className="text-2xl font-semibold">Registrar venda</Label>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="max-w-lg">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Registrar venda</AlertDialogTitle>
+          <AlertDialogDescription>Escolha o produto e quem comprou.</AlertDialogDescription>
+        </AlertDialogHeader>
 
-      {loading ? (
-        <div>Carregando...</div>
-      ) : (
-        <section className="space-y-6 max-w-2xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2 md:col-span-2">
-              <Label>Produto</Label>
+        {loading ? (
+          <div>Carregando...</div>
+        ) : (
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm">Produto</Label>
               <select
                 className="border rounded px-2 py-1 text-sm h-9"
                 value={productId}
@@ -131,61 +155,57 @@ export default function SaleFormPage() {
               </select>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>Quantidade</Label>
-              <Input
-                type="number"
-                min={1}
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Quantidade</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>Forma de pagamento</Label>
-              <select
-                className="border rounded px-2 py-1 text-sm h-9"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-              >
-                {paymentMethodOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Forma de pagamento</Label>
+                <select
+                  className="border rounded px-2 py-1 text-sm h-9"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                >
+                  {paymentMethodOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {selectedProduct && (
-              <div className="md:col-span-2 text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 Total: <span className="font-semibold text-foreground">{formatPrice(total)}</span>
               </div>
             )}
-          </div>
 
-          <div className="space-y-3">
-            <Label>Comprador</Label>
-            <SegmentedControl
-              value={buyerType}
-              onChange={setBuyerType}
-              options={[
-                { value: "ALUNO", label: "Aluno" },
-                { value: "OUTRO", label: "Outra pessoa" },
-              ]}
-            />
+            <div className="space-y-3">
+              <Label className="text-sm">Comprador</Label>
+              <SegmentedControl
+                value={buyerType}
+                onChange={setBuyerType}
+                options={[
+                  { value: "ALUNO", label: "Aluno" },
+                  { value: "OUTRO", label: "Outra pessoa" },
+                ]}
+              />
 
-            {buyerType === "ALUNO" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label className="text-sm">Buscar aluno</Label>
+              {buyerType === "ALUNO" ? (
+                <div className="grid grid-cols-1 gap-4">
                   <Input
                     value={playerSearch}
                     onChange={(e) => setPlayerSearch(e.target.value)}
-                    placeholder="Buscar por nome"
+                    placeholder="Buscar aluno por nome"
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label className="text-sm">Aluno</Label>
                   <select
                     className="border rounded px-2 py-1 text-sm h-9"
                     value={buyerPlayerId}
@@ -199,25 +219,26 @@ export default function SaleFormPage() {
                     ))}
                   </select>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2 max-w-sm">
-                <Label className="text-sm">Nome do comprador</Label>
-                <Input value={buyerName} onChange={(e) => setBuyerName(e.target.value)} />
-              </div>
-            )}
+              ) : (
+                <Input
+                  value={buyerName}
+                  onChange={(e) => setBuyerName(e.target.value)}
+                  placeholder="Nome do comprador"
+                />
+              )}
+            </div>
           </div>
-        </section>
-      )}
+        )}
 
-      <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={() => navigate("/produtos/vendas")}>
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit} disabled={saving || loading}>
-          {saving ? "Salvando..." : "Registrar venda"}
-        </Button>
-      </div>
-    </LayoutContent>
+        <AlertDialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit} disabled={saving || loading}>
+            {saving ? "Salvando..." : "Registrar venda"}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

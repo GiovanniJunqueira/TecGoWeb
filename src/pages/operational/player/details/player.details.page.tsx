@@ -137,7 +137,7 @@ export default function PlayerDetailsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => navigate(`/responsaveis/${r.id}`)}
+                            onClick={() => navigate(`/responsaveis?verId=${r.id}`)}
                           >
                             Ver responsável
                           </Button>
