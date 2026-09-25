@@ -77,9 +77,9 @@ export default function SaleListPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Vendas</Label>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => navigate("/produtos")}>
             Ver produtos
           </Button>

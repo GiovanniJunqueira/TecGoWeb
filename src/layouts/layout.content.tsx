@@ -18,7 +18,7 @@ export function LayoutContent({
       <LayoutContentHeader  />
 
       <div className="flex flex-col h-full mt-16 overflow-auto min-w-0">
-        <div className="flex-1 p-6 min-w-0">
+        <div className="flex-1 p-4 sm:p-6 min-w-0">
           <div className={cn("flex flex-col min-w-0", className)}>{children}</div>
         </div>
       </div>

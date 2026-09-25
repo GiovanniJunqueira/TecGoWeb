@@ -6,7 +6,7 @@ export function Layout() {
   return (
     <div className="flex h-screen flex-col">
       <SidebarProvider>
-        <div className="flex flex-1 h-full">
+        <div className="flex flex-1 h-full min-w-0">
           <AppSidebar />
 
           <main className="flex-1 w-full min-w-0 relative">

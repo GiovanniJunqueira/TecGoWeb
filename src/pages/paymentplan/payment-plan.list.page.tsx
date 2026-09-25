@@ -60,7 +60,7 @@ export default function PaymentPlanListPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Planos de Pagamento</Label>
         <Button
           onClick={() => {

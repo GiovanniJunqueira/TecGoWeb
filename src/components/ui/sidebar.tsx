@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { PanelLeftIcon } from "lucide-react";
+import { MenuIcon, PanelLeftIcon } from "lucide-react";
 import { environment } from "@/config/environment";
 
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -273,7 +273,7 @@ function SidebarTrigger({
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      className={cn("flex items-center gap-2", className)}
+      className={cn("flex items-center gap-2 px-2", className)}
       onClick={handleClick}
       {...props}
     >
@@ -285,6 +285,7 @@ function SidebarTrigger({
       <span className="truncate text-base font-semibold">
         {environment.DEALERSHIP.NAME}
       </span>
+      <MenuIcon className="size-5 text-muted-foreground" />
     </Button>
   ) : (
     <Button

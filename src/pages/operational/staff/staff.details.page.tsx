@@ -41,9 +41,9 @@ export default function StaffDetailsPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Detalhes do Profissional</Label>
-        <div className="space-x-2">
+        <div className="flex flex-wrap gap-2">
           {id && (
             <Button onClick={() => navigate(`/profissionais/editar/${id}`)}>Editar</Button>
           )}

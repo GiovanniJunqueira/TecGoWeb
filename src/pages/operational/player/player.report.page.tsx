@@ -94,9 +94,9 @@ export default function PlayerReportPage() {
         }
       `}</style>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Relatório de Atletas</Label>
-        <div className="space-x-2">
+        <div className="flex flex-wrap gap-2">
           <Button onClick={() => window.print()}>Imprimir</Button>
           <Button variant="outline" onClick={() => navigate(-1)}>
             Voltar

@@ -52,9 +52,9 @@ export default function AulaGrupoDetailsPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">{grupo?.name ?? "Grupo de aula"}</Label>
-        <div className="space-x-2">
+        <div className="flex flex-wrap gap-2">
           {id && (
             <>
               <Button variant="outline" onClick={() => navigate(`/aulas/editar/${id}`)}>

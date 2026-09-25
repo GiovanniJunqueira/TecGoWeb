@@ -85,9 +85,9 @@ export default function PlayerListPage() {
 
   return (
     <LayoutContent className="gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Atletas</Label>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => setPrintDialogOpen(true)}>
             Imprimir
           </Button>
