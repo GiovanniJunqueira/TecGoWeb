@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GameService } from "@/services/game/game.service";
-import type { Game, GameCategory, GameType } from "@/entities/game/game.entity";
+import { GAME_CATEGORY_OPTIONS, type Game, type GameCategory, type GameType } from "@/entities/game/game.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
@@ -15,13 +15,7 @@ const gameTypes: { value: GameType; label: string }[] = [
   { value: "FRIENDLY", label: "Amistoso" },
 ];
 
-const gameCategories: { value: GameCategory; label: string }[] = [
-  { value: "SUB_9", label: "Sub-9" },
-  { value: "SUB_11", label: "Sub-11" },
-  { value: "SUB_13", label: "Sub-13" },
-  { value: "SUB_15", label: "Sub-15" },
-  { value: "SUB_17", label: "Sub-17" },
-];
+const gameCategories = GAME_CATEGORY_OPTIONS;
 
 type Tab = "futuros" | "passados";
 

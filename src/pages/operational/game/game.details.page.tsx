@@ -4,16 +4,10 @@ import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { GameService } from "@/services/game/game.service";
-import type { Game, GameCategory } from "@/entities/game/game.entity";
+import { GAME_CATEGORY_OPTIONS, type Game } from "@/entities/game/game.entity";
 import { toast } from "sonner";
 
-const gameCategories: { value: GameCategory; label: string }[] = [
-  { value: "SUB_9", label: "Sub-9" },
-  { value: "SUB_11", label: "Sub-11" },
-  { value: "SUB_13", label: "Sub-13" },
-  { value: "SUB_15", label: "Sub-15" },
-  { value: "SUB_17", label: "Sub-17" },
-];
+const gameCategories = GAME_CATEGORY_OPTIONS;
 
 export default function GameDetailsPage() {
   const { id } = useParams<{ id: string }>();
