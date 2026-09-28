@@ -28,7 +28,6 @@ export default function PaymentListPage() {
   const [month, setMonth] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("TODOS");
-  const [colorize, setColorize] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [players, setPlayers] = useState<ProfilePlayer[]>([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -62,9 +61,13 @@ export default function PaymentListPage() {
       }
     }
     loadPlayers();
-    load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter, month]);
 
   const onDelete = async (id: string) => {
     try {
@@ -89,6 +92,7 @@ export default function PaymentListPage() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && load()}
             placeholder="Nome do aluno ou do responsável"
             className="min-w-64"
           />
@@ -114,18 +118,6 @@ export default function PaymentListPage() {
               { value: "PAGOS", label: "Pagos" },
             ]}
           />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <input
-            id="colorize"
-            type="checkbox"
-            checked={colorize}
-            onChange={(e) => setColorize(e.target.checked)}
-          />
-          <Label htmlFor="colorize" className="text-sm">
-            Colorir linhas
-          </Label>
         </div>
 
         <Button onClick={load} disabled={loading}>
@@ -164,10 +156,7 @@ export default function PaymentListPage() {
               payments.map((p) => (
                 <tr
                   key={p.id}
-                  className={cn(
-                    "border-t",
-                    colorize && (p.status ? "bg-green-50" : "bg-red-50")
-                  )}
+                  className={cn("border-t", p.status ? "bg-green-50" : "bg-red-50")}
                 >
                   <td className="p-3">{p.playerName ?? "-"}</td>
                   <td className="p-3">{p.responsibleName ?? "-"}</td>
