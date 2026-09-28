@@ -31,6 +31,7 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/aulas/registrar", permission: "AULAS_REGISTRAR_AULA" },
   { pattern: "/aulas/editar/:id", permission: "AULAS_EDITAR_GRUPO" },
   { pattern: "/aulas/sessoes/:sessaoId/chamada", permission: "AULAS_FAZER_CHAMADA" },
+  { pattern: "/aulas/sessoes", permission: "AULAS_VER_GRUPOS" },
   { pattern: "/aulas/:id/relatorio", permission: "AULAS_GERAR_RELATORIO" },
   { pattern: "/aulas/:id", permission: "AULAS_VER_GRUPOS" },
   { pattern: "/aulas", permission: "AULAS_VER_GRUPOS" },

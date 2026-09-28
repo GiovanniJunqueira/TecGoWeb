@@ -25,6 +25,7 @@ import AulaGrupoListPage from "./pages/operational/aula/aula.grupo.list.page";
 import AulaGrupoFormPage from "./pages/operational/aula/aula.grupo.form.page";
 import AulaGrupoDetailsPage from "./pages/operational/aula/aula.grupo.details.page";
 import AulaSessaoCreatePage from "./pages/operational/aula/aula.sessao.create.page";
+import AulaSessaoListPage from "./pages/operational/aula/aula.sessao.list.page";
 import AulaChamadaPage from "./pages/operational/aula/aula.chamada.page";
 import AulaReportPage from "./pages/operational/aula/aula.report.page";
 import ProductListPage from "./pages/operational/product/product.list.page";
@@ -66,6 +67,7 @@ export const Router = () => {
           <Route path="/aulas" element={<AulaGrupoListPage />} />
           <Route path="/aulas/novo" element={<AulaGrupoFormPage />} />
           <Route path="/aulas/registrar" element={<AulaSessaoCreatePage />} />
+          <Route path="/aulas/sessoes" element={<AulaSessaoListPage />} />
           <Route path="/aulas/editar/:id" element={<AulaGrupoFormPage />} />
           <Route path="/aulas/:id/relatorio" element={<AulaReportPage />} />
           <Route path="/aulas/:id" element={<AulaGrupoDetailsPage />} />

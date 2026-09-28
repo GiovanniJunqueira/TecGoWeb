@@ -43,6 +43,15 @@ export class AulaSessaoService {
     return data;
   }
 
+  public static async findAll(params: {
+    grupoId?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<AulaSessao[]> {
+    const { data } = await api.get<AulaSessao[]>("/api/aulas/sessoes", { params });
+    return data;
+  }
+
   public static async findById(sessaoId: string): Promise<AulaSessao> {
     const { data } = await api.get<AulaSessao>(`/api/aulas/sessoes/${sessaoId}`);
     return data;

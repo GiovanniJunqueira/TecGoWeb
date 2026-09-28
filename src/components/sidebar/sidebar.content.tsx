@@ -1,5 +1,6 @@
 import {
   CalendarCheck,
+  CalendarDays,
   CalendarPlus,
   ClipboardList,
   CreditCard,
@@ -165,6 +166,12 @@ const data = {
           url: "/aulas/registrar",
           icon: CalendarPlus,
           permission: "AULAS_REGISTRAR_AULA",
+        },
+        {
+          title: "Ver Aulas",
+          url: "/aulas/sessoes",
+          icon: CalendarDays,
+          permission: "AULAS_VER_GRUPOS",
         },
       ],
     },
