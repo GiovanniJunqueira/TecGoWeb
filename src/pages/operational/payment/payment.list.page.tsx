@@ -23,9 +23,14 @@ const paymentMethodOptions: { value: PaymentMethod; label: string }[] = [
   { value: "CARTAO", label: "Cartão" },
 ];
 
+function currentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
 export default function PaymentListPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [month, setMonth] = useState<string>("");
+  const [month, setMonth] = useState<string>(currentMonth());
   const [search, setSearch] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("TODOS");
   const [loading, setLoading] = useState<boolean>(false);
