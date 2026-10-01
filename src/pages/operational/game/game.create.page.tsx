@@ -10,6 +10,7 @@ import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
+import { AddGamePlayerDialog } from "@/components/game/add-game-player-dialog";
 
 const gameTypes: { value: GameType; label: string }[] = [
   { value: "CHAMPIONSHIP", label: "Campeonato" },
@@ -49,8 +50,6 @@ export default function GameCreatePage() {
   const [awayScore, setAwayScore] = useState<string>("0");
   const [location, setLocation] = useState<string>("");
   const [players, setPlayers] = useState<PlayerSelection[]>([]);
-  const [minAge, setMinAge] = useState<string>("");
-  const [maxAge, setMaxAge] = useState<string>("");
   const [showAddPlayers, setShowAddPlayers] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -257,12 +256,8 @@ export default function GameCreatePage() {
       <section className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <Label className="text-lg font-semibold">Escalação</Label>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setShowAddPlayers((prev) => !prev)}
-          >
-            {showAddPlayers ? "Fechar" : "Adicionar jogador"}
+          <Button type="button" variant="outline" onClick={() => setShowAddPlayers(true)}>
+            Adicionar jogador
           </Button>
         </div>
 
@@ -338,88 +333,12 @@ export default function GameCreatePage() {
           </table>
         </div>
 
-        {showAddPlayers && (
-          <div className="space-y-4 rounded border p-4">
-            <div className="flex items-end gap-4 flex-wrap">
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm">Idade mínima</Label>
-                <Input
-                  type="number"
-                  className="w-24"
-                  value={minAge}
-                  onChange={(e) => setMinAge(e.target.value)}
-                  placeholder="Ex: 9"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-sm">Idade máxima</Label>
-                <Input
-                  type="number"
-                  className="w-24"
-                  value={maxAge}
-                  onChange={(e) => setMaxAge(e.target.value)}
-                  placeholder="Ex: 11"
-                />
-              </div>
-            </div>
-
-            <div className="overflow-auto max-h-[300px] border rounded">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="p-3 text-left">Nome</th>
-                    <th className="p-3 text-left">Idade</th>
-                    <th className="p-3 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(() => {
-                    const min = minAge ? Number(minAge) : null;
-                    const max = maxAge ? Number(maxAge) : null;
-                    const available = players.filter((p) => {
-                      if (p.selected) return false;
-                      if (min === null && max === null) return true;
-                      const age = calculateAge(p.birthDate);
-                      if (age === null) return false;
-                      if (min !== null && age < min) return false;
-                      if (max !== null && age > max) return false;
-                      return true;
-                    });
-
-                    if (available.length === 0) {
-                      return (
-                        <tr>
-                          <td className="p-3" colSpan={3}>
-                            Nenhum atleta disponível para adicionar
-                          </td>
-                        </tr>
-                      );
-                    }
-
-                    return available.map((p) => (
-                      <tr key={p.id} className="border-t">
-                        <td className="p-3">
-                          {p.firstname} {p.lastname}
-                        </td>
-                        <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
-                        <td className="p-3 text-right">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => togglePlayerSelected(p.id)}
-                          >
-                            Adicionar
-                          </Button>
-                        </td>
-                      </tr>
-                    ));
-                  })()}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        <AddGamePlayerDialog
+          open={showAddPlayers}
+          availablePlayers={players.filter((p) => !p.selected)}
+          onOpenChange={setShowAddPlayers}
+          onAdd={togglePlayerSelected}
+        />
       </section>
 
       <div className="flex justify-end gap-4">
