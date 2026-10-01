@@ -38,11 +38,13 @@ export function AddGamePlayerDialog({
   onOpenChange,
   onAdd,
 }: AddGamePlayerDialogProps) {
+  const [search, setSearch] = useState("");
   const [minAge, setMinAge] = useState("");
   const [maxAge, setMaxAge] = useState("");
 
   useEffect(() => {
     if (open) {
+      setSearch("");
       setMinAge("");
       setMaxAge("");
     }
@@ -50,7 +52,12 @@ export function AddGamePlayerDialog({
 
   const min = minAge ? Number(minAge) : null;
   const max = maxAge ? Number(maxAge) : null;
+  const normalizedSearch = search.trim().toLowerCase();
   const filtered = availablePlayers.filter((p) => {
+    if (normalizedSearch) {
+      const fullName = `${p.firstname} ${p.lastname}`.toLowerCase();
+      if (!fullName.includes(normalizedSearch)) return false;
+    }
     if (min === null && max === null) return true;
     const age = calculateAge(p.birthDate);
     if (age === null) return false;
@@ -69,6 +76,14 @@ export function AddGamePlayerDialog({
 
         <div className="space-y-4">
           <div className="flex items-end gap-4 flex-wrap">
+            <div className="flex flex-col gap-2 flex-1 min-w-48">
+              <Label className="text-sm">Buscar por nome</Label>
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Ex: João"
+              />
+            </div>
             <div className="flex flex-col gap-2">
               <Label className="text-sm">Idade mínima</Label>
               <Input
