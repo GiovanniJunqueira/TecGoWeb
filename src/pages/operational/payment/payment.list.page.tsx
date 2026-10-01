@@ -91,19 +91,19 @@ export default function PaymentListPage() {
         <Button onClick={() => setCreateDialogOpen(true)}>Novo pagamento</Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Buscar por aluno ou responsável</Label>
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && load()}
             placeholder="Nome do aluno ou do responsável"
-            className="min-w-64"
+            className="sm:min-w-64"
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Mês (deixe em branco pra ver todos)</Label>
           <Input
             type="month"
@@ -112,7 +112,7 @@ export default function PaymentListPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Status</Label>
           <SegmentedControl
             value={statusFilter}
@@ -125,7 +125,7 @@ export default function PaymentListPage() {
           />
         </div>
 
-        <Button onClick={load} disabled={loading}>
+        <Button onClick={load} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Carregando..." : "Buscar"}
         </Button>
       </div>

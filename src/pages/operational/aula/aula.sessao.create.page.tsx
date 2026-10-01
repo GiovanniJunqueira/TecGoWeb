@@ -54,11 +54,11 @@ export default function AulaSessaoCreatePage() {
         </Button>
       </div>
 
-      <section className="flex flex-wrap items-end gap-4 max-w-2xl">
-        <div className="flex flex-col gap-2 flex-1 min-w-48">
+      <section className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4 max-w-2xl">
+        <div className="flex flex-col gap-2 w-full sm:flex-1 sm:min-w-48">
           <Label className="text-sm">Grupo</Label>
           <select
-            className="border rounded px-2 py-1 text-sm h-9"
+            className="border rounded px-2 py-1 text-sm w-full h-9"
             value={grupoId}
             onChange={(e) => setGrupoId(e.target.value)}
           >
@@ -71,12 +71,12 @@ export default function AulaSessaoCreatePage() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Data</Label>
           <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </div>
 
-        <Button onClick={onCreate} disabled={creating}>
+        <Button onClick={onCreate} disabled={creating} className="w-full sm:w-auto">
           {creating ? "Registrando..." : "Registrar aula"}
         </Button>
       </section>

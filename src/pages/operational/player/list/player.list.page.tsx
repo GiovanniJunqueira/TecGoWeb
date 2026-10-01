@@ -104,8 +104,8 @@ export default function PlayerListPage() {
         ]}
       />
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2 flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:flex-1 sm:max-w-sm">
           <Label className="text-sm">Buscar por nome ou matrícula</Label>
           <Input
             value={search}
@@ -114,7 +114,7 @@ export default function PlayerListPage() {
             placeholder="Ex: João ou 230501"
           />
         </div>
-        <div className="flex flex-col gap-2 max-w-48">
+        <div className="flex flex-col gap-2 w-full sm:w-auto sm:max-w-48">
           <Label className="text-sm">Nascidos</Label>
           <Input
             value={turmaFilter}
@@ -123,7 +123,12 @@ export default function PlayerListPage() {
             placeholder="Ex: Nascidos 12"
           />
         </div>
-        <Button variant="outline" onClick={() => load(tab, 0, search, turmaFilter)} disabled={loading}>
+        <Button
+          variant="outline"
+          onClick={() => load(tab, 0, search, turmaFilter)}
+          disabled={loading}
+          className="w-full sm:w-auto"
+        >
           Buscar
         </Button>
       </div>

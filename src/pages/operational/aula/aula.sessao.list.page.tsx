@@ -73,11 +73,11 @@ export default function AulaSessaoListPage() {
         <Button onClick={() => navigate("/aulas/registrar")}>Registrar aula</Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2 min-w-48">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:w-auto sm:min-w-48">
           <Label className="text-sm">Turma</Label>
           <select
-            className="border rounded px-2 py-1 text-sm h-9"
+            className="border rounded px-2 py-1 text-sm w-full h-9"
             value={grupoId}
             onChange={(e) => setGrupoId(e.target.value)}
           >
@@ -90,17 +90,17 @@ export default function AulaSessaoListPage() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Data inicial</Label>
           <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Data final</Label>
           <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
         </div>
 
-        <Button variant="outline" onClick={load} disabled={loading}>
+        <Button variant="outline" onClick={load} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Carregando..." : "Filtrar"}
         </Button>
       </div>

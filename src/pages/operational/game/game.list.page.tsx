@@ -78,11 +78,11 @@ export default function GameListPage() {
         ]}
       />
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Tipo</Label>
           <select
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded px-2 py-1 text-sm w-full h-9"
             value={type ?? ""}
             onChange={(e) =>
               setType((e.target.value || undefined) as GameType | undefined)
@@ -97,10 +97,10 @@ export default function GameListPage() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Categoria</Label>
           <select
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded px-2 py-1 text-sm w-full h-9"
             value={category ?? ""}
             onChange={(e) =>
               setCategory(
@@ -117,7 +117,7 @@ export default function GameListPage() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Data inicial</Label>
           <Input
             type="date"
@@ -126,7 +126,7 @@ export default function GameListPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Data final</Label>
           <Input
             type="date"
@@ -135,7 +135,7 @@ export default function GameListPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Adversário</Label>
           <Input
             value={opponentSearch}
@@ -144,7 +144,7 @@ export default function GameListPage() {
           />
         </div>
 
-        <Button onClick={load} disabled={loading}>
+        <Button onClick={load} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Carregando..." : "Filtrar"}
         </Button>
       </div>

@@ -88,8 +88,8 @@ export default function ResponsibleListPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Nome do responsável</Label>
           <Input
             value={name}
@@ -98,7 +98,7 @@ export default function ResponsibleListPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Nome do aluno</Label>
           <Input
             value={studentName}
@@ -107,7 +107,7 @@ export default function ResponsibleListPage() {
           />
         </div>
 
-        <Button onClick={load} disabled={loading}>
+        <Button onClick={load} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Carregando..." : "Filtrar"}
         </Button>
       </div>

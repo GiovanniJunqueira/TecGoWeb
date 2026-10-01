@@ -87,15 +87,20 @@ export default function SaleListPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Mês</Label>
           <Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} />
         </div>
-        <Button variant="outline" onClick={() => load(month)} disabled={loading}>
+        <Button
+          variant="outline"
+          onClick={() => load(month)}
+          disabled={loading}
+          className="w-full sm:w-auto"
+        >
           {loading ? "Carregando..." : "Filtrar"}
         </Button>
-        <div className="ml-auto text-sm text-muted-foreground">
+        <div className="sm:ml-auto text-sm text-muted-foreground">
           Total do mês: <span className="font-semibold text-foreground">{formatPrice(total)}</span>
         </div>
       </div>
