@@ -19,6 +19,7 @@ const KNOWN_LABELS: Record<string, string> = {
   registrar: "Registrar",
   sessoes: "Sessões",
   chamada: "Chamada",
+  lancamentos: "Entradas e Saídas",
 };
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

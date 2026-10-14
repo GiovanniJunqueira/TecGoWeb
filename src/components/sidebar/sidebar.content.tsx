@@ -1,4 +1,5 @@
 import {
+  ArrowLeftRight,
   CalendarCheck,
   CalendarDays,
   CalendarPlus,
@@ -63,7 +64,19 @@ const data = {
       title: "Financeiro",
       url: "/financeiro",
       icon: Wallet,
-      description: "Resumo consolidado de mensalidades e vendas do mês.",
+      description: "Resumo consolidado de mensalidades, vendas, entradas e saídas do mês.",
+      items: [
+        {
+          title: "Resumo do Mês",
+          url: "/financeiro",
+          icon: Eye,
+        },
+        {
+          title: "Entradas e Saídas",
+          url: "/financeiro/lancamentos",
+          icon: ArrowLeftRight,
+        },
+      ],
     },
   ] satisfies NavItem[],
   navOperacional: [

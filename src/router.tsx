@@ -31,6 +31,7 @@ import AulaReportPage from "./pages/operational/aula/aula.report.page";
 import ProductListPage from "./pages/operational/product/product.list.page";
 import SaleListPage from "./pages/operational/product/sale.list.page";
 import FinanceiroPage from "./pages/financeiro/financeiro.page";
+import LedgerPage from "./pages/financeiro/ledger.page";
 import PaymentPlanListPage from "./pages/paymentplan/payment-plan.list.page";
 
 export const Router = () => {
@@ -75,6 +76,7 @@ export const Router = () => {
           <Route path="/produtos" element={<ProductListPage />} />
           <Route path="/produtos/vendas" element={<SaleListPage />} />
           <Route path="/financeiro" element={<FinanceiroPage />} />
+          <Route path="/financeiro/lancamentos" element={<LedgerPage />} />
           <Route path="/planos-pagamento" element={<PaymentPlanListPage />} />
           <Route path="/escola" element={<SchoolSettingsPage />} />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
