@@ -1,11 +1,12 @@
 import { api } from "@/config";
-import type { Product } from "@/entities/product/product.entity";
+import type { Product, StockMovement } from "@/entities/product/product.entity";
 
 export interface ProductFormPayload {
   name: string;
   description: string;
   price: number;
   photoFile?: File | null;
+  initialStock?: number;
 }
 
 export class ProductService {
@@ -24,6 +25,9 @@ export class ProductService {
     formData.append("name", payload.name);
     formData.append("description", payload.description);
     formData.append("price", String(payload.price));
+    if (payload.initialStock) {
+      formData.append("initialStock", String(payload.initialStock));
+    }
     if (payload.photoFile) {
       formData.append("photo", payload.photoFile);
     }
@@ -55,5 +59,20 @@ export class ProductService {
 
   public static async reactivate(id: string): Promise<void> {
     await api.put(`/api/products/${id}/reativar`);
+  }
+
+  public static async addStock(id: string, quantity: number, note?: string): Promise<Product> {
+    const { data } = await api.post<Product>(`/api/products/${id}/estoque/entrada`, { quantity, note });
+    return data;
+  }
+
+  public static async adjustStock(id: string, newQuantity: number, note?: string): Promise<Product> {
+    const { data } = await api.post<Product>(`/api/products/${id}/estoque/ajuste`, { newQuantity, note });
+    return data;
+  }
+
+  public static async findStockMovements(id: string): Promise<StockMovement[]> {
+    const { data } = await api.get<StockMovement[]>(`/api/products/${id}/estoque/movimentos`);
+    return data;
   }
 }

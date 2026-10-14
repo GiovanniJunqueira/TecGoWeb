@@ -22,7 +22,7 @@ interface ProductFormDialogProps {
 
 export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: ProductFormDialogProps) {
   const isEdit = Boolean(productId);
-  const [form, setForm] = useState({ name: "", description: "", price: "" });
+  const [form, setForm] = useState({ name: "", description: "", price: "", initialStock: "" });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: Pr
     setPhoto(null);
 
     if (!productId) {
-      setForm({ name: "", description: "", price: "" });
+      setForm({ name: "", description: "", price: "", initialStock: "" });
       setPhotoUrl(null);
       return;
     }
@@ -47,6 +47,7 @@ export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: Pr
           name: product.name ?? "",
           description: product.description ?? "",
           price: String(product.price ?? ""),
+          initialStock: "",
         });
         setPhotoUrl(product.photoUrl ?? null);
       } catch {
@@ -70,9 +71,15 @@ export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: Pr
       return;
     }
 
+    const initialStock = form.initialStock === "" ? 0 : Number(form.initialStock);
+    if (!isEdit && (!Number.isInteger(initialStock) || initialStock < 0)) {
+      toast.error("O estoque inicial deve ser um número inteiro, 0 ou mais");
+      return;
+    }
+
     try {
       setSaving(true);
-      const payload = { name: form.name, description: form.description, price, photoFile: photo };
+      const payload = { name: form.name, description: form.description, price, photoFile: photo, initialStock };
       if (isEdit && productId) {
         await ProductService.update(productId, payload);
         toast.success("Produto atualizado com sucesso");
@@ -121,6 +128,20 @@ export function ProductFormDialog({ open, productId, onOpenChange, onSaved }: Pr
                 onChange={(e) => updateField("price", e.target.value)}
               />
             </div>
+
+            {!isEdit && (
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Estoque inicial (quantas unidades você tem)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={form.initialStock}
+                  onChange={(e) => updateField("initialStock", e.target.value)}
+                  placeholder="0"
+                />
+              </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <Label className="text-sm">Descrição</Label>

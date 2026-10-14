@@ -9,8 +9,11 @@ import { toast } from "sonner";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { ProductFormDialog } from "@/components/product/product-form-dialog";
 import { SaleFormDialog } from "@/components/product/sale-form-dialog";
+import { StockDialog } from "@/components/product/stock-dialog";
 
 type Tab = "ATIVOS" | "INATIVOS";
+
+const LOW_STOCK_THRESHOLD = 5;
 
 function formatPrice(value: number): string {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -25,6 +28,7 @@ export default function ProductListPage() {
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [sellingProductId, setSellingProductId] = useState<string | null>(null);
   const [saleDialogOpen, setSaleDialogOpen] = useState(false);
+  const [stockProductId, setStockProductId] = useState<string | null>(null);
 
   async function load(targetTab: Tab = tab) {
     try {
@@ -54,7 +58,7 @@ export default function ProductListPage() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const onDeactivate = async (id: string) => {
     try {
@@ -125,11 +129,27 @@ export default function ProductListPage() {
                   <div className="text-sm text-muted-foreground line-clamp-2">{p.description}</div>
                 )}
                 <div className="font-semibold mt-1">{formatPrice(p.price)}</div>
+                <div
+                  className={`text-sm mt-1 font-medium ${
+                    p.stock === 0
+                      ? "text-red-600"
+                      : p.stock <= LOW_STOCK_THRESHOLD
+                        ? "text-amber-600"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {p.stock === 0
+                    ? "Sem estoque"
+                    : p.stock <= LOW_STOCK_THRESHOLD
+                      ? `Estoque baixo: ${p.stock}`
+                      : `Em estoque: ${p.stock}`}
+                </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 {tab === "ATIVOS" && (
                   <Button
                     size="sm"
+                    disabled={p.stock === 0}
                     onClick={() => {
                       setSellingProductId(p.id);
                       setSaleDialogOpen(true);
@@ -138,6 +158,9 @@ export default function ProductListPage() {
                     Vender
                   </Button>
                 )}
+                <Button variant="outline" size="sm" onClick={() => setStockProductId(p.id)}>
+                  Estoque
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -168,6 +191,13 @@ export default function ProductListPage() {
         productId={editingProductId}
         onOpenChange={setFormOpen}
         onSaved={() => load(tab)}
+      />
+
+      <StockDialog
+        open={stockProductId !== null}
+        productId={stockProductId}
+        onOpenChange={(open) => !open && setStockProductId(null)}
+        onChanged={() => load(tab)}
       />
 
       <SaleFormDialog

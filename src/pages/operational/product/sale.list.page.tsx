@@ -44,7 +44,7 @@ export default function SaleListPage() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   async function load(targetMonth = month) {
     try {
@@ -156,7 +156,7 @@ export default function SaleListPage() {
         open={deleteDialog.isOpen}
         onOpenChange={(open) => !open && deleteDialog.close()}
         title="Excluir venda?"
-        description="Essa ação não pode ser desfeita."
+        description="A venda será removida e a quantidade volta para o estoque."
         confirmLabel="Excluir"
         onConfirm={() => deleteDialog.targetId && onDelete(deleteDialog.targetId)}
       />

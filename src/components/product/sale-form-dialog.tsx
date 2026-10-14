@@ -17,6 +17,7 @@ import { PlayerService } from "@/services/player/player.service";
 import type { Product } from "@/entities/product/product.entity";
 import type { PaymentMethod } from "@/entities/payment/payment.entity";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 type BuyerType = "ALUNO" | "OUTRO";
@@ -99,6 +100,10 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
       toast.error("Informe uma quantidade válida");
       return;
     }
+    if (selectedProduct && qty > selectedProduct.stock) {
+      toast.error(`Estoque insuficiente: restam ${selectedProduct.stock} unidade(s)`);
+      return;
+    }
     if (buyerType === "ALUNO" && !buyerPlayerId) {
       toast.error("Selecione o aluno");
       return;
@@ -120,8 +125,9 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
       toast.success("Venda registrada com sucesso");
       onOpenChange(false);
       onSaved();
-    } catch {
-      toast.error("Não foi possível registrar a venda");
+    } catch (error) {
+      const message = error instanceof AxiosError ? error.response?.data?.message : undefined;
+      toast.error(message ?? "Não foi possível registrar a venda");
     } finally {
       setSaving(false);
     }
@@ -148,8 +154,8 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
               >
                 <option value="">Selecione um produto</option>
                 {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} — {formatPrice(p.price)}
+                  <option key={p.id} value={p.id} disabled={p.stock === 0}>
+                    {p.name} — {formatPrice(p.price)} {p.stock === 0 ? "(sem estoque)" : `(estoque: ${p.stock})`}
                   </option>
                 ))}
               </select>
@@ -161,6 +167,7 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
                 <Input
                   type="number"
                   min={1}
+                  max={selectedProduct?.stock}
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                 />

@@ -7,6 +7,18 @@ export interface Product {
   price: number;
   photoUrl: string | null;
   active: boolean;
+  stock: number;
+}
+
+export type StockMovementType = "ENTRADA" | "VENDA" | "ESTORNO" | "AJUSTE";
+
+export interface StockMovement {
+  id: string;
+  type: StockMovementType;
+  quantity: number;
+  balanceAfter: number;
+  note: string | null;
+  createdAt: string;
 }
 
 export interface Sale {

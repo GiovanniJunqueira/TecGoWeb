@@ -62,7 +62,7 @@ export default function ResponsibleListPage() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const onDelete = async (id: string) => {
     try {

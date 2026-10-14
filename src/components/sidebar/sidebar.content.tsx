@@ -208,16 +208,10 @@ const data = {
           permission: "PRODUTOS_CRIAR",
         },
         {
-          title: "Ver Vendas",
+          title: "Vendas",
           url: "/produtos/vendas",
           icon: Receipt,
           permission: "PRODUTOS_VER",
-        },
-        {
-          title: "Registrar Venda",
-          url: "/produtos/vendas?novo=1",
-          icon: ShoppingBag,
-          permission: "PRODUTOS_VENDER",
         },
       ],
     },
