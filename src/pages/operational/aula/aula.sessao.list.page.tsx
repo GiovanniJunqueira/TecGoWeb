@@ -77,7 +77,7 @@ export default function AulaSessaoListPage() {
         <div className="flex flex-col gap-2 w-full sm:w-auto sm:min-w-48">
           <Label className="text-sm">Turma</Label>
           <select
-            className="border rounded px-2 py-1 text-sm w-full h-9"
+            className="border rounded-md px-3 text-sm w-full h-9"
             value={grupoId}
             onChange={(e) => setGrupoId(e.target.value)}
           >
@@ -105,7 +105,7 @@ export default function AulaSessaoListPage() {
         </Button>
       </div>
 
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>

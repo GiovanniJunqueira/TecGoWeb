@@ -105,13 +105,13 @@ export default function LedgerPage() {
         </div>
         <div className="sm:ml-auto text-sm text-muted-foreground">
           Total do mês:{" "}
-          <span className={`font-semibold ${isIncome ? "text-emerald-600" : "text-red-600"}`}>
+          <span className={`font-semibold ${isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
             {formatPrice(total)}
           </span>
         </div>
       </div>
 
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>

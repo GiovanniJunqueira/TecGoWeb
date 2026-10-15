@@ -91,7 +91,7 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Status</Label>
             <select
-              className="border rounded px-3 py-2 text-sm w-full h-9"
+              className="border rounded-md px-3 text-sm w-full h-9"
               value={status}
               onChange={(e) => setStatus(e.target.value as StatusFilter)}
             >
@@ -104,7 +104,7 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Agrupar/filtrar por</Label>
             <select
-              className="border rounded px-3 py-2 text-sm w-full h-9"
+              className="border rounded-md px-3 text-sm w-full h-9"
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value as GroupBy)}
             >
@@ -129,7 +129,7 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
             <div className="flex flex-col gap-2">
               <Label className="text-sm">Grupo de aula</Label>
               <select
-                className="border rounded px-3 py-2 text-sm w-full h-9"
+                className="border rounded-md px-3 text-sm w-full h-9"
                 value={aulaGrupoId}
                 onChange={(e) => setAulaGrupoId(e.target.value)}
               >

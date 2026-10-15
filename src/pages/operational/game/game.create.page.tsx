@@ -181,7 +181,7 @@ export default function GameCreatePage() {
           <div className="flex flex-col gap-2">
             <Label>Tipo</Label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded-md px-3 text-sm"
               value={type ?? ""}
               onChange={(e) =>
                 setType((e.target.value || undefined) as GameType | undefined)
@@ -199,7 +199,7 @@ export default function GameCreatePage() {
           <div className="flex flex-col gap-2">
             <Label>Categoria</Label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded-md px-3 text-sm"
               value={category ?? ""}
               onChange={(e) =>
                 setCategory(
@@ -261,7 +261,7 @@ export default function GameCreatePage() {
           </Button>
         </div>
 
-        <div className="overflow-auto max-h-[400px] border rounded">
+        <div className="overflow-auto max-h-[400px] border rounded-xl">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>

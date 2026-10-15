@@ -70,7 +70,7 @@ export function LedgerCategoriesDialog({ open, type, onOpenChange, onChanged }: 
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <div className="max-h-[50vh] overflow-y-auto rounded border divide-y">
+          <div className="max-h-[50vh] overflow-y-auto rounded-xl border divide-y">
             {loading ? (
               <div className="p-3 text-sm">Carregando...</div>
             ) : categories.length === 0 ? (

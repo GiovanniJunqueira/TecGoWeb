@@ -340,7 +340,7 @@ export default function PlayerCreateFormPage() {
                   <FormLabel>Grupo de aula</FormLabel>
                   <FormControl>
                     <select
-                      className="border rounded px-3 py-2 text-sm w-full h-9"
+                      className="border rounded-md px-3 text-sm w-full h-9"
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     >
@@ -364,7 +364,7 @@ export default function PlayerCreateFormPage() {
                   <FormLabel>Plano de pagamento</FormLabel>
                   <FormControl>
                     <select
-                      className="border rounded px-3 py-2 text-sm w-full h-9"
+                      className="border rounded-md px-3 text-sm w-full h-9"
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value || undefined)}
                     >
@@ -396,7 +396,7 @@ export default function PlayerCreateFormPage() {
             />
           </div>
 
-          <div className="overflow-auto max-h-[300px] border rounded">
+          <div className="overflow-auto max-h-[300px] border rounded-xl">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>

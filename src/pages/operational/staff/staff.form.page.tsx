@@ -198,7 +198,7 @@ export default function StaffFormPage() {
           <div className="flex flex-col gap-2">
             <Label>Função</Label>
             <select
-              className="border rounded px-2 py-1 text-sm h-9"
+              className="border rounded-md px-3 text-sm h-9"
               value={form.staffRole}
               onChange={(e) => updateField("staffRole", e.target.value as StaffRoleType)}
             >
@@ -256,7 +256,7 @@ export default function StaffFormPage() {
             <div className="flex flex-col gap-2">
               <Label>Status</Label>
               <select
-                className="border rounded px-2 py-1 text-sm h-9"
+                className="border rounded-md px-3 text-sm h-9"
                 value={form.status}
                 onChange={(e) => updateField("status", e.target.value as StaffStatus)}
               >
@@ -290,11 +290,11 @@ export default function StaffFormPage() {
             const someChecked = groupValues.some((p) => permissions.has(p));
 
             return (
-              <div key={group.module} className="rounded border p-4 space-y-2">
+              <div key={group.module} className="rounded-xl border p-4 space-y-2">
                 <label className="flex items-center gap-2 font-medium cursor-pointer">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-input"
+                    className="h-4 w-4 rounded-xl border-input"
                     checked={allChecked}
                     ref={(el) => {
                       if (el) el.indeterminate = !allChecked && someChecked;
@@ -308,7 +308,7 @@ export default function StaffFormPage() {
                     <label key={p.value} className="flex items-center gap-2 text-sm cursor-pointer">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-input"
+                        className="h-4 w-4 rounded-xl border-input"
                         checked={permissions.has(p.value)}
                         onChange={() => togglePermission(p.value)}
                       />

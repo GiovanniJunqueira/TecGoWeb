@@ -106,7 +106,7 @@ export function AddGamePlayerDialog({
             </div>
           </div>
 
-          <div className="overflow-auto max-h-[50vh] border rounded">
+          <div className="overflow-auto max-h-[50vh] border rounded-xl">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>

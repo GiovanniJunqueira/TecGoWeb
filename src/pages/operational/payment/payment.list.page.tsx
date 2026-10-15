@@ -130,7 +130,7 @@ export default function PaymentListPage() {
         </Button>
       </div>
 
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
@@ -161,7 +161,7 @@ export default function PaymentListPage() {
               payments.map((p) => (
                 <tr
                   key={p.id}
-                  className={cn("border-t", p.status ? "bg-green-50" : "bg-red-50")}
+                  className={cn("border-t", p.status ? "bg-emerald-500/10" : "bg-red-500/10")}
                 >
                   <td className="p-3">{p.playerName ?? "-"}</td>
                   <td className="p-3">{p.responsibleName ?? "-"}</td>

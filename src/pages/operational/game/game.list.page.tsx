@@ -82,7 +82,7 @@ export default function GameListPage() {
         <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Tipo</Label>
           <select
-            className="border rounded px-2 py-1 text-sm w-full h-9"
+            className="border rounded-md px-3 text-sm w-full h-9"
             value={type ?? ""}
             onChange={(e) =>
               setType((e.target.value || undefined) as GameType | undefined)
@@ -100,7 +100,7 @@ export default function GameListPage() {
         <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Label className="text-sm">Categoria</Label>
           <select
-            className="border rounded px-2 py-1 text-sm w-full h-9"
+            className="border rounded-md px-3 text-sm w-full h-9"
             value={category ?? ""}
             onChange={(e) =>
               setCategory(
@@ -149,7 +149,7 @@ export default function GameListPage() {
         </Button>
       </div>
 
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>

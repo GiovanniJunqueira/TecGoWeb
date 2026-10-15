@@ -49,7 +49,7 @@ export default function DashboardPage() {
       {loading && <div>Carregando...</div>}
 
       {!loading && error && (
-        <div className="rounded border p-4 flex flex-col items-start gap-3">
+        <div className="rounded-xl border p-4 flex flex-col items-start gap-3">
           <span className="text-sm text-muted-foreground">
             Não foi possível carregar os indicadores do dashboard.
           </span>
@@ -65,17 +65,17 @@ export default function DashboardPage() {
       {!loading && summary && (
         <>
           <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Total de alunos</span>
               <span className="text-2xl font-bold">{summary.totalPlayers}</span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Jogos no mês</span>
               <span className="text-2xl font-bold">{summary.totalGames}</span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Pagamentos no mês</span>
               <span className="text-2xl font-bold">
                 {summary.totalPaymentsThisMonth}
@@ -84,16 +84,16 @@ export default function DashboardPage() {
           </section>
 
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Pagamentos em dia</span>
-              <span className="text-2xl font-bold text-emerald-500">
+              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 {summary.totalPaymentsPaidThisMonth}
               </span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Pagamentos pendentes</span>
-              <span className="text-2xl font-bold text-red-500">
+              <span className="text-2xl font-bold text-red-600 dark:text-red-400">
                 {summary.totalPaymentsPendingThisMonth}
               </span>
             </div>

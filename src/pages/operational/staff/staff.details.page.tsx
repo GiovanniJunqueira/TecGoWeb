@@ -110,7 +110,7 @@ export default function StaffDetailsPage() {
                   staff.permissions.includes(p.value)
                 );
                 return (
-                  <div key={group.module} className="rounded border p-4">
+                  <div key={group.module} className="rounded-xl border p-4">
                     <div className="font-medium mb-2">{group.module}</div>
                     {granted.length === 0 ? (
                       <div className="text-sm text-muted-foreground">Nenhum acesso</div>

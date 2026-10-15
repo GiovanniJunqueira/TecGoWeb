@@ -124,9 +124,9 @@ export function StockDialog({ open, productId, onOpenChange, onChanged }: StockD
           <div>Carregando...</div>
         ) : (
           <div className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
-            <div className="rounded border p-4 flex items-baseline justify-between">
+            <div className="rounded-xl border p-4 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Em estoque agora</span>
-              <span className={`text-3xl font-bold ${stock === 0 ? "text-red-500" : ""}`}>{stock}</span>
+              <span className={`text-3xl font-bold ${stock === 0 ? "text-red-600 dark:text-red-400" : ""}`}>{stock}</span>
             </div>
 
             <div className="space-y-3">
@@ -178,7 +178,7 @@ export function StockDialog({ open, productId, onOpenChange, onChanged }: StockD
 
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Histórico</Label>
-              <div className="overflow-auto rounded border max-h-56">
+              <div className="overflow-auto rounded-xl border max-h-56">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
@@ -204,7 +204,7 @@ export function StockDialog({ open, productId, onOpenChange, onChanged }: StockD
                             {m.note && <div className="text-xs text-muted-foreground">{m.note}</div>}
                           </td>
                           <td
-                            className={`p-2 text-right font-medium ${m.quantity < 0 ? "text-red-600" : "text-emerald-600"}`}
+                            className={`p-2 text-right font-medium ${m.quantity < 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}
                           >
                             {m.quantity > 0 ? `+${m.quantity}` : m.quantity}
                           </td>

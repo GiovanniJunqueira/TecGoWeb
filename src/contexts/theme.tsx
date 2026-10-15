@@ -45,7 +45,7 @@ export function ThemeProvider({
       meta.name = "theme-color";
       document.head.appendChild(meta);
     }
-    meta.content = resolved === "dark" ? "#04070b" : "#ffffff";
+    meta.content = resolved === "dark" ? "#0b0b0c" : "#ffffff";
   }, [theme]);
 
   const setTheme = (value: Theme) => {

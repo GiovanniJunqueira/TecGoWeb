@@ -123,7 +123,7 @@ export default function AulaGrupoFormPage() {
         <Label className="text-lg font-semibold">
           Alunos selecionados ({selectedPlayers.length})
         </Label>
-        <div className="overflow-auto max-h-[250px] border rounded">
+        <div className="overflow-auto max-h-[250px] border rounded-xl">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
@@ -192,7 +192,7 @@ export default function AulaGrupoFormPage() {
           </div>
         </div>
 
-        <div className="overflow-auto max-h-[300px] border rounded">
+        <div className="overflow-auto max-h-[300px] border rounded-xl">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>

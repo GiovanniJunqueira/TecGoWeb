@@ -148,7 +148,7 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
             <div className="flex flex-col gap-2">
               <Label className="text-sm">Produto</Label>
               <select
-                className="border rounded px-2 py-1 text-sm h-9"
+                className="border rounded-md px-3 text-sm h-9"
                 value={productId}
                 onChange={(e) => setProductId(e.target.value)}
               >
@@ -176,7 +176,7 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
               <div className="flex flex-col gap-2">
                 <Label className="text-sm">Forma de pagamento</Label>
                 <select
-                  className="border rounded px-2 py-1 text-sm h-9"
+                  className="border rounded-md px-3 text-sm h-9"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                 >
@@ -214,7 +214,7 @@ export function SaleFormDialog({ open, defaultProductId, onOpenChange, onSaved }
                     placeholder="Buscar aluno por nome"
                   />
                   <select
-                    className="border rounded px-2 py-1 text-sm h-9"
+                    className="border rounded-md px-3 text-sm h-9"
                     value={buyerPlayerId}
                     onChange={(e) => setBuyerPlayerId(e.target.value)}
                   >

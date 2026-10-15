@@ -58,7 +58,7 @@ export default function AulaSessaoCreatePage() {
         <div className="flex flex-col gap-2 w-full sm:flex-1 sm:min-w-48">
           <Label className="text-sm">Grupo</Label>
           <select
-            className="border rounded px-2 py-1 text-sm w-full h-9"
+            className="border rounded-md px-3 text-sm w-full h-9"
             value={grupoId}
             onChange={(e) => setGrupoId(e.target.value)}
           >

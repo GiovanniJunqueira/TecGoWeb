@@ -82,7 +82,7 @@ export function MarkAsPaidDialog({ payment, onOpenChange, onSaved }: MarkAsPaidD
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Forma de pagamento</Label>
             <select
-              className="border rounded px-3 py-2 text-sm w-full h-9"
+              className="border rounded-md px-3 text-sm w-full h-9"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
             >

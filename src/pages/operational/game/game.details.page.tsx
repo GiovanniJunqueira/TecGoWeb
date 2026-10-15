@@ -93,7 +93,7 @@ export default function GameDetailsPage() {
 
           <section className="space-y-4">
             <Label className="text-lg font-semibold">Atletas e estatísticas</Label>
-            <div className="overflow-auto rounded border">
+            <div className="overflow-auto rounded-xl border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>

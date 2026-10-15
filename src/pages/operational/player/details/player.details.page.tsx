@@ -119,7 +119,7 @@ export default function PlayerDetailsPage() {
                 Nenhum responsável vinculado a este atleta.
               </div>
             ) : (
-              <div className="overflow-auto max-h-[300px] border rounded">
+              <div className="overflow-auto max-h-[300px] border rounded-xl">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>

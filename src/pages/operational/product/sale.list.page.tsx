@@ -105,7 +105,7 @@ export default function SaleListPage() {
         </div>
       </div>
 
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>

@@ -64,7 +64,7 @@ export function CreatePaymentDialog({ open, players, onOpenChange, onSaved }: Cr
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Atleta</Label>
             <select
-              className="border rounded px-3 py-2 text-sm w-full h-9"
+              className="border rounded-md px-3 text-sm w-full h-9"
               value={playerId}
               onChange={(e) => setPlayerId(e.target.value)}
             >

@@ -76,7 +76,7 @@ export default function AulaChamadaPage() {
             {sessao.grupoName} — {sessao.date}
           </p>
 
-          <div className="overflow-auto rounded border max-h-[500px]">
+          <div className="overflow-auto rounded-xl border max-h-[500px]">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>

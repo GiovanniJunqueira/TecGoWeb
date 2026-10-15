@@ -44,7 +44,7 @@ function ReportTable({ title, rows, total, tone }: { title: string; rows: Report
   return (
     <div className="space-y-2">
       <h3 className="font-semibold">{title}</h3>
-      <div className="overflow-auto rounded border">
+      <div className="overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <tbody>
             {rows.length === 0 ? (
@@ -150,7 +150,7 @@ export default function FinanceiroPage() {
       {loading && <div>Carregando...</div>}
 
       {!loading && error && (
-        <div className="rounded border p-4 flex flex-col items-start gap-3">
+        <div className="rounded-xl border p-4 flex flex-col items-start gap-3">
           <span className="text-sm text-muted-foreground">
             Não foi possível carregar os dados financeiros.
           </span>
@@ -166,22 +166,22 @@ export default function FinanceiroPage() {
       {!loading && summary && (
         <>
           <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Total de entradas</span>
-              <span className="text-2xl font-bold text-emerald-500">
+              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 {formatPrice(summary.totalEntradasMes ?? 0)}
               </span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Total de saídas</span>
-              <span className="text-2xl font-bold text-red-500">{formatPrice(summary.saidasTotal ?? 0)}</span>
+              <span className="text-2xl font-bold text-red-600 dark:text-red-400">{formatPrice(summary.saidasTotal ?? 0)}</span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Saldo do mês</span>
               <span
-                className={`text-2xl font-bold ${(summary.saldoMes ?? 0) < 0 ? "text-red-500" : "text-emerald-500"}`}
+                className={`text-2xl font-bold ${(summary.saldoMes ?? 0) < 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}
               >
                 {formatPrice(summary.saldoMes ?? 0)}
               </span>
@@ -189,16 +189,16 @@ export default function FinanceiroPage() {
           </section>
 
           <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">Mensalidades recebidas</span>
               <span className="text-xl font-bold">{formatPrice(summary.mensalidadesRecebidas)}</span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">
                 Mensalidades pendentes ({summary.mensalidadesPendentesQtd})
               </span>
-              <span className="text-xl font-bold text-red-500">
+              <span className="text-xl font-bold text-red-600 dark:text-red-400">
                 ~{formatPrice(summary.mensalidadesPendentesEstimativa)}
               </span>
               <span className="text-xs text-muted-foreground">
@@ -206,7 +206,7 @@ export default function FinanceiroPage() {
               </span>
             </div>
 
-            <div className="rounded border p-4 flex flex-col gap-2 bg-card">
+            <div className="rounded-xl border p-4 flex flex-col gap-2 bg-card">
               <span className="text-sm text-muted-foreground">
                 Vendas de produtos ({summary.vendasQtd})
               </span>
@@ -228,20 +228,20 @@ export default function FinanceiroPage() {
                 title="Entradas por categoria"
                 rows={entradasRows}
                 total={summary.totalEntradasMes ?? 0}
-                tone="text-emerald-600"
+                tone="text-emerald-600 dark:text-emerald-400"
               />
               <ReportTable
                 title="Saídas por categoria"
                 rows={toRows(summary.saidasPorCategoria ?? [])}
                 total={summary.saidasTotal ?? 0}
-                tone="text-red-600"
+                tone="text-red-600 dark:text-red-400"
               />
             </div>
           </section>
 
           <section className="space-y-4">
             <Label className="text-lg font-semibold">Vendas recentes</Label>
-            <div className="overflow-auto rounded border">
+            <div className="overflow-auto rounded-xl border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>

@@ -86,7 +86,6 @@ export default function ProductListPage() {
         <Label className="text-2xl font-semibold">Produtos</Label>
         <div className="flex flex-wrap gap-2">
           <Button
-            variant="outline"
             onClick={() => {
               setEditingProductId(null);
               setFormOpen(true);
@@ -115,8 +114,8 @@ export default function ProductListPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((p) => (
-            <div key={p.id} className="rounded border p-4 space-y-3">
-              <div className="aspect-square w-full rounded bg-muted overflow-hidden flex items-center justify-center">
+            <div key={p.id} className="rounded-xl border p-4 space-y-3">
+              <div className="aspect-square w-full rounded-xl bg-muted overflow-hidden flex items-center justify-center">
                 {p.photoUrl ? (
                   <img src={p.photoUrl} alt={p.name} className="w-full h-full object-cover" />
                 ) : (
@@ -132,9 +131,9 @@ export default function ProductListPage() {
                 <div
                   className={`text-sm mt-1 font-medium ${
                     p.stock === 0
-                      ? "text-red-600"
+                      ? "text-red-600 dark:text-red-400"
                       : p.stock <= LOW_STOCK_THRESHOLD
-                        ? "text-amber-600"
+                        ? "text-amber-600 dark:text-amber-400"
                         : "text-muted-foreground"
                   }`}
                 >
