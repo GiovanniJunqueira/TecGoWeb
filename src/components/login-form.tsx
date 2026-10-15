@@ -27,7 +27,7 @@ export function LoginForm() {
   });
 
   const handleSubmit = (data: LoginFormData) => {
-    AuthService.login(data)
+    AuthService.login({ ...data, email: data.email.trim() })
       .then(async (responseData) => {
         await login(responseData);
         const payload = JSON.parse(atob(responseData.accessToken.split(".")[1]));

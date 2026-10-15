@@ -1,3 +1,4 @@
+import { AuthStorage } from "@/storages";
 import { api } from "@/config";
 import type { LoginResponseEntity } from "@/entities/auth";
 import type { UserPayload } from "@/entities/user/user.entity";
@@ -32,7 +33,7 @@ export class AuthService {
   }
 
   public static async logout(): Promise<void> {
-    await api.delete("/auth/logout");
+    await api.delete("/auth/logout", { data: { refreshToken: AuthStorage.getRefreshToken() } });
   }
 
   public static async changePassword(
