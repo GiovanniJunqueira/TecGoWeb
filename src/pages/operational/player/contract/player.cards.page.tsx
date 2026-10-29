@@ -42,7 +42,7 @@ function groupPaid(payments: Payment[], year: number, fallbackPlayerId?: string)
 }
 
 // Carteirinha gerada na hora (nada é salvo). Serve para um atleta (/atletas/:id/carteirinha)
-// ou para vários de uma vez (/atletas/carteirinhas?status=&turma=&aulaGrupoId=), 4 por folha A4.
+// ou para vários de uma vez (/atletas/carteirinhas?status=&turma=&aulaGrupoId= ou ?ids=), 4 por folha A4.
 export default function PlayerCardsPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -62,6 +62,7 @@ export default function PlayerCardsPage() {
   const status = (searchParams.get("status") as StatusFilter) || "ATIVOS";
   const turma = searchParams.get("turma") || undefined;
   const aulaGrupoId = searchParams.get("aulaGrupoId") || undefined;
+  const ids = searchParams.get("ids") || undefined;
 
   useEffect(() => {
     if (!school) refreshSchool();
@@ -89,7 +90,10 @@ export default function PlayerCardsPage() {
             },
           ]);
         } else {
-          const report = await PlayerService.report({ status, turma, aulaGrupoId });
+          const picked = ids ? new Set(ids.split(",")) : null;
+          const report = picked
+            ? (await PlayerService.report({ status: "TODOS" })).filter((p) => picked.has(p.id))
+            : await PlayerService.report({ status, turma, aulaGrupoId });
           setPeople(
             (report ?? []).map((p) => ({
               id: p.id,
@@ -108,7 +112,7 @@ export default function PlayerCardsPage() {
       }
     };
     load();
-  }, [id, status, turma, aulaGrupoId]);
+  }, [id, ids, status, turma, aulaGrupoId]);
 
   // Meses já pagos no ano escolhido (sem permissão de pagamentos, a grade só sai em branco).
   useEffect(() => {

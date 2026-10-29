@@ -12,7 +12,7 @@ import type { Responsible } from "@/entities/responsible/responsible.entity";
 import { NewResponsibleDialog, type NewResponsibleDraft } from "@/components/responsible/new-responsible-dialog";
 import type { AulaGrupo } from "@/entities/aula/aula.entity";
 import type { PaymentPlan } from "@/entities/paymentplan/payment-plan.entity";
-import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
+import { useForm, type SubmitHandler, type Resolver, type FieldErrors } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { playerSchema, type PlayerFormData } from "@/validators";
 import {
@@ -26,12 +26,37 @@ import {
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { Plus } from "lucide-react";
+import { FormSection } from "@/components/form/form-section";
 
 function computeTurma(birthDate: string): string {
   const year = new Date(birthDate).getFullYear();
   if (Number.isNaN(year)) return "";
   return `Nascidos ${String(year % 100).padStart(2, "0")}`;
 }
+
+type SectionKey = "atleta" | "responsaveis" | "documentos" | "endereco" | "escola";
+
+const ALL_SECTIONS: SectionKey[] = ["atleta", "responsaveis", "documentos", "endereco", "escola"];
+
+// Em qual seção está cada campo: ao salvar com erro, abre a seção certa para o erro aparecer.
+const FIELD_SECTION: Partial<Record<keyof PlayerFormData, SectionKey>> = {
+  rg: "documentos",
+  cpf: "documentos",
+  phoneNumber: "documentos",
+  address: "endereco",
+  addressNumber: "endereco",
+  addressNeighborhood: "endereco",
+  addressComplement: "endereco",
+  postcode: "endereco",
+  college: "escola",
+  collegePhone: "escola",
+  collegeAddress: "escola",
+  collegeNeighborhood: "escola",
+  collegeComplement: "escola",
+  collegePostcode: "escola",
+  collegeSeries: "escola",
+  collegeTime: "escola",
+};
 
 export default function PlayerCreateFormPage() {
 
@@ -44,6 +69,11 @@ export default function PlayerCreateFormPage() {
   const [responsibleSearch, setResponsibleSearch] = useState("");
   const [pendingResponsibles, setPendingResponsibles] = useState<NewResponsibleDraft[]>([]);
   const [newResponsibleOpen, setNewResponsibleOpen] = useState(false);
+  // Seções começam fechadas; a pessoa abre só o que vai preencher.
+  const [openSections, setOpenSections] = useState<SectionKey[]>([]);
+  const toggleSection = (key: SectionKey, open: boolean) =>
+    setOpenSections((prev) => (open ? [...new Set([...prev, key])] : prev.filter((k) => k !== key)));
+  const allOpen = openSections.length === ALL_SECTIONS.length;
   const [aulaGrupos, setAulaGrupos] = useState<AulaGrupo[]>([]);
   const [paymentPlans, setPaymentPlans] = useState<PaymentPlan[]>([]);
   const form = useForm<PlayerFormData>({
@@ -177,6 +207,17 @@ export default function PlayerCreateFormPage() {
     loadPaymentPlans();
   }, []);
 
+  const onInvalid = (errors: FieldErrors<PlayerFormData>) => {
+    const withErrors = (Object.keys(errors) as (keyof PlayerFormData)[]).map((f) => FIELD_SECTION[f] ?? "atleta");
+    setOpenSections((prev) => [...new Set([...prev, ...withErrors])]);
+    toast.error("Confira os campos destacados");
+  };
+
+  const responsiblesHint = (() => {
+    const total = selectedResponsibleIds.length + pendingResponsibles.length;
+    return total > 0 ? `${total} selecionado${total === 1 ? "" : "s"}` : undefined;
+  })();
+
   const onSubmit: SubmitHandler<PlayerFormData> = async (data) => {
     try {
       let playerId = id;
@@ -240,9 +281,21 @@ export default function PlayerCreateFormPage() {
         </Button>
       </div>
       <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Dados do Atleta</h2>
+      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="w-full space-y-4">
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="text-sm text-primary"
+            onClick={() => setOpenSections(allOpen ? [] : ALL_SECTIONS)}
+          >
+            {allOpen ? "Fechar tudo" : "Abrir tudo"}
+          </button>
+        </div>
+        <FormSection
+          title="Dados do Atleta"
+          open={openSections.includes("atleta")}
+          onOpenChange={(open) => toggleSection("atleta", open)}
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -376,10 +429,14 @@ export default function PlayerCreateFormPage() {
               )}
             />
           </div>
-        </section>
+        </FormSection>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Responsáveis</h2>
+        <FormSection
+          title="Responsáveis"
+          hint={responsiblesHint}
+          open={openSections.includes("responsaveis")}
+          onOpenChange={(open) => toggleSection("responsaveis", open)}
+        >
 
           <div className="flex flex-col sm:flex-row sm:items-end gap-2">
             <div className="flex flex-col gap-2 w-full max-w-md">
@@ -465,10 +522,13 @@ export default function PlayerCreateFormPage() {
             onOpenChange={setNewResponsibleOpen}
             onAdd={(draft) => setPendingResponsibles((prev) => [...prev, draft])}
           />
-        </section>
+        </FormSection>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Documentos e Contato</h2>
+        <FormSection
+          title="Documentos e Contato"
+          open={openSections.includes("documentos")}
+          onOpenChange={(open) => toggleSection("documentos", open)}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormField
               control={form.control}
@@ -510,10 +570,13 @@ export default function PlayerCreateFormPage() {
               )}
             />
           </div>
-        </section>
+        </FormSection>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Endereço Residencial</h2>
+        <FormSection
+          title="Endereço Residencial"
+          open={openSections.includes("endereco")}
+          onOpenChange={(open) => toggleSection("endereco", open)}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
               <FormField
@@ -583,10 +646,13 @@ export default function PlayerCreateFormPage() {
               )}
             />
           </div>
-        </section>
+        </FormSection>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Dados da Escola/Faculdade</h2>
+        <FormSection
+          title="Dados da Escola/Faculdade"
+          open={openSections.includes("escola")}
+          onOpenChange={(open) => toggleSection("escola", open)}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
               <FormField
@@ -701,7 +767,7 @@ export default function PlayerCreateFormPage() {
               )}
             />
           </div>
-        </section>
+        </FormSection>
 
         <div className="flex justify-end gap-4">
           <Button
