@@ -57,6 +57,9 @@ export default function PlayerDetailsPage() {
           >
             Editar atleta
           </Button>
+          <Button onClick={() => navigate(`/atletas/${id}/ficha`)} disabled={!id}>
+            Ficha e contrato
+          </Button>
           <Button variant="outline" onClick={() => navigate(-1)}>
             Voltar
           </Button>

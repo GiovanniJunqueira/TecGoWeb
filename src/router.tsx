@@ -10,6 +10,7 @@ import PlayerListPage from "./pages/operational/player/list/player.list.page";
 import PlayerCreateFormPage from "./pages/operational/player/player.create.form.page";
 import PlayerDetailsPage from "./pages/operational/player/details/player.details.page";
 import PlayerReportPage from "./pages/operational/player/player.report.page";
+import PlayerContractPage from "./pages/operational/player/contract/player.contract.page";
 import PaymentListPage from "./pages/operational/payment/payment.list.page";
 import GameListPage from "./pages/operational/game/game.list.page";
 import GameCreatePage from "./pages/operational/game/game.create.page";
@@ -46,6 +47,7 @@ export const Router = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
+        <Route path="/atletas/:id/ficha" element={<PlayerContractPage />} />
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />

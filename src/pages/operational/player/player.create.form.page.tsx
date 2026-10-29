@@ -190,7 +190,12 @@ export default function PlayerCreateFormPage() {
       } else {
         const response = await PlayerService.create({ ...data });
         playerId = response;
-        toast.success("Atleta criado com sucesso");
+        const createdId = response;
+        toast.success("Atleta criado com sucesso", {
+          description: "A ficha e o contrato já estão prontos para imprimir.",
+          duration: 10000,
+          action: { label: "Ficha e contrato", onClick: () => navigate(`/atletas/${createdId}/ficha`) },
+        });
       }
 
       let responsibleIds = [...selectedResponsibleIds];
