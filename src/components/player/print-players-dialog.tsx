@@ -37,9 +37,12 @@ const DEFAULT_COLUMNS = ["matricula", "cpf", "responsavel"];
 interface PrintPlayersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** "carteirinhas" reaproveita os filtros para imprimir as carteirinhas em lote. */
+  mode?: "lista" | "carteirinhas";
 }
 
-export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogProps) {
+export function PrintPlayersDialog({ open, onOpenChange, mode = "lista" }: PrintPlayersDialogProps) {
+  const isCards = mode === "carteirinhas";
   const navigate = useNavigate();
   const [status, setStatus] = useState<StatusFilter>("ATIVOS");
   const [groupBy, setGroupBy] = useState<GroupBy>("NENHUM");
@@ -72,18 +75,20 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
     params.set("status", status);
     if (groupBy === "NASCIDOS" && turmaValue) params.set("turma", turmaValue);
     if (groupBy === "GRUPO_AULA" && aulaGrupoId) params.set("aulaGrupoId", aulaGrupoId);
-    if (selectedColumns.length > 0) params.set("columns", selectedColumns.join(","));
+    if (!isCards && selectedColumns.length > 0) params.set("columns", selectedColumns.join(","));
     onOpenChange(false);
-    navigate(`/atletas/relatorio?${params.toString()}`);
+    navigate(`${isCards ? "/atletas/carteirinhas" : "/atletas/relatorio"}?${params.toString()}`);
   };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle>Imprimir lista de atletas</AlertDialogTitle>
+          <AlertDialogTitle>{isCards ? "Imprimir carteirinhas" : "Imprimir lista de atletas"}</AlertDialogTitle>
           <AlertDialogDescription>
-            Escolha o que deve entrar no relatório.
+            {isCards
+              ? "Escolha de quais atletas gerar as carteirinhas (4 por folha A4)."
+              : "Escolha o que deve entrar no relatório."}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -143,6 +148,7 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
             </div>
           )}
 
+          {!isCards && (
           <div className="flex flex-col gap-2">
             <Label className="text-sm">Dados a incluir (Nome sempre aparece)</Label>
             <div className="grid grid-cols-2 gap-2">
@@ -158,13 +164,14 @@ export function PrintPlayersDialog({ open, onOpenChange }: PrintPlayersDialogPro
               ))}
             </div>
           </div>
+          )}
         </div>
 
         <AlertDialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={onGenerate}>Gerar relatório</Button>
+          <Button onClick={onGenerate}>{isCards ? "Gerar carteirinhas" : "Gerar relatório"}</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

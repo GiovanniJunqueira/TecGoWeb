@@ -21,6 +21,8 @@ export interface ContractConfig {
   adjustmentMonth: string;
   paymentMethod: string;
   forum: string;
+  /** Linhas ao lado do logo na carteirinha (unidade, local, endereço, telefone...). */
+  cardHeaderLines: string[];
 }
 
 const SCHOOL_OVERRIDES: Record<string, Partial<ContractConfig>> = {
@@ -35,6 +37,14 @@ const SCHOOL_OVERRIDES: Record<string, Partial<ContractConfig>> = {
     unitName: "Vila Friburgo",
     insuranceCompany: "SEGASP",
     insuranceCoverage: "R$ 1.000,00",
+    cardHeaderLines: [
+      "Unidade 2",
+      "Arena Burakão",
+      "R. Dr. Armando Fajardo, 20",
+      "Jd. São Bernardo",
+      "São Paulo - SP",
+      "(11) 99440-0950",
+    ],
   },
 };
 
@@ -59,6 +69,7 @@ export function getContractConfig(school: School | null): ContractConfig {
     adjustmentMonth: "Abril",
     paymentMethod: "Pix",
     forum: city ? `${city}/SP` : "",
+    cardHeaderLines: [name, address, city && `${city} - SP`].filter((line): line is string => !!line),
   };
 
   return { ...defaults, ...(school?.id ? SCHOOL_OVERRIDES[school.id] : undefined) };

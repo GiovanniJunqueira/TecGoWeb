@@ -14,7 +14,9 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/atletas/matricular", permission: "ATLETAS_MATRICULAR" },
   { pattern: "/atletas/editar/:id", permission: "ATLETAS_EDITAR" },
   { pattern: "/atletas/relatorio", permission: "ATLETAS_IMPRIMIR" },
+  { pattern: "/atletas/carteirinhas", permission: "ATLETAS_IMPRIMIR" },
   { pattern: "/atletas/:id/ficha", permission: "ATLETAS_IMPRIMIR" },
+  { pattern: "/atletas/:id/carteirinha", permission: "ATLETAS_IMPRIMIR" },
   { pattern: "/atletas/:id", permission: "ATLETAS_VER" },
   { pattern: "/atletas", permission: "ATLETAS_VER" },
 

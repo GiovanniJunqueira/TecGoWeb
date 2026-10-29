@@ -60,6 +60,9 @@ export default function PlayerDetailsPage() {
           <Button onClick={() => navigate(`/atletas/${id}/ficha`)} disabled={!id}>
             Ficha e contrato
           </Button>
+          <Button variant="outline" onClick={() => navigate(`/atletas/${id}/carteirinha`)} disabled={!id}>
+            Carteirinha
+          </Button>
           <Button variant="outline" onClick={() => navigate(-1)}>
             Voltar
           </Button>

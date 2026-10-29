@@ -30,6 +30,7 @@ export default function PlayerListPage() {
   const navigate = useNavigate();
   const hardDeleteDialog = useConfirmDialog();
   const [printDialogOpen, setPrintDialogOpen] = useState(false);
+  const [cardsDialogOpen, setCardsDialogOpen] = useState(false);
 
   async function load(targetTab: Tab = tab, targetPage = 0, targetSearch = search, targetTurma = turmaFilter) {
     try {
@@ -90,6 +91,9 @@ export default function PlayerListPage() {
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => setPrintDialogOpen(true)}>
             Imprimir
+          </Button>
+          <Button variant="outline" onClick={() => setCardsDialogOpen(true)}>
+            Carteirinhas
           </Button>
           <Button onClick={() => navigate("/atletas/matricular")}>Novo atleta</Button>
         </div>
@@ -233,6 +237,7 @@ export default function PlayerListPage() {
       />
 
       <PrintPlayersDialog open={printDialogOpen} onOpenChange={setPrintDialogOpen} />
+      <PrintPlayersDialog open={cardsDialogOpen} onOpenChange={setCardsDialogOpen} mode="carteirinhas" />
     </LayoutContent>
   );
 }
