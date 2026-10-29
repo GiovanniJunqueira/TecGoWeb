@@ -9,6 +9,7 @@ import { ResponsibleService } from "@/services/responsible/responsible.service";
 import { AulaGrupoService } from "@/services/aula/aula.service";
 import { PaymentPlanService } from "@/services/paymentplan/payment-plan.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
+import { NewResponsibleDialog, type NewResponsibleDraft } from "@/components/responsible/new-responsible-dialog";
 import type { AulaGrupo } from "@/entities/aula/aula.entity";
 import type { PaymentPlan } from "@/entities/paymentplan/payment-plan.entity";
 import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { Plus } from "lucide-react";
 
 function computeTurma(birthDate: string): string {
   const year = new Date(birthDate).getFullYear();
@@ -40,12 +42,8 @@ export default function PlayerCreateFormPage() {
   const [availableResponsibles, setAvailableResponsibles] = useState<Responsible[]>([]);
   const [selectedResponsibleIds, setSelectedResponsibleIds] = useState<string[]>([]);
   const [responsibleSearch, setResponsibleSearch] = useState("");
-  const [newResponsible, setNewResponsible] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    document: "",
-  });
+  const [pendingResponsibles, setPendingResponsibles] = useState<NewResponsibleDraft[]>([]);
+  const [newResponsibleOpen, setNewResponsibleOpen] = useState(false);
   const [aulaGrupos, setAulaGrupos] = useState<AulaGrupo[]>([]);
   const [paymentPlans, setPaymentPlans] = useState<PaymentPlan[]>([]);
   const form = useForm<PlayerFormData>({
@@ -198,19 +196,11 @@ export default function PlayerCreateFormPage() {
         });
       }
 
-      let responsibleIds = [...selectedResponsibleIds];
+      const responsibleIds = [...selectedResponsibleIds];
 
-      if (
-        newResponsible.name.trim() ||
-        newResponsible.phone.trim() ||
-        newResponsible.email.trim() ||
-        newResponsible.document.trim()
-      ) {
+      for (const draft of pendingResponsibles) {
         const created = await ResponsibleService.create({
-          name: newResponsible.name,
-          phone: newResponsible.phone,
-          email: newResponsible.email,
-          document: newResponsible.document,
+          ...draft,
           address: "",
           addressNumber: "",
           addressNeighborhood: "",
@@ -218,7 +208,6 @@ export default function PlayerCreateFormPage() {
           postcode: "",
           students: [],
         });
-
         responsibleIds.push(created.id);
       }
 
@@ -392,13 +381,18 @@ export default function PlayerCreateFormPage() {
         <section className="space-y-4">
           <h2 className="text-lg font-semibold">Responsáveis</h2>
 
-          <div className="flex flex-col gap-2 max-w-md">
-            <Label>Buscar responsável</Label>
-            <Input
-              value={responsibleSearch}
-              onChange={(e) => setResponsibleSearch(e.target.value)}
-              placeholder="Digite o nome do responsável"
-            />
+          <div className="flex flex-col sm:flex-row sm:items-end gap-2">
+            <div className="flex flex-col gap-2 w-full max-w-md">
+              <Label>Buscar responsável</Label>
+              <Input
+                value={responsibleSearch}
+                onChange={(e) => setResponsibleSearch(e.target.value)}
+                placeholder="Digite o nome do responsável"
+              />
+            </div>
+            <Button type="button" variant="outline" onClick={() => setNewResponsibleOpen(true)}>
+              <Plus /> Novo responsável
+            </Button>
           </div>
 
           <div className="overflow-auto max-h-[300px] border rounded-xl">
@@ -411,7 +405,31 @@ export default function PlayerCreateFormPage() {
                 </tr>
               </thead>
               <tbody>
-                {availableResponsibles.length === 0 ? (
+                {pendingResponsibles.map((r, index) => (
+                  <tr key={`novo-${index}`} className="border-t bg-primary/5">
+                    <td className="p-3">
+                      <input type="checkbox" checked readOnly aria-label="Novo responsável selecionado" />
+                    </td>
+                    <td className="p-3">
+                      <span className="font-medium">{r.name}</span>
+                      <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">Novo</span>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span>{r.phone}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setPendingResponsibles((prev) => prev.filter((_, i) => i !== index))}
+                        >
+                          Remover
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {availableResponsibles.length === 0 && pendingResponsibles.length === 0 ? (
                   <tr>
                     <td className="p-3" colSpan={3}>
                       Nenhum responsável encontrado
@@ -442,52 +460,11 @@ export default function PlayerCreateFormPage() {
             </table>
           </div>
 
-          <div className="space-y-2 mt-4 max-w-xl">
-            <h3 className="font-semibold">Novo responsável</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>Nome</Label>
-                <Input
-                  value={newResponsible.name}
-                  onChange={(e) =>
-                    setNewResponsible((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Nome do responsável"
-                />
-              </div>
-              <div>
-                <Label>Telefone</Label>
-                <Input
-                  value={newResponsible.phone}
-                  onChange={(e) =>
-                    setNewResponsible((prev) => ({ ...prev, phone: e.target.value }))
-                  }
-                  placeholder="Telefone do responsável"
-                />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input
-                  type="email"
-                  value={newResponsible.email}
-                  onChange={(e) =>
-                    setNewResponsible((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  placeholder="Email do responsável"
-                />
-              </div>
-              <div>
-                <Label>Documento</Label>
-                <Input
-                  value={newResponsible.document}
-                  onChange={(e) =>
-                    setNewResponsible((prev) => ({ ...prev, document: e.target.value }))
-                  }
-                  placeholder="CPF ou RG"
-                />
-              </div>
-            </div>
-          </div>
+          <NewResponsibleDialog
+            open={newResponsibleOpen}
+            onOpenChange={setNewResponsibleOpen}
+            onAdd={(draft) => setPendingResponsibles((prev) => [...prev, draft])}
+          />
         </section>
 
         <section className="space-y-4">
