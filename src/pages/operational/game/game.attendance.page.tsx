@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GameService } from "@/services/game/game.service";
 import type { Game } from "@/entities/game/game.entity";
 import { toast } from "sonner";
+import { compareNames, formatDateBr } from "@/lib/dates";
 
 export default function GameAttendancePage() {
   const { id } = useParams<{ id: string }>();
@@ -61,9 +62,16 @@ export default function GameAttendancePage() {
     <LayoutContent className="gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Label className="text-2xl font-semibold">Chamada do Jogo</Label>
-        <Button variant="outline" onClick={() => navigate(-1)}>
-          Voltar
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          {id && (
+            <Button variant="outline" onClick={() => navigate(`/jogos/${id}/relacao`)}>
+              Imprimir relação
+            </Button>
+          )}
+          <Button variant="outline" onClick={() => navigate(-1)}>
+            Voltar
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -73,7 +81,7 @@ export default function GameAttendancePage() {
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
-            {game.opponent} — {game.date}
+            {game.opponent} — {formatDateBr(game.date)} · {game.players.length} atleta(s) inscrito(s)
           </p>
 
           <div className="overflow-auto rounded-xl border max-h-[500px]">
@@ -93,10 +101,17 @@ export default function GameAttendancePage() {
                   </tr>
                 ) : (
                   [...game.players]
-                    .sort((a, b) => (a.playerName ?? "").localeCompare(b.playerName ?? "", "pt-BR", { sensitivity: "base" }))
+                    .sort((a, b) => compareNames(a.playerName, b.playerName))
                     .map((p) => (
                     <tr key={p.playerId} className="border-t">
-                      <td className="p-3">{p.playerName}</td>
+                      <td className="p-3">
+                      {p.shirtNumber != null && (
+                        <span className="mr-2 inline-block min-w-7 rounded-md bg-muted px-1.5 text-center text-xs font-semibold">
+                          {p.shirtNumber}
+                        </span>
+                      )}
+                      {p.playerName}
+                    </td>
                       <td className="p-3">
                         <input
                           type="checkbox"

@@ -17,6 +17,7 @@ import GameListPage from "./pages/operational/game/game.list.page";
 import GameCreatePage from "./pages/operational/game/game.create.page";
 import GameDetailsPage from "./pages/operational/game/game.details.page";
 import GameAttendancePage from "./pages/operational/game/game.attendance.page";
+import GameRosterPage from "./pages/operational/game/game.roster.page";
 import ResponsibleListPage from "./pages/operational/responsible/responsible.list.page";
 import StaffListPage from "./pages/operational/staff/staff.list.page";
 import StaffFormPage from "./pages/operational/staff/staff.form.page";
@@ -51,6 +52,7 @@ export const Router = () => {
         <Route path="/atletas/:id/ficha" element={<PlayerContractPage />} />
         <Route path="/atletas/:id/carteirinha" element={<PlayerCardsPage />} />
         <Route path="/atletas/carteirinhas" element={<PlayerCardsPage />} />
+        <Route path="/jogos/:id/relacao" element={<GameRosterPage />} />
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { ResponsibleFormDialog } from "@/components/responsible/responsible-form-dialog";
 import { ResponsibleDetailsDialog } from "@/components/responsible/responsible-details-dialog";
+import { compareNames } from "@/lib/dates";
 
 export default function ResponsibleListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -142,7 +143,7 @@ export default function ResponsibleListPage() {
                   <td className="p-3">{r.phone}</td>
                   <td className="p-3">
                     {r.students && r.students.length > 0
-                      ? r.students.map((s) => s.firstname).join(", ")
+                      ? [...r.students].sort((a, b) => compareNames(a.firstname, b.firstname)).map((s) => s.firstname).join(", ")
                       : "-"}
                   </td>
                   <td className="p-3 text-right space-x-2">

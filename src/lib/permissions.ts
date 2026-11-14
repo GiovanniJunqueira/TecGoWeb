@@ -27,6 +27,7 @@ export const ROUTE_PERMISSIONS: { pattern: string; permission: Permission }[] = 
   { pattern: "/jogos/novo", permission: "JOGOS_CRIAR" },
   { pattern: "/jogos/editar/:id", permission: "JOGOS_EDITAR" },
   { pattern: "/jogos/:id/chamada", permission: "JOGOS_FAZER_CHAMADA" },
+  { pattern: "/jogos/:id/relacao", permission: "JOGOS_VER" },
   { pattern: "/jogos/:id", permission: "JOGOS_VER" },
   { pattern: "/jogos", permission: "JOGOS_VER" },
 

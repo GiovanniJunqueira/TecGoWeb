@@ -14,6 +14,7 @@ export interface GamePayload {
     goals: number;
     starter: boolean;
     notes?: string;
+    shirtNumber?: number;
   }[];
 }
 

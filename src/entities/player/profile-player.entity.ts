@@ -29,6 +29,15 @@ export interface ProfilePlayer {
   paymentPlan?: PaymentPlan | null;
 }
 
+export interface Birthday {
+  id: string;
+  name: string;
+  birthDate: string;
+  age: number;
+  turma?: string | null;
+  phoneNumber?: string | null;
+}
+
 export interface PlayerReport {
   id: string;
   firstname: string;

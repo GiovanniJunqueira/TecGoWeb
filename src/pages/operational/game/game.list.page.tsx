@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog, useConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { formatDateBr, relativeDay } from "@/lib/dates";
 
 const gameTypes: { value: GameType; label: string }[] = [
   { value: "CHAMPIONSHIP", label: "Campeonato" },
@@ -17,7 +18,13 @@ const gameTypes: { value: GameType; label: string }[] = [
 
 const gameCategories = GAME_CATEGORY_OPTIONS;
 
-type Tab = "futuros" | "passados";
+type Tab = "hoje" | "futuros" | "passados";
+
+const EMPTY_MESSAGE: Record<Tab, string> = {
+  hoje: "Nenhum jogo hoje",
+  futuros: "Nenhum jogo futuro encontrado",
+  passados: "Nenhum jogo passado encontrado",
+};
 
 export default function GameListPage() {
   const [tab, setTab] = useState<Tab>("futuros");
@@ -30,6 +37,7 @@ export default function GameListPage() {
   const [opponentSearch, setOpponentSearch] = useState<string>("");
   const navigate = useNavigate();
   const deleteDialog = useConfirmDialog();
+  const pickedInitialTab = useRef(false);
 
   async function load() {
     try {
@@ -41,6 +49,11 @@ export default function GameListPage() {
         endDate: endDate || undefined,
       });
       setGames(data ?? []);
+      // Abre em "Hoje" quando tem jogo no dia; senão, nos próximos jogos.
+      if (!pickedInitialTab.current) {
+        pickedInitialTab.current = true;
+        if ((data ?? []).some((g) => relativeDay(g.date) === "hoje")) setTab("hoje");
+      }
     } catch {
       toast.error("Falha ao buscar jogos");
     } finally {
@@ -73,6 +86,7 @@ export default function GameListPage() {
         value={tab}
         onChange={setTab}
         options={[
+          { value: "hoje", label: "Hoje" },
           { value: "futuros", label: "Futuros" },
           { value: "passados", label: "Passados" },
         ]}
@@ -157,17 +171,16 @@ export default function GameListPage() {
               <th className="text-left p-3">Tipo</th>
               <th className="text-left p-3">Categoria</th>
               <th className="text-left p-3">Adversário</th>
+              <th className="text-left p-3">Atletas</th>
               <th className="text-left p-3">Placar</th>
               <th className="text-right p-3">Ações</th>
             </tr>
           </thead>
           <tbody>
             {(() => {
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
+              const tabOf: Record<string, Tab> = { hoje: "hoje", futuro: "futuros", passado: "passados" };
               const filteredGames = games.filter((g) => {
-                const gameDate = new Date(g.date);
-                const matchesTab = tab === "futuros" ? gameDate >= today : gameDate < today;
+                const matchesTab = tabOf[relativeDay(g.date) ?? ""] === tab;
                 const matchesOpponent = !opponentSearch
                   || g.opponent?.toLowerCase().includes(opponentSearch.toLowerCase());
                 return matchesTab && matchesOpponent;
@@ -176,7 +189,7 @@ export default function GameListPage() {
               if (loading) {
                 return (
                   <tr>
-                    <td className="p-3" colSpan={6}>
+                    <td className="p-3" colSpan={7}>
                       Carregando...
                     </td>
                   </tr>
@@ -186,8 +199,8 @@ export default function GameListPage() {
               if (filteredGames.length === 0) {
                 return (
                   <tr>
-                    <td className="p-3" colSpan={6}>
-                      {tab === "futuros" ? "Nenhum jogo futuro encontrado" : "Nenhum jogo passado encontrado"}
+                    <td className="p-3" colSpan={7}>
+                      {EMPTY_MESSAGE[tab]}
                     </td>
                   </tr>
                 );
@@ -195,7 +208,14 @@ export default function GameListPage() {
 
               return filteredGames.map((g) => (
                 <tr key={g.id} className="border-t">
-                  <td className="p-3">{g.date}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {formatDateBr(g.date)}
+                    {relativeDay(g.date) === "hoje" && (
+                      <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        Hoje
+                      </span>
+                    )}
+                  </td>
                   <td className="p-3">
                     {g.type === "CHAMPIONSHIP" ? "Campeonato" : "Amistoso"}
                   </td>
@@ -204,6 +224,23 @@ export default function GameListPage() {
                       g.category}
                   </td>
                   <td className="p-3">{g.opponent}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {(() => {
+                      const total = g.players?.length ?? 0;
+                      const present = g.players?.filter((p) => p.attended).length ?? 0;
+                      const calledRoll = g.players?.some((p) => p.attended !== null) ?? false;
+                      return (
+                        <>
+                          {total} inscrito{total === 1 ? "" : "s"}
+                          {calledRoll && (
+                            <span className="block text-xs text-muted-foreground">
+                              {present} presente{present === 1 ? "" : "s"}
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </td>
                   <td className="p-3">
                     {g.homeScore ?? 0} x {g.awayScore ?? 0}
                   </td>

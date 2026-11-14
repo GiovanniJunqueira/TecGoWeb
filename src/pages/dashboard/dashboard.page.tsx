@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Cake } from "lucide-react";
 import { LayoutContent } from "@/layouts/layout.content";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { DashboardService } from "@/services/dashboard/dashboard.service";
+import { PlayerService } from "@/services/player/player.service";
+import type { Birthday } from "@/entities/player/profile-player.entity";
 import type { DashboardSummary } from "@/entities/dashboard/dashboard.entity";
 import { toast } from "sonner";
 
@@ -16,6 +20,15 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [month, setMonth] = useState(currentMonth());
+  const [birthdays, setBirthdays] = useState<Birthday[] | null>(null);
+  const navigate = useNavigate();
+
+  // Aniversariantes do dia: independente do mês escolhido; se não carregar, o quadro só não aparece.
+  useEffect(() => {
+    PlayerService.birthdaysToday()
+      .then((data) => setBirthdays(data ?? []))
+      .catch(() => setBirthdays(null));
+  }, []);
 
   async function load(targetMonth = month) {
     try {
@@ -45,6 +58,39 @@ export default function DashboardPage() {
           <Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} />
         </div>
       </div>
+
+      {birthdays && (
+        <section className="rounded-xl border p-4 bg-card flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <Cake className="size-5 text-pink-600 dark:text-pink-400" />
+            <span className="font-semibold">Aniversariantes de hoje</span>
+            <span className="text-sm text-muted-foreground">
+              {new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}
+            </span>
+          </div>
+          {birthdays.length === 0 ? (
+            <span className="text-sm text-muted-foreground">Nenhum aluno faz aniversário hoje.</span>
+          ) : (
+            <ul className="divide-y">
+              {birthdays.map((b) => (
+                <li key={b.id}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/atletas/${b.id}`)}
+                    className="flex w-full flex-wrap items-center justify-between gap-x-3 gap-y-0.5 py-2 text-left hover:opacity-80"
+                  >
+                    <span className="font-medium">{b.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {b.age} anos{b.turma ? ` · ${b.turma}` : ""}
+                      {b.phoneNumber ? ` · ${b.phoneNumber}` : ""}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       {loading && <div>Carregando...</div>}
 

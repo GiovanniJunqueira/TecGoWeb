@@ -12,6 +12,7 @@ import { ResponsibleService } from "@/services/responsible/responsible.service";
 import type { Responsible } from "@/entities/responsible/responsible.entity";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { compareNames } from "@/lib/dates";
 
 interface ResponsibleDetailsDialogProps {
   responsibleId: string | null;
@@ -91,7 +92,7 @@ export function ResponsibleDetailsDialog({ responsibleId, onOpenChange, onEdit }
                 <div className="text-sm text-muted-foreground">Nenhum aluno vinculado</div>
               ) : (
                 <ul className="text-sm space-y-1">
-                  {responsible.students.map((s) => (
+                  {[...responsible.students].sort((a, b) => compareNames(`${a.firstname} ${a.lastname}`, `${b.firstname} ${b.lastname}`)).map((s) => (
                     <li key={s.id} className="flex items-center justify-between border-t pt-1">
                       <span>
                         {s.firstname} {s.lastname}

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
+import { compareNames } from "@/lib/dates";
 
 function calculateAge(birthDate?: string): number | null {
   if (!birthDate) return null;
@@ -64,7 +65,7 @@ export function AddGamePlayerDialog({
     if (min !== null && age < min) return false;
     if (max !== null && age > max) return false;
     return true;
-  });
+  }).sort((a, b) => compareNames(`${a.firstname} ${a.lastname}`, `${b.firstname} ${b.lastname}`));
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

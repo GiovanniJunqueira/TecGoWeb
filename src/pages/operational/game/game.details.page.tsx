@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GameService } from "@/services/game/game.service";
 import { GAME_CATEGORY_OPTIONS, type Game } from "@/entities/game/game.entity";
 import { toast } from "sonner";
+import { compareNames, formatDateBr, relativeDay } from "@/lib/dates";
 
 const gameCategories = GAME_CATEGORY_OPTIONS;
 
@@ -46,6 +47,9 @@ export default function GameDetailsPage() {
               <Button variant="outline" onClick={() => navigate(`/jogos/${id}/chamada`)}>
                 Fazer chamada
               </Button>
+              <Button variant="outline" onClick={() => navigate(`/jogos/${id}/relacao`)}>
+                Imprimir relação
+              </Button>
             </>
           )}
           <Button variant="outline" onClick={() => navigate(-1)}>
@@ -73,7 +77,14 @@ export default function GameDetailsPage() {
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Data</div>
-              <div className="font-medium">{game.date}</div>
+              <div className="font-medium">
+                {formatDateBr(game.date)}
+                {relativeDay(game.date) === "hoje" && (
+                  <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    Hoje
+                  </span>
+                )}
+              </div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Adversário</div>
@@ -92,11 +103,17 @@ export default function GameDetailsPage() {
           </section>
 
           <section className="space-y-4">
-            <Label className="text-lg font-semibold">Atletas e estatísticas</Label>
+            <Label className="text-lg font-semibold">
+              Atletas e estatísticas
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                {game.players?.length ?? 0} inscrito(s)
+              </span>
+            </Label>
             <div className="overflow-auto rounded-xl border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
+                    <th className="p-3 text-left">Camisa</th>
                     <th className="p-3 text-left">Atleta</th>
                     <th className="p-3 text-left">Gols</th>
                     <th className="p-3 text-left">Titular</th>
@@ -107,13 +124,14 @@ export default function GameDetailsPage() {
                 <tbody>
                   {(!game.players || game.players.length === 0) ? (
                     <tr>
-                      <td className="p-3" colSpan={5}>
+                      <td className="p-3" colSpan={6}>
                         Nenhum atleta cadastrado para este jogo
                       </td>
                     </tr>
                   ) : (
-                    game.players.map((p) => (
+                    [...game.players].sort((a, b) => compareNames(a.playerName, b.playerName)).map((p) => (
                       <tr key={p.playerId ?? p.playerName} className="border-t">
+                        <td className="p-3 font-semibold">{p.shirtNumber ?? "-"}</td>
                         <td className="p-3">{p.playerName ?? "-"}</td>
                         <td className="p-3">{p.goals ?? 0}</td>
                         <td className="p-3">{p.starter ? "Sim" : "Não"}</td>

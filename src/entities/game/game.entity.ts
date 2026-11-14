@@ -42,6 +42,7 @@ export interface GamePlayerStats {
   starter: boolean | null;
   notes: string | null;
   attended: boolean | null;
+  shirtNumber: number | null;
 }
 
 export interface Game {

@@ -7,6 +7,7 @@ import { GameService } from "@/services/game/game.service";
 import { GAME_CATEGORY_OPTIONS, type GameCategory, type GameType } from "@/entities/game/game.entity";
 import { PlayerService } from "@/services/player/player.service";
 import type { ProfilePlayer } from "@/entities/player/profile-player.entity";
+import { compareNames } from "@/lib/dates";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,6 +25,7 @@ interface PlayerSelection extends ProfilePlayer {
   goals: number;
   starter: boolean;
   notes: string;
+  shirtNumber: string;
 }
 
 function calculateAge(birthDate?: string): number | null {
@@ -65,6 +67,7 @@ export default function GameCreatePage() {
           goals: 0,
           starter: false,
           notes: "",
+          shirtNumber: "",
         }));
 
         if (isEdit && id) {
@@ -86,6 +89,7 @@ export default function GameCreatePage() {
                   goals: stats.goals ?? 0,
                   starter: Boolean(stats.starter),
                   notes: stats.notes ?? "",
+                  shirtNumber: stats.shirtNumber != null ? String(stats.shirtNumber) : "",
                 }
               : p;
           });
@@ -152,6 +156,7 @@ export default function GameCreatePage() {
         goals: p.goals || 0,
         starter: p.starter,
         notes: p.notes || undefined,
+        shirtNumber: p.shirtNumber.trim() ? Number(p.shirtNumber) : undefined,
       })),
     };
 
@@ -255,7 +260,12 @@ export default function GameCreatePage() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <Label className="text-lg font-semibold">Escalação</Label>
+          <Label className="text-lg font-semibold">
+            Escalação
+            <span className="ml-2 text-sm font-normal text-muted-foreground">
+              {players.filter((p) => p.selected).length} atleta(s)
+            </span>
+          </Label>
           <Button type="button" variant="outline" onClick={() => setShowAddPlayers(true)}>
             Adicionar jogador
           </Button>
@@ -266,6 +276,7 @@ export default function GameCreatePage() {
             <thead className="bg-muted/50">
               <tr>
                 <th className="p-3 text-left">Nome</th>
+                <th className="p-3 text-left">Camisa</th>
                 <th className="p-3 text-left">Idade</th>
                 <th className="p-3 text-left">Gols</th>
                 <th className="p-3 text-left">Titular</th>
@@ -276,17 +287,31 @@ export default function GameCreatePage() {
             <tbody>
               {players.filter((p) => p.selected).length === 0 ? (
                 <tr>
-                  <td className="p-3" colSpan={6}>
+                  <td className="p-3" colSpan={7}>
                     Nenhum atleta escalado ainda. Clique em "Adicionar jogador".
                   </td>
                 </tr>
               ) : (
                 players
                   .filter((p) => p.selected)
+                  .sort((a, b) => compareNames(`${a.firstname} ${a.lastname}`, `${b.firstname} ${b.lastname}`))
                   .map((p) => (
                     <tr key={p.id} className="border-t">
                       <td className="p-3">
                         {p.firstname} {p.lastname}
+                      </td>
+                      <td className="p-3">
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          min={0}
+                          max={999}
+                          className="w-20"
+                          placeholder="Nº"
+                          aria-label={`Número da camisa de ${p.firstname}`}
+                          value={p.shirtNumber}
+                          onChange={(e) => updatePlayerField(p.id, "shirtNumber", e.target.value.replace(/\D/g, "").slice(0, 3))}
+                        />
                       </td>
                       <td className="p-3">{calculateAge(p.birthDate) ?? "-"}</td>
                       <td className="p-3">

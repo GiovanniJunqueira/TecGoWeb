@@ -1,6 +1,6 @@
 import { api } from "@/config";
 import type { PlayerFormData } from "@/validators";
-import type { PlayerReport } from "@/entities/player/profile-player.entity";
+import type { Birthday, PlayerReport } from "@/entities/player/profile-player.entity";
 
 export class PlayerService {
   public static async create(payload: PlayerFormData) {
@@ -19,6 +19,12 @@ export class PlayerService {
     const { data } = await api.get("/player/findAll", {
       params: { page, size, sort, search: search || undefined, turma: turma || undefined },
     });
+    return data;
+  }
+
+  /** Alunos ativos que fazem aniversário hoje. */
+  public static async birthdaysToday(): Promise<Birthday[]> {
+    const { data } = await api.get<Birthday[]>("/player/aniversariantes");
     return data;
   }
 
