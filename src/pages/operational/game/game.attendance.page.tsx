@@ -92,7 +92,9 @@ export default function GameAttendancePage() {
                     </td>
                   </tr>
                 ) : (
-                  game.players.map((p) => (
+                  [...game.players]
+                    .sort((a, b) => (a.playerName ?? "").localeCompare(b.playerName ?? "", "pt-BR", { sensitivity: "base" }))
+                    .map((p) => (
                     <tr key={p.playerId} className="border-t">
                       <td className="p-3">{p.playerName}</td>
                       <td className="p-3">
